@@ -1,4 +1,4 @@
-# Codeforces Tool
+# SIO Tool
 
 [![Github release](https://img.shields.io/github/release/Arapak/sio-tool.svg)](https://github.com/Arapak/sio-tool/releases)
 [![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue.svg)](https://github.com/Arapak/sio-tool/releases)
@@ -6,16 +6,16 @@
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.12-green.svg)](https://github.com/golang)
 [![license](https://img.shields.io/badge/license-MIT-%23373737.svg)](https://raw.githubusercontent.com/Arapak/sio-tool/main/LICENSE)
 
-Codeforces Tool is a command-line interface tool for [Codeforces](https://codeforces.com).
+SIO Tool is a command-line interface tool for [Codeforces](https://codeforces.com), [Szkopul (OI archive)][https://szkopul.edu.pl/task_archive/oi/], [SIO2 (staszic)][https://sio2.staszic.waw.pl] and [SIO2 (mimuw)][https://sio2.mimuw.edu.pl].
 
 It's fast, small, cross-platform and powerful.
 
-[Installation](#installation) | [Usage](#usage) | [FAQ](#faq)
+[Installation](##installation) | [Usage](##usage) | [FAQ](##faq)
 
 ## Features
 
--   Support Contests, Gym, Groups and acmsguru.
--   Support all programming languages in Codeforces.
+-   Supports Contests, Gym, Groups and acmsguru.
+-   Supports all programming languages in Codeforces.
 -   Submit codes.
 -   Watch submissions' status dynamically.
 -   Fetch problems' samples.
@@ -248,7 +248,7 @@ int main() {
 
 ### I double click the program but it doesn't work
 
-Codeforces Tool is a command-line tool. You should run it in terminal.
+SIO Tool is a command-line tool. You should run it in terminal.
 
 ### I cannot use `st` command
 
