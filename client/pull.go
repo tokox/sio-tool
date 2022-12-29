@@ -18,7 +18,7 @@ func findCode(body []byte) (string, error) {
 	reg := regexp.MustCompile(`<pre[\s\S]*?>([\s\S]*?)</pre>`)
 	tmp := reg.FindSubmatch(body)
 	if tmp == nil {
-		return "", errors.New("Cannot find any code")
+		return "", errors.New("cannot find any code")
 	}
 	return html.UnescapeString(string(tmp[1])), nil
 }
@@ -29,14 +29,14 @@ func findMessage(body []byte) (string, error) {
 	if tmp != nil {
 		return string(tmp[1]), nil
 	}
-	return "", errors.New("Cannot find any message")
+	return "", errors.New("cannot find any message")
 }
 
 // ErrorSkip error
-const ErrorSkip = "Exists, skip"
+const ErrorSkip = "exists, skip"
 
 // ErrorTooManyRequest error
-const ErrorTooManyRequest = "Too many requests"
+const ErrorTooManyRequest = "too many requests"
 
 // PullCode pull problem's code to path
 func (c *Client) PullCode(URL, path, ext string, rename bool) (filename string, err error) {
@@ -131,7 +131,7 @@ func (c *Client) Pull(info Info, rootPath string, ac bool) (err error) {
 	}
 
 	if len(used) == 0 {
-		return errors.New("Cannot find any code to save")
+		return errors.New("cannot find any code to save")
 	}
 
 	color.Cyan("These submissions' codes have been saved.")

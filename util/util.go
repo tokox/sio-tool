@@ -107,18 +107,23 @@ func GetJSONBody(client *http.Client, url string) (map[string]interface{}, error
 	return data, nil
 }
 
-// DebugSave write data to temperory file
+// DebugSave write data to temperary file
 func DebugSave(data interface{}) {
 	f, err := os.OpenFile("./tmp/body", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if data, ok := data.([]byte); ok {
-		if _, err := f.Write(data); err != nil {
+	if dataBytes, ok := data.([]byte); ok {
+		// Write the slice of bytes to the file
+		if _, err := f.Write(dataBytes); err != nil {
 			log.Fatal(err)
 		}
 	} else {
-		if _, err := f.Write([]byte(fmt.Sprintf("%v\n\n", data))); err != nil {
+		// Convert the value of data to a string
+		dataString := fmt.Sprintf("%v\n\n", data)
+
+		// Write the string to the file
+		if _, err := f.Write([]byte(dataString)); err != nil {
 			log.Fatal(err)
 		}
 	}

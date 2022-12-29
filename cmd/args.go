@@ -61,31 +61,31 @@ func parseArgs(opts docopt.Opts) error {
 		parsed := parseArg(arg)
 		if value, ok := parsed["problemType"]; ok {
 			if info.ProblemType != "" && info.ProblemType != value {
-				return fmt.Errorf("Problem Type conflicts: %v %v", info.ProblemType, value)
+				return fmt.Errorf("problem type conflicts: %v %v", info.ProblemType, value)
 			}
 			info.ProblemType = value
 		}
 		if value, ok := parsed["contestID"]; ok {
 			if info.ContestID != "" && info.ContestID != value {
-				return fmt.Errorf("Contest ID conflicts: %v %v", info.ContestID, value)
+				return fmt.Errorf("contest ID conflicts: %v %v", info.ContestID, value)
 			}
 			info.ContestID = value
 		}
 		if value, ok := parsed["groupID"]; ok {
 			if info.GroupID != "" && info.GroupID != value {
-				return fmt.Errorf("Group ID conflicts: %v %v", info.GroupID, value)
+				return fmt.Errorf("group ID conflicts: %v %v", info.GroupID, value)
 			}
 			info.GroupID = value
 		}
 		if value, ok := parsed["problemID"]; ok {
 			if info.ProblemID != "" && info.ProblemID != value {
-				return fmt.Errorf("Problem ID conflicts: %v %v", info.ProblemID, value)
+				return fmt.Errorf("problem ID conflicts: %v %v", info.ProblemID, value)
 			}
 			info.ProblemID = value
 		}
 		if value, ok := parsed["submissionID"]; ok {
 			if info.SubmissionID != "" && info.SubmissionID != value {
-				return fmt.Errorf("Submission ID conflicts: %v %v", info.SubmissionID, value)
+				return fmt.Errorf("submission ID conflicts: %v %v", info.SubmissionID, value)
 			}
 			info.SubmissionID = value
 		}

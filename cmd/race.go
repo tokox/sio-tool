@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"time"
-
 	"sio-tool/client"
 	"sio-tool/config"
 )
@@ -20,7 +18,6 @@ func Race() (err error) {
 	if err != nil {
 		return
 	}
-	time.Sleep(1)
 	URL, err := info.ProblemSetURL(cfg.Host)
 	if err != nil {
 		return

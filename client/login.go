@@ -18,7 +18,7 @@ import (
 	"syscall"
 
 	"github.com/fatih/color"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 // genFtaa generate a random one
@@ -48,7 +48,7 @@ func findCsrf(body []byte) (string, error) {
 	reg := regexp.MustCompile(`csrf='(.+?)'`)
 	tmp := reg.FindSubmatch(body)
 	if len(tmp) < 2 {
-		return "", errors.New("Cannot find csrf")
+		return "", errors.New("cannot find csrf")
 	}
 	return string(tmp[1]), nil
 }
@@ -64,7 +64,7 @@ func AesDecrypt(cipherIn []byte, key, iv []byte) ([]byte, error) {
 	return origData, nil
 }
 func addRCPC(c *Client, body []byte) ([]byte, error) {
-	if strings.Index(string(body), "Redirecting... Please, wait.") != -1 {
+	if strings.Contains(string(body), "Redirecting... Please, wait.") {
 		reg := regexp.MustCompile(`var a=toNumbers\("([0-9a-f]*)"\),b=toNumbers\("([0-9a-f]*)"\),c=toNumbers\("([0-9a-f]*)"\);`)
 		out := reg.FindAllSubmatch(body, -1)
 		if len(out) != 1 {
@@ -175,7 +175,7 @@ func encrypt(handle, password string) (ret string, err error) {
 func decrypt(handle, password string) (ret string, err error) {
 	data, err := hex.DecodeString(password)
 	if err != nil {
-		err = errors.New("Cannot decode the password")
+		err = errors.New("cannot decode the password")
 		return
 	}
 	block, err := aes.NewCipher(createHash("glhf" + handle + "233"))
@@ -199,7 +199,7 @@ func decrypt(handle, password string) (ret string, err error) {
 // DecryptPassword get real password
 func (c *Client) DecryptPassword() (string, error) {
 	if len(c.Password) == 0 || len(c.HandleOrEmail) == 0 {
-		return "", errors.New("You have to configure your handle and password by `st config`")
+		return "", errors.New("you have to configure your handle and password by `st config`")
 	}
 	return decrypt(c.HandleOrEmail, c.Password)
 }
@@ -216,9 +216,9 @@ func (c *Client) ConfigLogin() (err error) {
 	handleOrEmail := util.ScanlineTrim()
 
 	password := ""
-	if terminal.IsTerminal(int(syscall.Stdin)) {
+	if term.IsTerminal(int(syscall.Stdin)) {
 		fmt.Printf("password: ")
-		bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 		if err != nil {
 			fmt.Println()
 			if err.Error() == "EOF" {

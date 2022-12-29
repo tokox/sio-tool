@@ -59,7 +59,7 @@ func gen(source, currentPath, ext string) error {
 func Gen() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {
-		return errors.New("You have to add at least one code template by `st config`")
+		return errors.New("you have to add at least one code template by `st config`")
 	}
 	alias := Args.Alias
 	var path string
@@ -67,7 +67,7 @@ func Gen() (err error) {
 	if alias != "" {
 		templates := cfg.TemplateByAlias(alias)
 		if len(templates) < 1 {
-			return fmt.Errorf("Cannot find any template with alias %v", alias)
+			return fmt.Errorf("cannot find any template with alias %v", alias)
 		} else if len(templates) == 1 {
 			path = templates[0].Path
 		} else {

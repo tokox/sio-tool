@@ -19,7 +19,7 @@ func (c *Config) SetGenAfterParse() (err error) {
 func formatHost(host string) (string, error) {
 	reg := regexp.MustCompile(`https?://[\w\-]+(\.[\w\-]+)+/?`)
 	if !reg.MatchString(host) {
-		return "", fmt.Errorf(`Invalid host "%v"`, host)
+		return "", fmt.Errorf(`invalid host "%v"`, host)
 	}
 	for host[len(host)-1:] == "/" {
 		host = host[:len(host)-1]
@@ -30,7 +30,7 @@ func formatHost(host string) (string, error) {
 func formatProxy(proxy string) (string, error) {
 	reg := regexp.MustCompile(`[\w\-]+?://[\w\-]+(\.[\w\-]+)*(:\d+)?`)
 	if !reg.MatchString(proxy) {
-		return "", fmt.Errorf(`Invalid proxy "%v"`, proxy)
+		return "", fmt.Errorf(`invalid proxy "%v"`, proxy)
 	}
 	return proxy, nil
 }

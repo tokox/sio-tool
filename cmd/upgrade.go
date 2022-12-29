@@ -47,7 +47,7 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 	case "windows":
 		goos = "windows"
 	default:
-		err = fmt.Errorf("Not support %v", runtime.GOOS)
+		err = fmt.Errorf("not support %v", runtime.GOOS)
 		return
 	}
 
@@ -58,7 +58,7 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 	case "amd64":
 		arch = "64"
 	default:
-		err = fmt.Errorf("Not support %v", runtime.GOARCH)
+		err = fmt.Errorf("not support %v", runtime.GOARCH)
 		return
 	}
 

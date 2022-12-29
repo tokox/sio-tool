@@ -78,7 +78,7 @@ func judge(sampleID, command string) error {
 	cmd.Stdout = output
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("Runtime Error #%v ... %v", sampleID, err.Error())
+		return fmt.Errorf("runtime error #%v ... %v", sampleID, err.Error())
 	}
 
 	pid := int32(cmd.Process.Pid)
@@ -92,7 +92,7 @@ func judge(sampleID, command string) error {
 		select {
 		case err := <-ch:
 			if err != nil {
-				return fmt.Errorf("Runtime Error #%v ... %v", sampleID, err.Error())
+				return fmt.Errorf("runtime error #%v ... %v", sampleID, err.Error())
 			}
 			running = false
 		default:
@@ -152,11 +152,11 @@ func judge(sampleID, command string) error {
 func Test() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {
-		return errors.New("You have to add at least one code template by `st config`")
+		return errors.New("you have to add at least one code template by `st config`")
 	}
 	samples := getSampleID()
 	if len(samples) == 0 {
-		return errors.New("Cannot find any sample file")
+		return errors.New("cannot find any sample file")
 	}
 	filename, index, err := getOneCode(Args.File, cfg.Template)
 	if err != nil {
@@ -199,7 +199,7 @@ func Test() (err error) {
 			}
 		}
 	} else {
-		return errors.New("Invalid script command. Please check config file")
+		return errors.New("invalid script command, please check config file")
 	}
 	return run(template.AfterScript)
 }

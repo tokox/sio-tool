@@ -132,7 +132,7 @@ func getOneCode(filename string, templates []config.CodeTemplate) (name string, 
 		return
 	}
 	if len(codes) < 1 {
-		return "", 0, errors.New("Cannot find any code.\nMaybe you should add a new template by `st config`")
+		return "", 0, errors.New("cannot find any code,\nmaybe you should add a new template by `st config`")
 	}
 	if len(codes) > 1 {
 		color.Cyan("There are multiple files can be selected.")
