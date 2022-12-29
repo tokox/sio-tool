@@ -20,7 +20,6 @@ It's fast, small, cross-platform and powerful.
 -   Watch submissions' status dynamically.
 -   Fetch problems' samples.
 -   Compile and test locally.
--   Clone all codes of someone.
 -   Generate codes from the specified template (including timestamp, author, etc.)
 -   List problems' stats of one contest.
 -   Use default web browser to open problems' pages, standings' page, etc.
@@ -102,7 +101,6 @@ Usage:
   st sid [<specifier>...]
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
-  st clone [ac] [<handle>]
   st upgrade
 
 Options:
@@ -168,7 +166,6 @@ Examples:
                        "a" of contest 100.
   st pull              Pull the latest codes of current problem into current
                        path.
-  st clone Arapak     Clone all codes of Arapak.
   st upgrade           Upgrade the "st" to the latest version from GitHub.
 
 File:

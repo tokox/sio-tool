@@ -39,7 +39,6 @@ Usage:
   st sid [<specifier>...]
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
-  st clone [ac] [<handle>]
   st upgrade
 Options:
   -h --help            Show this screen.
@@ -103,7 +102,6 @@ Examples:
                        "a" of contest 100.
   st pull              Pull the latest codes of current problem into current
                        path.
-  st clone Arapak      Clone all codes of Arapak.
   st upgrade           Upgrade the "st" to the latest version from GitHub.
 File:
   st will save some data in some files:
