@@ -20,6 +20,12 @@ import (
 )
 
 func less(a, b string) bool {
+	if a == "$CI_VERSION" {
+		return true
+	}
+	if b == "$CI_VERSION" {
+		return false
+	}
 	reg := regexp.MustCompile(`(\d+)\.(\d+)\.(\d+)`)
 	x := reg.FindSubmatch([]byte(a))
 	y := reg.FindSubmatch([]byte(b))
@@ -54,9 +60,9 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 	arch := ""
 	switch runtime.GOARCH {
 	case "386":
-		arch = "32"
+		arch = "x32"
 	case "amd64":
-		arch = "64"
+		arch = "x64"
 	default:
 		err = fmt.Errorf("not support %v", runtime.GOARCH)
 		return
@@ -77,7 +83,7 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 	note = result["body"].(string)
 	tm, _ := time.Parse("2006-01-02T15:04:05Z", result["published_at"].(string))
 	ptime = tm.In(time.Local).Format("2006-01-02 15:04")
-	url = fmt.Sprintf("https://github.com/Arapak/sio-tool/releases/download/%v/st_%v_%v_%v.zip", version, version, goos, arch)
+	url = fmt.Sprintf("https://github.com/Arapak/sio-tool/releases/download/%v/st_%v_%v.zip", version, goos, arch)
 	assets, _ := result["assets"].([]interface{})
 	for _, tmp := range assets {
 		asset, _ := tmp.(map[string]interface{})

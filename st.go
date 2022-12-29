@@ -22,7 +22,7 @@ const configPath = "~/.st/config"
 const sessionPath = "~/.st/session"
 
 func main() {
-	usage := `Codeforces Tool $%version%$ (st). https://github.com/Arapak/sio-tool
+	usage := `SIO Tool $%version%$ (st). https://github.com/Arapak/sio-tool
 You should run "st config" to configure your handle, password and code
 templates at first.
 If you want to compete, the best command is "st race"
@@ -138,7 +138,7 @@ Script in template:
 	color.Output = ansi.NewAnsiStdout()
 
 	usage = strings.Replace(usage, `$%version%$`, version, 1)
-	opts, _ := docopt.ParseArgs(usage, os.Args[1:], fmt.Sprintf("Codeforces Tool (st) %v\nLast built: %v\n", version, buildTime))
+	opts, _ := docopt.ParseArgs(usage, os.Args[1:], fmt.Sprintf("SIO Tool (st) %v\nLast built: %v\n", version, buildTime))
 	opts[`{version}`] = version
 
 	cfgPath, _ := homedir.Expand(configPath)
