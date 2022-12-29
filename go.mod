@@ -1,4 +1,4 @@
-module cf-tool
+module sio-tool
 
 go 1.18
 

@@ -1,94 +1,31 @@
-# Codeforces Tool
+package main
 
-[![Github release](https://img.shields.io/github/release/Arapak/sio-tool.svg)](https://github.com/Arapak/sio-tool/releases)
-[![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue.svg)](https://github.com/Arapak/sio-tool/releases)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Arapak/sio-tool)](https://goreportcard.com/report/github.com/Arapak/sio-tool)
-[![Go Version](https://img.shields.io/badge/go-%3E%3D1.12-green.svg)](https://github.com/golang)
-[![license](https://img.shields.io/badge/license-MIT-%23373737.svg)](https://raw.githubusercontent.com/Arapak/sio-tool/main/LICENSE)
+import (
+	"fmt"
+	"os"
+	"strings"
 
-Codeforces Tool is a command-line interface tool for [Codeforces](https://codeforces.com).
+	"sio-tool/client"
+	"sio-tool/cmd"
+	"sio-tool/config"
 
-It's fast, small, cross-platform and powerful.
+	"github.com/fatih/color"
+	ansi "github.com/k0kubun/go-ansi"
+	"github.com/mitchellh/go-homedir"
 
-[Installation](#installation) | [Usage](#usage) | [FAQ](#faq)
+	docopt "github.com/docopt/docopt-go"
+)
 
-## Features
+const version = "$CI_VERSION"
+const buildTime = "$CI_BUILD_TIME"
+const configPath = "~/.st/config"
+const sessionPath = "~/.st/session"
 
--   Support Contests, Gym, Groups and acmsguru.
--   Support all programming languages in Codeforces.
--   Submit codes.
--   Watch submissions' status dynamically.
--   Fetch problems' samples.
--   Compile and test locally.
--   Clone all codes of someone.
--   Generate codes from the specified template (including timestamp, author, etc.)
--   List problems' stats of one contest.
--   Use default web browser to open problems' pages, standings' page, etc.
--   Setup a network proxy. Setup a mirror host.
--   Colorful CLI.
-
-Pull requests are always welcome.
-
-## Installation
-
-You can download the pre-compiled binary file in [here](https://github.com/Arapak/sio-tool/releases).
-
-Then enjoy the sio-tool~
-
-Or you can compile it from the source **(go >= 1.12)**:
-
-```plain
-$ go get github.com/Arapak/sio-tool
-$ cd $GOPATH/src/github.com/Arapak/sio-tool
-$ go build -ldflags "-s -w" st.go
-```
-
-If you don't know what's the `$GOPATH`, please see here <https://github.com/golang/go/wiki/GOPATH>.
-
-## Usage
-
-Let's simulate a competition.
-
-`st race 1136` or `st race https://codeforces.com/contest/1136`
-
-To start competing the contest 1136!
-
-If the contest has not started yet, `st` will count down. If the contest have started or the countdown ends, `st` will use the default browser to open dashboard's page and problems' page, and fetch all samples to the local.
-
-`cd ./st/contest/1136/a` (May be different from this, please notice the message on your screen)
-
-Enter the directory of problem A, the directory should contain all samples of the problem.
-
-`st gen`
-
-Generate a code with the default template. The filename of the code is problem id by default.
-
-`vim a.cpp`
-
-Use Vim to write the code (It depends on yourself).
-
-`st test`
-
-Compile and test all samples.
-
-`st submit`
-
-Submit the code.
-
-`st list`
-
-List problems' stats of the contest.
-
-`st stand`
-
-Open the standings' page of the contest.
-
-```plain
+func main() {
+	usage := `Codeforces Tool $%version%$ (st). https://github.com/Arapak/sio-tool
 You should run "st config" to configure your handle, password and code
 templates at first.
-
-If you want to compete, the best command is "st race".
-
+If you want to compete, the best command is "st race"
 Usage:
   st config
   st submit [-f <file>] [<specifier>...]
@@ -104,7 +41,6 @@ Usage:
   st pull [ac] [<specifier>...]
   st clone [ac] [<handle>]
   st upgrade
-
 Options:
   -h --help            Show this screen.
   --version            Show version.
@@ -113,26 +49,25 @@ Options:
   <specifier>          Any useful text. E.g.
                        "https://codeforces.com/contest/100",
                        "https://codeforces.com/contest/180/problem/A",
-                       "https://codeforces.com/group/Cw4JRyRGXR/contest/269760",
+                       "https://codeforces.com/group/Cw4JRyRGXR/contest/269760"
                        "1111A", "1111", "a", "Cw4JRyRGXR"
                        You can combine multiple specifiers to specify what you
                        want.
   <alias>              Template's alias. E.g. "cpp"
   ac                   The status of the submission is Accepted.
-
 Examples:
   st config            Configure the sio-tool.
   st submit            st will detect what you want to submit automatically.
   st submit -f a.cpp
   st submit https://codeforces.com/contest/100/A
-  st submit -f a.cpp 100A
+  st submit -f a.cpp 100A 
   st submit -f a.cpp 100 a
   st submit contest 100 a
   st submit gym 100001 a
   st list              List all problems' stats of a contest.
   st list 1119
   st parse 100         Fetch all problems' samples of contest 100 into
-                       "{st}/{contest}/100/".
+                       "{st}/{contest}/100/<problem-id>".
   st parse gym 100001a
                        Fetch samples of problem "a" of gym 100001 into
                        "{st}/{gym}/100001/a".
@@ -168,21 +103,16 @@ Examples:
                        "a" of contest 100.
   st pull              Pull the latest codes of current problem into current
                        path.
-  st clone Arapak     Clone all codes of Arapak.
+  st clone Arapak      Clone all codes of Arapak.
   st upgrade           Upgrade the "st" to the latest version from GitHub.
-
 File:
   st will save some data in some files:
-
   "~/.st/config"        Configuration file, including templates, etc.
   "~/.st/session"       Session file, including cookies, handle, password, etc.
-
   "~" is the home directory of current user in your system.
-
 Template:
   You can insert some placeholders into your template code. When generate a code
   from the template, st will replace all placeholders by following rules:
-
   $%U%$   Handle (e.g. Arapak)
   $%Y%$   Year   (e.g. 2019)
   $%M%$   Month  (e.g. 04)
@@ -190,7 +120,6 @@ Template:
   $%h%$   Hour   (e.g. 08)
   $%m%$   Minute (e.g. 05)
   $%s%$   Second (e.g. 00)
-
 Script in template:
   Template will run 3 scripts in sequence when you run "st test":
     - before_script   (execute once)
@@ -200,68 +129,26 @@ Script in template:
   not executing.
   You have to run your program in "script" with standard input/output (no
   need to redirect).
-
   You can insert some placeholders in your scripts. When execute a script,
   st will replace all placeholders by following rules:
-
   $%path%$   Path to source file (Excluding $%full%$, e.g. "/home/arapak/")
   $%full%$   Full name of source file (e.g. "a.cpp")
   $%file%$   Name of source file (Excluding suffix, e.g. "a")
-  $%rand%$   Random string with 8 character (including "a-z" "0-9")
-```
+  $%rand%$   Random string with 8 character (including "a-z" "0-9")`
+	color.Output = ansi.NewAnsiStdout()
 
-## Template Example
+	usage = strings.Replace(usage, `$%version%$`, version, 1)
+	opts, _ := docopt.ParseArgs(usage, os.Args[1:], fmt.Sprintf("Codeforces Tool (st) %v\nLast built: %v\n", version, buildTime))
+	opts[`{version}`] = version
 
-The placeholders inside the template will be replaced with the corresponding content when you run `st gen`.
+	cfgPath, _ := homedir.Expand(configPath)
+	clnPath, _ := homedir.Expand(sessionPath)
+	config.Init(cfgPath)
+	client.Init(clnPath, config.Instance.Host, config.Instance.Proxy)
 
-```
-$%U%$   Handle (e.g. xalanq)
-$%Y%$   Year   (e.g. 2019)
-$%M%$   Month  (e.g. 04)
-$%D%$   Day    (e.g. 09)
-$%h%$   Hour   (e.g. 08)
-$%m%$   Minute (e.g. 05)
-$%s%$   Second (e.g. 00)
-```
-
-```cpp
-/* Generated by powerful Sio Tool
- * You can download the binary file in here https://github.com/Arapak/sio-tool (Linux, Windows, MacOS)
- * Author: $%U%$
- * Time: $%Y%$-$%M%$-$%D%$ $%h%$:$%m%$:$%s%$
-**/
-
-#include <bits/stdc++.h>
-using namespace std;
-
-typedef long long ll;
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-
-    return 0;
+	err := cmd.Eval(opts)
+	if err != nil {
+		color.Red(err.Error())
+	}
+	color.Unset()
 }
-```
-
-## FAQ
-
-### I double click the program but it doesn't work
-
-Codeforces Tool is a command-line tool. You should run it in terminal.
-
-### I cannot use `st` command
-
-You should put the `st` program to a path (e.g. `/usr/bin/` in Linux) which has been added to system environment variable PATH.
-
-Or just google "how to add a path to system environment variable PATH".
-
-### How to add a new testcase
-
-Create two extra testcase files `inK.txt` and `ansK.txt` (K is a string with 0~9).
-
-### Enable tab completion in terminal
-
-Use this [Infinidat/infi.docopt_completion](https://github.com/Infinidat/infi.docopt_completion).
-
-Note: If there is a new version released (especially a new command added), you should run `docopt-completion st` again.

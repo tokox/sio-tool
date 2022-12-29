@@ -7,8 +7,9 @@ import (
 	"sort"
 	"strings"
 
-	"cf-tool/client"
-	"cf-tool/util"
+	"sio-tool/client"
+	"sio-tool/util"
+
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"
 	homedir "github.com/mitchellh/go-homedir"
@@ -42,9 +43,9 @@ func (c *Config) AddTemplate() (err error) {
 
 	note := `Template:
   You can insert some placeholders into your template code. When generate a code from the
-  template, cf will replace all placeholders by following rules:
+  template, st will replace all placeholders by following rules:
 
-  $%U%$   Handle (e.g. dianhsu)
+  $%U%$   Handle (e.g. Arapak)
   $%Y%$   Year   (e.g. 2019)
   $%M%$   Month  (e.g. 04)
   $%D%$   Day    (e.g. 09)
@@ -89,7 +90,7 @@ func (c *Config) AddTemplate() (err error) {
 	}
 
 	color.Green("Script in template:")
-	note = `Template will run 3 scripts in sequence when you run "cf test":
+	note = `Template will run 3 scripts in sequence when you run "st test":
     - before_script   (execute once)
     - script          (execute the number of samples times)
     - after_script    (execute once)
@@ -97,9 +98,9 @@ func (c *Config) AddTemplate() (err error) {
   You have to run your program in "script" with standard input/output (no need to redirect).
 
   You can insert some placeholders in your scripts. When execute a script,
-  cf will replace all placeholders by following rules:
+  st will replace all placeholders by following rules:
 
-  $%path%$   Path to source file (Excluding $%full%$, e.g. "/home/dianhsu/")
+  $%path%$   Path to source file (Excluding $%full%$, e.g. "/home/arapak/")
   $%full%$   Full name of source file (e.g. "a.cpp")
   $%file%$   Name of source file (Excluding suffix, e.g. "a")
   $%rand%$   Random string with 8 character (including "a-z" "0-9")`

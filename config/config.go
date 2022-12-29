@@ -7,7 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"cf-tool/client"
+	"sio-tool/client"
+
 	"github.com/fatih/color"
 )
 
@@ -50,7 +51,7 @@ func Init(path string) {
 		c.FolderName = map[string]string{}
 	}
 	if _, ok := c.FolderName["root"]; !ok {
-		c.FolderName["root"] = "cf"
+		c.FolderName["root"] = "st"
 	}
 	for _, problemType := range client.ProblemTypes {
 		if _, ok := c.FolderName[problemType]; !ok {

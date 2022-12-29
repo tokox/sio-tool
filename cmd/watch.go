@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"cf-tool/client"
+	"sio-tool/client"
 )
 
 // Watch command

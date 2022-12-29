@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
-	"cf-tool/client"
-	"cf-tool/config"
+	"sio-tool/client"
+	"sio-tool/config"
 )
 
 // Submit command

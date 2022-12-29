@@ -2,15 +2,16 @@ package client
 
 import (
 	"bytes"
-	"cf-tool/util"
 	"fmt"
+	"os"
+	"path/filepath"
+	"sio-tool/util"
+	"strings"
+	"sync"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
 	"github.com/k0kubun/go-ansi"
-	"os"
-	"path/filepath"
-	"strings"
-	"sync"
 )
 
 func findSample(body []byte) (input [][]byte, output [][]byte, err error) {

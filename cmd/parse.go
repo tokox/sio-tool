@@ -4,8 +4,8 @@ import (
 	"errors"
 	"path/filepath"
 
-	"cf-tool/client"
-	"cf-tool/config"
+	"sio-tool/client"
+	"sio-tool/config"
 )
 
 // Parse command
@@ -17,7 +17,7 @@ func Parse() (err error) {
 	ext := ""
 	if cfg.GenAfterParse {
 		if len(cfg.Template) == 0 {
-			return errors.New("You have to add at least one code template by `cf config`")
+			return errors.New("You have to add at least one code template by `st config`")
 		}
 		path := cfg.Template[cfg.Default].Path
 		ext = filepath.Ext(path)

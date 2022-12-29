@@ -3,8 +3,8 @@ package cmd
 import (
 	"time"
 
-	"cf-tool/client"
-	"cf-tool/config"
+	"sio-tool/client"
+	"sio-tool/config"
 )
 
 // Race command

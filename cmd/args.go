@@ -6,8 +6,9 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"cf-tool/client"
-	"cf-tool/config"
+	"sio-tool/client"
+	"sio-tool/config"
+
 	"github.com/docopt/docopt-go"
 )
 

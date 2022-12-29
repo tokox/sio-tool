@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"cf-tool/client"
+	"sio-tool/client"
 )
 
 // Clone command

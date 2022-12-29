@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"cf-tool/client"
-	"cf-tool/config"
+	"sio-tool/client"
+	"sio-tool/config"
+
 	"github.com/fatih/color"
 	"github.com/skratchdot/open-golang/open"
 )

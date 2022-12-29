@@ -9,9 +9,9 @@ import (
 
 	"github.com/docopt/docopt-go"
 
-	"cf-tool/client"
-	"cf-tool/config"
-	"cf-tool/util"
+	"sio-tool/client"
+	"sio-tool/config"
+	"sio-tool/util"
 
 	"github.com/fatih/color"
 )
@@ -64,13 +64,13 @@ func getSampleID() (samples []string) {
 	if err != nil {
 		return
 	}
-	reg := regexp.MustCompile(`testI(\d+).txt`)
+	reg := regexp.MustCompile(`in(\d+).txt`)
 	for _, path := range paths {
 		name := path.Name()
 		tmp := reg.FindSubmatch([]byte(name))
 		if tmp != nil {
 			idx := string(tmp[1])
-			ans := fmt.Sprintf("testO%v.txt", idx)
+			ans := fmt.Sprintf("ans%v.txt", idx)
 			if _, err := os.Stat(ans); err == nil {
 				samples = append(samples, idx)
 			}
@@ -103,7 +103,7 @@ func getCode(filename string, templates []config.CodeTemplate) (codes []CodeList
 		if idx, ok := mp[ext]; ok {
 			return []CodeList{{filename, idx}}, nil
 		}
-		return nil, fmt.Errorf("%v can not match any template. You could add a new template by `cf config`", filename)
+		return nil, fmt.Errorf("%v can not match any template. You could add a new template by `st config`", filename)
 	}
 
 	path, err := os.Getwd()
@@ -132,7 +132,7 @@ func getOneCode(filename string, templates []config.CodeTemplate) (name string, 
 		return
 	}
 	if len(codes) < 1 {
-		return "", 0, errors.New("Cannot find any code.\nMaybe you should add a new template by `cf config`")
+		return "", 0, errors.New("Cannot find any code.\nMaybe you should add a new template by `st config`")
 	}
 	if len(codes) > 1 {
 		color.Cyan("There are multiple files can be selected.")

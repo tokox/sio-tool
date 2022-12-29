@@ -12,8 +12,8 @@ import (
 	"strings"
 	"unicode"
 
-	"cf-tool/config"
-	"cf-tool/util"
+	"sio-tool/config"
+	"sio-tool/util"
 
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"
@@ -62,8 +62,8 @@ func plain(raw []byte) string {
 }
 
 func judge(sampleID, command string) error {
-	inPath := fmt.Sprintf("testI%v.txt", sampleID)
-	ansPath := fmt.Sprintf("testO%v.txt", sampleID)
+	inPath := fmt.Sprintf("in%v.txt", sampleID)
+	ansPath := fmt.Sprintf("ans%v.txt", sampleID)
 	input, err := os.Open(inPath)
 	if err != nil {
 		return err
@@ -152,7 +152,7 @@ func judge(sampleID, command string) error {
 func Test() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {
-		return errors.New("You have to add at least one code template by `cf config`")
+		return errors.New("You have to add at least one code template by `st config`")
 	}
 	samples := getSampleID()
 	if len(samples) == 0 {

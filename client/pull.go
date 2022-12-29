@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"cf-tool/util"
+	"sio-tool/util"
 
 	"github.com/fatih/color"
 )

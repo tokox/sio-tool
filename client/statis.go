@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"cf-tool/util"
+	"sio-tool/util"
 )
 
 // StatisInfo statis information

@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"cf-tool/client"
-	"cf-tool/config"
-	"cf-tool/util"
+	"sio-tool/client"
+	"sio-tool/config"
+	"sio-tool/util"
+
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"
 )
@@ -17,7 +18,7 @@ func Config() (err error) {
 	ansi.Println(`1) add a template`)
 	ansi.Println(`2) delete a template`)
 	ansi.Println(`3) set default template`)
-	ansi.Println(`4) run "cf gen" after "cf parse"`)
+	ansi.Println(`4) run "st gen" after "st parse"`)
 	ansi.Println(`5) set host domain`)
 	ansi.Println(`6) set proxy`)
 	ansi.Println(`7) set folders' name`)

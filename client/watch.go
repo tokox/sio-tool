@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"cf-tool/util"
+	"sio-tool/util"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
@@ -153,7 +153,7 @@ func findCfOffset(body []byte) (string, error) {
 	reg := regexp.MustCompile(`name="utc_offset" content="([\s\S]+?)"`)
 	tmp := reg.FindSubmatch(body)
 	if tmp == nil {
-		return "", errors.New("Cannot find cf utc offset")
+		return "", errors.New("Cannot find st utc offset")
 	}
 	return string(tmp[1]), nil
 }

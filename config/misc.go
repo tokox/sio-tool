@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"regexp"
 
-	"cf-tool/client"
-	"cf-tool/util"
+	"sio-tool/client"
+	"sio-tool/util"
+
 	"github.com/fatih/color"
 )
 
 // SetGenAfterParse set it yes or no
 func (c *Config) SetGenAfterParse() (err error) {
-	c.GenAfterParse = util.YesOrNo(`Run "cf gen" after "cf parse" (y/n)? `)
+	c.GenAfterParse = util.YesOrNo(`Run "st gen" after "st parse" (y/n)? `)
 	return c.save()
 }
 

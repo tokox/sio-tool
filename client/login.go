@@ -1,8 +1,6 @@
 package client
 
 import (
-	"cf-tool/cookiejar"
-	"cf-tool/util"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/md5"
@@ -10,14 +8,17 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
-	"golang.org/x/crypto/ssh/terminal"
 	"io"
 	"net/http"
 	"net/url"
 	"regexp"
+	"sio-tool/cookiejar"
+	"sio-tool/util"
 	"strings"
 	"syscall"
+
+	"github.com/fatih/color"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // genFtaa generate a random one
@@ -198,7 +199,7 @@ func decrypt(handle, password string) (ret string, err error) {
 // DecryptPassword get real password
 func (c *Client) DecryptPassword() (string, error) {
 	if len(c.Password) == 0 || len(c.HandleOrEmail) == 0 {
-		return "", errors.New("You have to configure your handle and password by `cf config`")
+		return "", errors.New("You have to configure your handle and password by `st config`")
 	}
 	return decrypt(c.HandleOrEmail, c.Password)
 }

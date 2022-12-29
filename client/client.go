@@ -8,7 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"cf-tool/cookiejar"
+	"sio-tool/cookiejar"
+
 	"github.com/fatih/color"
 )
 

@@ -8,9 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"cf-tool/client"
-	"cf-tool/config"
-	"cf-tool/util"
+	"sio-tool/client"
+	"sio-tool/config"
+	"sio-tool/util"
+
 	"github.com/fatih/color"
 )
 
@@ -58,7 +59,7 @@ func gen(source, currentPath, ext string) error {
 func Gen() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {
-		return errors.New("You have to add at least one code template by `cf config`")
+		return errors.New("You have to add at least one code template by `st config`")
 	}
 	alias := Args.Alias
 	var path string

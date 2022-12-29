@@ -6,7 +6,8 @@ import (
 	"io"
 	"strings"
 
-	"cf-tool/client"
+	"sio-tool/client"
+
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"
 	"github.com/olekukonko/tablewriter"
