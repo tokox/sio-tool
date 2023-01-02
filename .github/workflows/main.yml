@@ -15,7 +15,7 @@ jobs:
                   go-version: 1.18
             - name: Unittest
               run: |
-                  go test sio-tool/client
+                  go test sio-tool/codeforces_client
             - name: Build
               run: |
                   mkdir -p output

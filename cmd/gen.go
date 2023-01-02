@@ -8,14 +8,14 @@ import (
 	"strings"
 	"time"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 	"sio-tool/util"
 
 	"github.com/fatih/color"
 )
 
-func parseTemplate(source string, cln *client.Client) string {
+func parseTemplate(source string, cln *codeforces_client.CodeforcesClient) string {
 	now := time.Now()
 	source = strings.ReplaceAll(source, "$%U%$", cln.Handle)
 	source = strings.ReplaceAll(source, "$%Y%$", fmt.Sprintf("%v", now.Year()))
@@ -27,7 +27,7 @@ func parseTemplate(source string, cln *client.Client) string {
 	return source
 }
 
-func readTemplateSource(path string, cln *client.Client) (source string, err error) {
+func readTemplateSource(path string, cln *codeforces_client.CodeforcesClient) (source string, err error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return
@@ -83,7 +83,7 @@ func Gen() (err error) {
 		path = cfg.Template[cfg.Default].Path
 	}
 
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	source, err := readTemplateSource(path, cln)
 	if err != nil {
 		return

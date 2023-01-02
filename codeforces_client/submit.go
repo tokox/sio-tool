@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"errors"
@@ -22,7 +22,7 @@ func findErrorMessage(body []byte) (string, error) {
 }
 
 // Submit submit (block while pending)
-func (c *Client) Submit(info Info, langID, source string) (err error) {
+func (c *CodeforcesClient) Submit(info Info, langID, source string) (err error) {
 	color.Cyan("Submit " + info.Hint())
 
 	URL, err := info.SubmitURL(c.host)

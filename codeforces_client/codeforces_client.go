@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"encoding/json"
@@ -13,8 +13,8 @@ import (
 	"github.com/fatih/color"
 )
 
-// Client codeforces client
-type Client struct {
+// CodeforcesClient codeforces client
+type CodeforcesClient struct {
 	Jar            *cookiejar.Jar `json:"cookies"`
 	Handle         string         `json:"handle"`
 	HandleOrEmail  string         `json:"handle_or_email"`
@@ -29,12 +29,12 @@ type Client struct {
 }
 
 // Instance global client
-var Instance *Client
+var Instance *CodeforcesClient
 
 // Init initialize
 func Init(path, host, proxy string) {
 	jar, _ := cookiejar.New(nil)
-	c := &Client{Jar: jar, LastSubmission: nil, path: path, host: host, proxy: proxy, client: nil}
+	c := &CodeforcesClient{Jar: jar, LastSubmission: nil, path: path, host: host, proxy: proxy, client: nil}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new session in %v", path)
@@ -57,7 +57,7 @@ func Init(path, host, proxy string) {
 }
 
 // load from path
-func (c *Client) load() (err error) {
+func (c *CodeforcesClient) load() (err error) {
 	file, err := os.Open(c.path)
 	if err != nil {
 		return
@@ -74,7 +74,7 @@ func (c *Client) load() (err error) {
 }
 
 // save file to path
-func (c *Client) save() (err error) {
+func (c *CodeforcesClient) save() (err error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err == nil {
 		os.MkdirAll(filepath.Dir(c.path), os.ModePerm)

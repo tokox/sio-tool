@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"bytes"
@@ -27,7 +27,7 @@ func findCountdown(body []byte) (int, error) {
 }
 
 // RaceContest wait for contest starting
-func (c *Client) RaceContest(info Info) (err error) {
+func (c *CodeforcesClient) RaceContest(info Info) (err error) {
 	color.Cyan("Race " + info.Hint())
 
 	URL, err := info.ProblemSetURL(c.host)

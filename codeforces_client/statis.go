@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"errors"
@@ -73,7 +73,7 @@ func findProblems(body []byte) ([]StatisInfo, error) {
 }
 
 // Statis get statis
-func (c *Client) Statis(info Info) (problems []StatisInfo, err error) {
+func (c *CodeforcesClient) Statis(info Info) (problems []StatisInfo, err error) {
 	URL, err := info.ProblemSetURL(c.host)
 	if err != nil {
 		return

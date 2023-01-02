@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/util"
 
 	"github.com/fatih/color"
@@ -23,7 +23,7 @@ func (c *Config) AddTemplate() (err error) {
 		K, V string
 	}
 	langs := []kv{}
-	for k, v := range client.Langs {
+	for k, v := range codeforces_client.Langs {
 		langs = append(langs, kv{k, v})
 	}
 	sort.Slice(langs, func(i, j int) bool { return langs[i].V < langs[j].V })
@@ -34,7 +34,7 @@ func (c *Config) AddTemplate() (err error) {
 	lang := ""
 	for {
 		lang = util.ScanlineTrim()
-		if val, ok := client.Langs[lang]; ok {
+		if val, ok := codeforces_client.Langs[lang]; ok {
 			color.Green(val)
 			break
 		}

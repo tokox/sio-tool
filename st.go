@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"sio-tool/client"
 	"sio-tool/cmd"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 
 	"github.com/fatih/color"
@@ -142,7 +142,7 @@ Script in template:
 	cfgPath, _ := homedir.Expand(configPath)
 	clnPath, _ := homedir.Expand(sessionPath)
 	config.Init(cfgPath)
-	client.Init(clnPath, config.Instance.Host, config.Instance.Proxy)
+	codeforces_client.Init(clnPath, config.Instance.Host, config.Instance.Proxy)
 
 	err := cmd.Eval(opts)
 	if err != nil {

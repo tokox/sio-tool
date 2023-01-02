@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"bytes"
@@ -46,7 +46,7 @@ func findSample(body []byte) (input [][]byte, output [][]byte, err error) {
 }
 
 // ParseProblem parse problem to path. mu can be nil
-func (c *Client) ParseProblem(URL, path string, mu *sync.Mutex) (samples int, standardIO bool, err error) {
+func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (samples int, standardIO bool, err error) {
 	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
@@ -68,8 +68,8 @@ func (c *Client) ParseProblem(URL, path string, mu *sync.Mutex) (samples int, st
 	}
 
 	for i := 0; i < len(input); i++ {
-		fileIn := filepath.Join(path, fmt.Sprintf("testI%v.txt", i+1))
-		fileOut := filepath.Join(path, fmt.Sprintf("testO%v.txt", i+1))
+		fileIn := filepath.Join(path, fmt.Sprintf("in%v.txt", i+1))
+		fileOut := filepath.Join(path, fmt.Sprintf("ans%v.txt", i+1))
 		e := os.WriteFile(fileIn, input[i], 0644)
 		if e != nil {
 			if mu != nil {
@@ -95,7 +95,7 @@ func (c *Client) ParseProblem(URL, path string, mu *sync.Mutex) (samples int, st
 }
 
 // Parse parse
-func (c *Client) Parse(info Info) (problems []string, paths []string, err error) {
+func (c *CodeforcesClient) Parse(info Info) (problems []string, paths []string, err error) {
 	color.Cyan("Parse " + info.Hint())
 
 	problemID := info.ProblemID

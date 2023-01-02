@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"crypto/aes"
@@ -63,7 +63,7 @@ func AesDecrypt(cipherIn []byte, key, iv []byte) ([]byte, error) {
 	blockMode.CryptBlocks(origData, cipherIn)
 	return origData, nil
 }
-func addRCPC(c *Client, body []byte) ([]byte, error) {
+func addRCPC(c *CodeforcesClient, body []byte) ([]byte, error) {
 	if strings.Contains(string(body), "Redirecting... Please, wait.") {
 		reg := regexp.MustCompile(`var a=toNumbers\("([0-9a-f]*)"\),b=toNumbers\("([0-9a-f]*)"\),c=toNumbers\("([0-9a-f]*)"\);`)
 		out := reg.FindAllSubmatch(body, -1)
@@ -92,7 +92,7 @@ func addRCPC(c *Client, body []byte) ([]byte, error) {
 }
 
 // Login codeforces with handler and password
-func (c *Client) Login() (err error) {
+func (c *CodeforcesClient) Login() (err error) {
 	color.Cyan("Login %v...\n", c.HandleOrEmail)
 
 	password, err := c.DecryptPassword()
@@ -197,7 +197,7 @@ func decrypt(handle, password string) (ret string, err error) {
 }
 
 // DecryptPassword get real password
-func (c *Client) DecryptPassword() (string, error) {
+func (c *CodeforcesClient) DecryptPassword() (string, error) {
 	if len(c.Password) == 0 || len(c.HandleOrEmail) == 0 {
 		return "", errors.New("you have to configure your handle and password by `st config`")
 	}
@@ -205,7 +205,7 @@ func (c *Client) DecryptPassword() (string, error) {
 }
 
 // ConfigLogin configure handle and password
-func (c *Client) ConfigLogin() (err error) {
+func (c *CodeforcesClient) ConfigLogin() (err error) {
 	if c.Handle != "" {
 		color.Green("Current user: %v", c.Handle)
 	}

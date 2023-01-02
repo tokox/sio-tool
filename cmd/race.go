@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 )
 
 // Race command
 func Race() (err error) {
 	cfg := config.Instance
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	info := Args.Info
 	if err = cln.RaceContest(info); err != nil {
 		if err = loginAgain(cln, err); err == nil {

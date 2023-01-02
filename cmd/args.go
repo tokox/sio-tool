@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 
 	"github.com/docopt/docopt-go"
@@ -14,7 +14,7 @@ import (
 
 // ParsedArgs parsed arguments
 type ParsedArgs struct {
-	Info      client.Info
+	Info      codeforces_client.Info
 	File      string
 	Specifier []string `docopt:"<specifier>"`
 	Alias     string   `docopt:"<alias>"`
@@ -34,6 +34,7 @@ type ParsedArgs struct {
 	Sid       bool     `docopt:"sid"`
 	Race      bool     `docopt:"race"`
 	Pull      bool     `docopt:"pull"`
+	Clone     bool     `docopt:"clone"`
 	Upgrade   bool     `docopt:"upgrade"`
 }
 
@@ -42,7 +43,7 @@ var Args *ParsedArgs
 
 func parseArgs(opts docopt.Opts) error {
 	cfg := config.Instance
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	path, err := os.Getwd()
 	if err != nil {
 		return err
@@ -55,7 +56,7 @@ func parseArgs(opts docopt.Opts) error {
 	if Args.Handle == "" {
 		Args.Handle = cln.Handle
 	}
-	info := client.Info{}
+	info := codeforces_client.Info{}
 	for _, arg := range Args.Specifier {
 		parsed := parseArg(arg)
 		if value, ok := parsed["problemType"]; ok {
@@ -221,7 +222,7 @@ func parsePath(path string) map[string]string {
 	path = filepath.ToSlash(path) + "/"
 	output := make(map[string]string)
 	cfg := config.Instance
-	for k, problemType := range client.ProblemTypes {
+	for k, problemType := range codeforces_client.ProblemTypes {
 		reg := regexp.MustCompile(fmt.Sprintf(ArgTypePathRegStr[k], cfg.FolderName["root"], cfg.FolderName[problemType]))
 		names := reg.SubexpNames()
 		for i, val := range reg.FindStringSubmatch(path) {

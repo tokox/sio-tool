@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 	"sio-tool/util"
 
@@ -12,7 +12,7 @@ import (
 // Config command
 func Config() (err error) {
 	cfg := config.Instance
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	color.Cyan("Configure the tool")
 	ansi.Println(`0) login`)
 	ansi.Println(`1) add a template`)

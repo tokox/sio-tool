@@ -9,7 +9,7 @@ import (
 
 	"github.com/docopt/docopt-go"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 	"sio-tool/util"
 
@@ -143,7 +143,7 @@ func getOneCode(filename string, templates []config.CodeTemplate) (name string, 
 	if len(codes[0].Index) > 1 {
 		color.Cyan("There are multiple languages match the file.")
 		for i, idx := range codes[0].Index {
-			fmt.Printf("%3v: %v\n", i, client.Langs[templates[idx].Lang])
+			fmt.Printf("%3v: %v\n", i, codeforces_client.Langs[templates[idx].Lang])
 		}
 		i := util.ChooseIndex(len(codes[0].Index))
 		codes[0].Index[0] = codes[0].Index[i]
@@ -151,8 +151,8 @@ func getOneCode(filename string, templates []config.CodeTemplate) (name string, 
 	return codes[0].Name, codes[0].Index[0], nil
 }
 
-func loginAgain(cln *client.Client, err error) error {
-	if err != nil && err.Error() == client.ErrorNotLogged {
+func loginAgain(cln *codeforces_client.CodeforcesClient, err error) error {
+	if err != nil && err.Error() == codeforces_client.ErrorNotLogged {
 		color.Red("Not logged. Try to login\n")
 		err = cln.Login()
 	}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/util"
 
 	"github.com/fatih/color"
@@ -56,7 +56,7 @@ func (c *Config) SetHost() (err error) {
 	return c.save()
 }
 
-// SetProxy set proxy for client
+// SetProxy set proxy for codeforces client
 func (c *Config) SetProxy() (err error) {
 	proxy, err := formatProxy(c.Proxy)
 	if err != nil {
@@ -94,7 +94,7 @@ func (c *Config) SetFolderName() (err error) {
 	if value := util.ScanlineTrim(); value != "" {
 		c.FolderName["root"] = value
 	}
-	for _, problemType := range client.ProblemTypes {
+	for _, problemType := range codeforces_client.ProblemTypes {
 		color.Green(`%v path (current: %v)`, problemType, c.FolderName[problemType])
 		if value := util.ScanlineTrim(); value != "" {
 			c.FolderName[problemType] = value

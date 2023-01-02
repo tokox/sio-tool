@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"errors"
@@ -39,7 +39,7 @@ const ErrorSkip = "exists, skip"
 const ErrorTooManyRequest = "too many requests"
 
 // PullCode pull problem's code to path
-func (c *Client) PullCode(URL, path, ext string, rename bool) (filename string, err error) {
+func (c *CodeforcesClient) PullCode(URL, path, ext string, rename bool) (filename string, err error) {
 	filename = path + ext
 	if rename {
 		i := 1
@@ -77,7 +77,7 @@ func (c *Client) PullCode(URL, path, ext string, rename bool) (filename string, 
 }
 
 // Pull pull all latest codes or ac codes
-func (c *Client) Pull(info Info, rootPath string, ac bool) (err error) {
+func (c *CodeforcesClient) Pull(info Info, rootPath string, ac bool) (err error) {
 	color.Cyan("Pull " + info.Hint())
 
 	URL, err := info.MySubmissionURL(c.host)

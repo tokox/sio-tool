@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 )
 
 // Watch command
 func Watch() (err error) {
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	info := Args.Info
 	n := 10
 	if Args.All {

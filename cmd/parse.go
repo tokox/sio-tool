@@ -4,14 +4,14 @@ import (
 	"errors"
 	"path/filepath"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 )
 
 // Parse command
 func Parse() (err error) {
 	cfg := config.Instance
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	info := Args.Info
 	source := ""
 	ext := ""

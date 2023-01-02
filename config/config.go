@@ -6,8 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 
 	"github.com/fatih/color"
 )
@@ -53,7 +52,7 @@ func Init(path string) {
 	if _, ok := c.FolderName["root"]; !ok {
 		c.FolderName["root"] = "st"
 	}
-	for _, problemType := range client.ProblemTypes {
+	for _, problemType := range codeforces_client.ProblemTypes {
 		if _, ok := c.FolderName[problemType]; !ok {
 			c.FolderName[problemType] = problemType
 		}

@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"bufio"
@@ -242,7 +242,7 @@ func parseSubmission(body []byte, cfOffset string) (ret Submission, err error) {
 	}, nil
 }
 
-func (c *Client) getSubmissions(URL string, n int) (submissions []Submission, err error) {
+func (c *CodeforcesClient) getSubmissions(URL string, n int) (submissions []Submission, err error) {
 	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
@@ -276,7 +276,7 @@ func (c *Client) getSubmissions(URL string, n int) (submissions []Submission, er
 }
 
 // WatchSubmission n is the number of submissions
-func (c *Client) WatchSubmission(info Info, n int, line bool) (submissions []Submission, err error) {
+func (c *CodeforcesClient) WatchSubmission(info Info, n int, line bool) (submissions []Submission, err error) {
 	URL, err := info.MySubmissionURL(c.host)
 	if err != nil {
 		return

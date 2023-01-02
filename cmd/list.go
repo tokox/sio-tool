@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"
@@ -15,7 +15,7 @@ import (
 
 // List command
 func List() (err error) {
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	info := Args.Info
 	problems, err := cln.Statis(info)
 	if err != nil {

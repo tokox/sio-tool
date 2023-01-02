@@ -1,4 +1,4 @@
-package client
+package codeforces_client
 
 import (
 	"errors"

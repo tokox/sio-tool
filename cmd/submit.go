@@ -3,13 +3,13 @@ package cmd
 import (
 	"os"
 
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 )
 
 // Submit command
 func Submit() (err error) {
-	cln := client.Instance
+	cln := codeforces_client.Instance
 	cfg := config.Instance
 	info := Args.Info
 	filename, index, err := getOneCode(Args.File, cfg.Template)

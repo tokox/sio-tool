@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"sio-tool/client"
+	"sio-tool/codeforces_client"
 	"sio-tool/config"
 
 	"github.com/fatih/color"
@@ -34,8 +34,8 @@ func Stand() (err error) {
 // Sid command
 func Sid() (err error) {
 	info := Args.Info
-	if info.SubmissionID == "" && client.Instance.LastSubmission != nil {
-		info = *client.Instance.LastSubmission
+	if info.SubmissionID == "" && codeforces_client.Instance.LastSubmission != nil {
+		info = *codeforces_client.Instance.LastSubmission
 	}
 	URL, err := info.SubmissionURL(config.Instance.Host)
 	if err != nil {
