@@ -8,7 +8,6 @@ import (
 
 	"sio-tool/config"
 	"sio-tool/szkopul_client"
-	"sio-tool/util"
 
 	"github.com/docopt/docopt-go"
 )
@@ -27,7 +26,6 @@ func parseArgsSzkopul(opts docopt.Opts) error {
 	info := szkopul_client.Info{}
 	for _, arg := range Args.Specifier {
 		parsed := parseArgSzkopul(arg)
-		util.DebugJSON(parsed)
 		if value, ok := parsed["archive"]; ok {
 			if info.Archive != "" && info.Archive != value {
 				return fmt.Errorf("archive conflicts: %v %v", info.Archive, value)

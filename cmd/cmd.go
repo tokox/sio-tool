@@ -58,6 +58,7 @@ func Eval(opts docopt.Opts) error {
 			}
 		}
 	}
+	color.Red("This function is not available here. Maybe you are in the wrong folder?")
 	return nil
 }
 
