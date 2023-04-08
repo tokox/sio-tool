@@ -14,12 +14,12 @@ import (
 )
 
 // List command
-func List() (err error) {
+func CodeforcesList() (err error) {
 	cln := codeforces_client.Instance
-	info := Args.Info
+	info := Args.CodeforcesInfo
 	problems, err := cln.Statis(info)
 	if err != nil {
-		if err = loginAgain(cln, err); err == nil {
+		if err = loginAgainCodeforces(cln, err); err == nil {
 			problems, err = cln.Statis(info)
 		}
 	}

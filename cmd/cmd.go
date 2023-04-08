@@ -25,30 +25,38 @@ func Eval(opts docopt.Opts) error {
 	}
 	if Args.Config {
 		return Config()
-	} else if Args.Submit {
-		return Submit()
-	} else if Args.List {
-		return List()
-	} else if Args.Parse {
-		return Parse()
 	} else if Args.Gen {
 		return Gen()
 	} else if Args.Test {
 		return Test()
-	} else if Args.Watch {
-		return Watch()
-	} else if Args.Open {
-		return Open()
-	} else if Args.Stand {
-		return Stand()
-	} else if Args.Sid {
-		return Sid()
-	} else if Args.Race {
-		return Race()
-	} else if Args.Pull {
-		return Pull()
 	} else if Args.Upgrade {
 		return Upgrade()
+	} else {
+		if Args.Codeforces {
+			if Args.Submit {
+				return CodeforcesSubmit()
+			} else if Args.List {
+				return CodeforcesList()
+			} else if Args.Parse {
+				return CodeforcesParse()
+			} else if Args.Watch {
+				return CodeforcesWatch()
+			} else if Args.Open {
+				return CodeforcesOpen()
+			} else if Args.Stand {
+				return CodeforcesStand()
+			} else if Args.Sid {
+				return CodeforcesSid()
+			} else if Args.Race {
+				return CodeforcesRace()
+			} else if Args.Pull {
+				return CodeforcesPull()
+			}
+		} else if Args.Szkopul {
+			if Args.Submit {
+				return SzkopulSubmit()
+			}
+		}
 	}
 	return nil
 }
@@ -149,12 +157,4 @@ func getOneCode(filename string, templates []config.CodeTemplate) (name string, 
 		codes[0].Index[0] = codes[0].Index[i]
 	}
 	return codes[0].Name, codes[0].Index[0], nil
-}
-
-func loginAgain(cln *codeforces_client.CodeforcesClient, err error) error {
-	if err != nil && err.Error() == codeforces_client.ErrorNotLogged {
-		color.Red("Not logged. Try to login\n")
-		err = cln.Login()
-	}
-	return err
 }

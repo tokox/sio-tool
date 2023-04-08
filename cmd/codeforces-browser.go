@@ -14,8 +14,8 @@ func openURL(url string) error {
 }
 
 // Open command
-func Open() (err error) {
-	URL, err := Args.Info.OpenURL(config.Instance.Host)
+func CodeforcesOpen() (err error) {
+	URL, err := Args.CodeforcesInfo.OpenURL(config.Instance.CodeforcesHost)
 	if err != nil {
 		return
 	}
@@ -23,8 +23,8 @@ func Open() (err error) {
 }
 
 // Stand command
-func Stand() (err error) {
-	URL, err := Args.Info.StandingsURL(config.Instance.Host)
+func CodeforcesStand() (err error) {
+	URL, err := Args.CodeforcesInfo.StandingsURL(config.Instance.CodeforcesHost)
 	if err != nil {
 		return
 	}
@@ -32,12 +32,12 @@ func Stand() (err error) {
 }
 
 // Sid command
-func Sid() (err error) {
-	info := Args.Info
+func CodeforcesSid() (err error) {
+	info := Args.CodeforcesInfo
 	if info.SubmissionID == "" && codeforces_client.Instance.LastSubmission != nil {
 		info = *codeforces_client.Instance.LastSubmission
 	}
-	URL, err := info.SubmissionURL(config.Instance.Host)
+	URL, err := info.SubmissionURL(config.Instance.CodeforcesHost)
 	if err != nil {
 		return
 	}

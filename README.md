@@ -26,6 +26,8 @@ It's fast, small, cross-platform and powerful.
 -   Setup a network proxy. Setup a mirror host.
 -   Colorful CLI.
 
+Currently only the submit function is available for szkopul
+
 Pull requests are always welcome.
 
 ## Installation
@@ -112,6 +114,7 @@ Options:
                        "https://codeforces.com/contest/100",
                        "https://codeforces.com/contest/180/problem/A",
                        "https://codeforces.com/group/Cw4JRyRGXR/contest/269760",
+					   "https://szkopul.edu.pl/problemset/problem/kQ5ExYNkFhx3K2FvVuXAAbn4/site/?key=statement",
                        "1111A", "1111", "a", "Cw4JRyRGXR"
                        You can combine multiple specifiers to specify what you
                        want.
@@ -172,7 +175,8 @@ File:
   st will save some data in some files:
 
   "~/.st/config"        Configuration file, including templates, etc.
-  "~/.st/session"       Session file, including cookies, handle, password, etc.
+  "~/.st/codeforces_session"    Codeforces session file, including cookies, handle, password, etc.
+  "~/.st/szkopul_session"       Szkopul session file, including token
 
   "~" is the home directory of current user in your system.
 

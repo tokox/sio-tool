@@ -6,23 +6,23 @@ import (
 )
 
 // Race command
-func Race() (err error) {
+func CodeforcesRace() (err error) {
 	cfg := config.Instance
 	cln := codeforces_client.Instance
-	info := Args.Info
+	info := Args.CodeforcesInfo
 	if err = cln.RaceContest(info); err != nil {
-		if err = loginAgain(cln, err); err == nil {
+		if err = loginAgainCodeforces(cln, err); err == nil {
 			err = cln.RaceContest(info)
 		}
 	}
 	if err != nil {
 		return
 	}
-	URL, err := info.ProblemSetURL(cfg.Host)
+	URL, err := info.ProblemSetURL(cfg.CodeforcesHost)
 	if err != nil {
 		return
 	}
 	openURL(URL)
 	openURL(URL + "/problems")
-	return Parse()
+	return CodeforcesParse()
 }

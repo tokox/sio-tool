@@ -3,6 +3,7 @@ package cmd
 import (
 	"sio-tool/codeforces_client"
 	"sio-tool/config"
+	"sio-tool/szkopul_client"
 	"sio-tool/util"
 
 	"github.com/fatih/color"
@@ -12,7 +13,8 @@ import (
 // Config command
 func Config() (err error) {
 	cfg := config.Instance
-	cln := codeforces_client.Instance
+	codeforces_cln := codeforces_client.Instance
+	szkopul_cln := szkopul_client.Instance
 	color.Cyan("Configure the tool")
 	ansi.Println(`0) login`)
 	ansi.Println(`1) add a template`)
@@ -24,7 +26,15 @@ func Config() (err error) {
 	ansi.Println(`7) set folders' name`)
 	index := util.ChooseIndex(8)
 	if index == 0 {
-		return cln.ConfigLogin()
+		color.Cyan("Select client")
+		ansi.Println(`0) Codeforces`)
+		ansi.Println(`1) Szkopul`)
+		index = util.ChooseIndex(2)
+		if index == 0 {
+			return codeforces_cln.ConfigLogin()
+		} else if index == 1 {
+			return szkopul_cln.ConfigLogin()
+		}
 	} else if index == 1 {
 		return cfg.AddTemplate()
 	} else if index == 2 {

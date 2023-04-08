@@ -8,7 +8,10 @@ import (
 	"path/filepath"
 	"sio-tool/codeforces_client"
 
+	// "sio-tool/codeforces_client"
+
 	"github.com/fatih/color"
+	"github.com/mitchellh/go-homedir"
 )
 
 // CodeTemplate config parse code template
@@ -24,13 +27,14 @@ type CodeTemplate struct {
 
 // Config load and save configuration
 type Config struct {
-	Template      []CodeTemplate    `json:"template"`
-	Default       int               `json:"default"`
-	GenAfterParse bool              `json:"gen_after_parse"`
-	Host          string            `json:"host"`
-	Proxy         string            `json:"proxy"`
-	FolderName    map[string]string `json:"folder_name"`
-	path          string
+	Template       []CodeTemplate    `json:"template"`
+	Default        int               `json:"default"`
+	GenAfterParse  bool              `json:"gen_after_parse"`
+	CodeforcesHost string            `json:"codeforces_host"`
+	SzkopulHost    string            `json:"szkopul_host"`
+	Proxy          string            `json:"proxy"`
+	FolderName     map[string]string `json:"folder_name"`
+	path           string
 }
 
 // Instance global configuration
@@ -38,7 +42,7 @@ var Instance *Config
 
 // Init initialize
 func Init(path string) {
-	c := &Config{path: path, Host: "https://codeforces.com", Proxy: ""}
+	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", Proxy: ""}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new configuration in %v", path)
@@ -49,8 +53,11 @@ func Init(path string) {
 	if c.FolderName == nil {
 		c.FolderName = map[string]string{}
 	}
-	if _, ok := c.FolderName["root"]; !ok {
-		c.FolderName["root"] = "st"
+	if _, ok := c.FolderName["codeforces-root"]; !ok {
+		c.FolderName["codeforces-root"] = "st/codeforces"
+	}
+	if _, ok := c.FolderName["szkopul-root"]; !ok {
+		c.FolderName["szkopul-root"] = "st/szkopul"
 	}
 	for _, problemType := range codeforces_client.ProblemTypes {
 		if _, ok := c.FolderName[problemType]; !ok {
@@ -58,6 +65,15 @@ func Init(path string) {
 		}
 	}
 	c.save()
+	var err error
+	c.FolderName["codeforces-root"], err = homedir.Expand(c.FolderName["codeforces-root"])
+	if err != nil {
+		color.Red(err.Error())
+	}
+	c.FolderName["szkopul-root"], err = homedir.Expand(c.FolderName["szkopul-root"])
+	if err != nil {
+		color.Red(err.Error())
+	}
 	Instance = c
 }
 
@@ -75,7 +91,11 @@ func (c *Config) load() (err error) {
 		return err
 	}
 
-	return json.Unmarshal(data, c)
+	err = json.Unmarshal(data, c)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // save file to path

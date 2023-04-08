@@ -5,13 +5,15 @@ import (
 
 	"sio-tool/codeforces_client"
 	"sio-tool/config"
+
+	"github.com/fatih/color"
 )
 
 // Submit command
-func Submit() (err error) {
+func CodeforcesSubmit() (err error) {
 	cln := codeforces_client.Instance
 	cfg := config.Instance
-	info := Args.Info
+	info := Args.CodeforcesInfo
 	filename, index, err := getOneCode(Args.File, cfg.Template)
 	if err != nil {
 		return
@@ -25,9 +27,17 @@ func Submit() (err error) {
 
 	lang := cfg.Template[index].Lang
 	if err = cln.Submit(info, lang, source); err != nil {
-		if err = loginAgain(cln, err); err == nil {
+		if err = loginAgainCodeforces(cln, err); err == nil {
 			err = cln.Submit(info, lang, source)
 		}
 	}
 	return
+}
+
+func loginAgainCodeforces(cln *codeforces_client.CodeforcesClient, err error) error {
+	if err != nil && err.Error() == codeforces_client.ErrorNotLogged {
+		color.Red("Not logged. Try to login\n")
+		err = cln.Login()
+	}
+	return err
 }

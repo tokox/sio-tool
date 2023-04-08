@@ -37,7 +37,7 @@ func formatProxy(proxy string) (string, error) {
 
 // SetHost set host for Codeforces
 func (c *Config) SetHost() (err error) {
-	host, err := formatHost(c.Host)
+	host, err := formatHost(c.CodeforcesHost)
 	if err != nil {
 		host = "https://codeforces.com"
 	}
@@ -51,7 +51,7 @@ func (c *Config) SetHost() (err error) {
 		}
 		color.Red(err.Error())
 	}
-	c.Host = host
+	c.CodeforcesHost = host
 	color.Green("New host domain is %v", host)
 	return c.save()
 }

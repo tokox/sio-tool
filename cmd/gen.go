@@ -36,7 +36,7 @@ func readTemplateSource(path string, cln *codeforces_client.CodeforcesClient) (s
 	return
 }
 
-func gen(source, currentPath, ext string) error {
+func GenFiles(source, currentPath, ext string) error {
 	path := filepath.Join(currentPath, filepath.Base(currentPath))
 
 	savePath := path + ext
@@ -95,5 +95,5 @@ func Gen() (err error) {
 	}
 
 	ext := filepath.Ext(path)
-	return gen(source, currentPath, ext)
+	return GenFiles(source, currentPath, ext)
 }

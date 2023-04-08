@@ -9,10 +9,10 @@ import (
 )
 
 // Parse command
-func Parse() (err error) {
+func CodeforcesParse() (err error) {
 	cfg := config.Instance
 	cln := codeforces_client.Instance
-	info := Args.Info
+	info := Args.CodeforcesInfo
 	source := ""
 	ext := ""
 	if cfg.GenAfterParse {
@@ -32,13 +32,13 @@ func Parse() (err error) {
 		}
 		if cfg.GenAfterParse {
 			for _, path := range paths {
-				gen(source, path, ext)
+				GenFiles(source, path, ext)
 			}
 		}
 		return nil
 	}
 	if err = work(); err != nil {
-		if err = loginAgain(cln, err); err == nil {
+		if err = loginAgainCodeforces(cln, err); err == nil {
 			err = work()
 		}
 	}

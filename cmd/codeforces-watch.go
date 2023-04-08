@@ -5,15 +5,15 @@ import (
 )
 
 // Watch command
-func Watch() (err error) {
+func CodeforcesWatch() (err error) {
 	cln := codeforces_client.Instance
-	info := Args.Info
+	info := Args.CodeforcesInfo
 	n := 10
 	if Args.All {
 		n = -1
 	}
 	if _, err = cln.WatchSubmission(info, n, false); err != nil {
-		if err = loginAgain(cln, err); err == nil {
+		if err = loginAgainCodeforces(cln, err); err == nil {
 			_, err = cln.WatchSubmission(info, n, false)
 		}
 	}
