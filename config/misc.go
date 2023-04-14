@@ -10,6 +10,7 @@ import (
 	"sio-tool/util"
 
 	"github.com/fatih/color"
+	ansi "github.com/k0kubun/go-ansi"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -130,6 +131,30 @@ func (c *Config) SetFolderName() (err error) {
 		if value := util.ScanlineTrim(); value != "" {
 			c.FolderName[fmt.Sprintf("szkopul-%v", archive)] = value
 		}
+	}
+	return c.save()
+}
+
+func (c *Config) SetDefaultNaming() (err error) {
+	color.Cyan(`Set default naming (for stress testing purposes)`)
+	color.Cyan(`Enter empty line if you don't want to change the value`)
+	ansi.Println(`You can insert $%task%$ placeholder in your filenames, which you will provide when using st stress-test command.`)
+	color.Green(`Solution file name (current: %v)`, c.DefaultNaming["solve"])
+	if value := util.ScanlineTrim(); value != "" {
+		c.DefaultNaming["solve"] = value
+	}
+	color.Green(`Brute forces solution filename (current: %v)`, c.DefaultNaming["brute"])
+	if value := util.ScanlineTrim(); value != "" {
+		c.DefaultNaming["brute"] = value
+	}
+	color.Green(`Tests generator filename (current: %v)`, c.DefaultNaming["gen"])
+	if value := util.ScanlineTrim(); value != "" {
+		c.DefaultNaming["gen"] = value
+	}
+	ansi.Println(`Here you can also insert $%test%$ placeholder in your filename, which will indicate the test number.`)
+	color.Green(`Generated test filename (current: %v)`, c.DefaultNaming["test_in"])
+	if value := util.ScanlineTrim(); value != "" {
+		c.DefaultNaming["test_in"] = value
 	}
 	return c.save()
 }

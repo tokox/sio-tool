@@ -15,6 +15,9 @@ type ParsedArgs struct {
 	CodeforcesInfo codeforces_client.Info
 	SzkopulInfo    szkopul_client.Info
 	File           string
+	Generator      string
+	Solve          string
+	Brute          string
 	Specifier      []string `docopt:"<specifier>"`
 	Alias          string   `docopt:"<alias>"`
 	Accepted       bool     `docopt:"ac"`
@@ -35,6 +38,7 @@ type ParsedArgs struct {
 	Pull           bool     `docopt:"pull"`
 	Clone          bool     `docopt:"clone"`
 	Upgrade        bool     `docopt:"upgrade"`
+	StressTest     bool     `docopt:"stress-test"`
 	Codeforces     bool
 	Szkopul        bool
 }
