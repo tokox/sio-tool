@@ -85,7 +85,7 @@ func parseArgsCodeforces(opts docopt.Opts) error {
 		info.ContestID = "99999"
 	}
 	root := cfg.FolderName["codeforces-root"]
-	info.RootPath = filepath.Join(root, cfg.FolderName[info.ProblemType])
+	info.RootPath = filepath.Join(root, cfg.FolderName[fmt.Sprintf("codeforces-%v", info.ProblemType)])
 	Args.CodeforcesInfo = info
 	return nil
 }
@@ -168,7 +168,7 @@ func parsePathCodeforces(path string) map[string]string {
 	output := make(map[string]string)
 	cfg := config.Instance
 	for k, problemType := range codeforces_client.ProblemTypes {
-		reg := regexp.MustCompile(fmt.Sprintf(CodeforcesArgTypePathRegStr[k], cfg.FolderName["codeforces-root"], cfg.FolderName[problemType]))
+		reg := regexp.MustCompile(fmt.Sprintf(CodeforcesArgTypePathRegStr[k], cfg.FolderName["codeforces-root"], cfg.FolderName[fmt.Sprintf("codeforces-%v", problemType)]))
 		names := reg.SubexpNames()
 		for i, val := range reg.FindStringSubmatch(path) {
 			if names[i] != "" && val != "" {

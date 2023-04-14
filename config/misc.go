@@ -2,12 +2,15 @@ package config
 
 import (
 	"fmt"
+	"path/filepath"
 	"regexp"
 
 	"sio-tool/codeforces_client"
+	"sio-tool/szkopul_client"
 	"sio-tool/util"
 
 	"github.com/fatih/color"
+	"github.com/mitchellh/go-homedir"
 )
 
 // SetGenAfterParse set it yes or no
@@ -90,14 +93,42 @@ func (c *Config) SetProxy() (err error) {
 func (c *Config) SetFolderName() (err error) {
 	color.Cyan(`Set folders' name`)
 	color.Cyan(`Enter empty line if you don't want to change the value`)
-	color.Green(`Root path (current: %v)`, c.FolderName["root"])
+	color.Green(`Codeforces root path (absolute) (current: %v)`, c.FolderName["codeforces-root"])
 	if value := util.ScanlineTrim(); value != "" {
-		c.FolderName["root"] = value
+		value, err = homedir.Expand(value)
+		if err != nil {
+			color.Red(err.Error())
+			return
+		}
+		if filepath.IsAbs(value) {
+			c.FolderName["codeforces-root"] = value
+		} else {
+			color.Red("this is not an absolute path (leaving current)")
+		}
 	}
 	for _, problemType := range codeforces_client.ProblemTypes {
-		color.Green(`%v path (current: %v)`, problemType, c.FolderName[problemType])
+		color.Green(`%v path (current: %v)`, problemType, c.FolderName[fmt.Sprintf("codeforces-%v", problemType)])
 		if value := util.ScanlineTrim(); value != "" {
-			c.FolderName[problemType] = value
+			c.FolderName[fmt.Sprintf("codeforces-%v", problemType)] = value
+		}
+	}
+	color.Green(`Szkopul root path (absolute) (current: %v)`, c.FolderName["szkopul-root"])
+	if value := util.ScanlineTrim(); value != "" {
+		value, err = homedir.Expand(value)
+		if err != nil {
+			color.Red(err.Error())
+			return
+		}
+		if filepath.IsAbs(value) {
+			c.FolderName["szkopul-root"] = value
+		} else {
+			color.Red("this is not an absolute path (leaving current)")
+		}
+	}
+	for _, archive := range szkopul_client.Archives {
+		color.Green(`%v path (current: %v)`, archive, c.FolderName[fmt.Sprintf("szkopul-%v", archive)])
+		if value := util.ScanlineTrim(); value != "" {
+			c.FolderName[fmt.Sprintf("szkopul-%v", archive)] = value
 		}
 	}
 	return c.save()

@@ -79,7 +79,7 @@ func parseArgsSzkopul(opts docopt.Opts) error {
 		}
 	}
 	// util.DebugJSON(info)
-	info.RootPath = filepath.Join(cfg.FolderName["szkopul-root"], cfg.FolderName[info.Archive])
+	info.RootPath = filepath.Join(cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("codeforces-%v", info.Archive)])
 	Args.SzkopulInfo = info
 	return nil
 }
@@ -135,7 +135,7 @@ func parsePathSzkopul(path string) map[string]string {
 	output := make(map[string]string)
 	cfg := config.Instance
 	for k, archive := range szkopul_client.Archives {
-		reg := regexp.MustCompile(fmt.Sprintf(SzkopulPathRegStr[k], cfg.FolderName["szkopul-root"], cfg.FolderName[archive]))
+		reg := regexp.MustCompile(fmt.Sprintf(SzkopulPathRegStr[k], cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("codeforces-%v", archive)]))
 		names := reg.SubexpNames()
 		for i, val := range reg.FindStringSubmatch(path) {
 			if names[i] != "" && val != "" {

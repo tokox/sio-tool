@@ -30,7 +30,7 @@ func (c *Config) AddTemplate() (err error) {
 	for _, t := range langs {
 		fmt.Printf("%5v: %v\n", t.K, t.V)
 	}
-	color.Cyan(`Select a language (e.g. "42"): `)
+	color.Cyan(`Select a language (e.g. "54"): `)
 	lang := ""
 	for {
 		lang = util.ScanlineTrim()
@@ -106,10 +106,10 @@ func (c *Config) AddTemplate() (err error) {
   $%rand%$   Random string with 8 character (including "a-z" "0-9")`
 	ansi.Println(note)
 
-	color.Cyan(`Before script (e.g. "g++ $%full%$ -o $%file%$.exe -std=c++11"), empty is ok: `)
+	color.Cyan(`Before script (e.g. "g++ $%full%$ -o $%file%$.e -std=c++17"), empty is ok: `)
 	beforeScript := util.ScanlineTrim()
 
-	color.Cyan(`Script (e.g. "./$%file%$.exe" "python3 $%full%$"): `)
+	color.Cyan(`Script (e.g. "./$%file%$.e" "python3 $%full%$"): `)
 	script := ""
 	for {
 		script = util.ScanlineTrim()
@@ -119,7 +119,7 @@ func (c *Config) AddTemplate() (err error) {
 		color.Red("Script can not be empty. Please input again: ")
 	}
 
-	color.Cyan(`After script (e.g. "rm $%file%$.exe" or "cmd.exe /C del $%file%$.exe" in windows), empty is ok: `)
+	color.Cyan(`After script (e.g. "rm $%file%$.e"), empty is ok: `)
 	afterScript := util.ScanlineTrim()
 
 	c.Template = append(c.Template, CodeTemplate{

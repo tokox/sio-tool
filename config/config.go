@@ -3,12 +3,12 @@ package config
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"sio-tool/codeforces_client"
-
-	// "sio-tool/codeforces_client"
+	"sio-tool/szkopul_client"
 
 	"github.com/fatih/color"
 	"github.com/mitchellh/go-homedir"
@@ -56,12 +56,17 @@ func Init(path string) {
 	if _, ok := c.FolderName["codeforces-root"]; !ok {
 		c.FolderName["codeforces-root"] = "st/codeforces"
 	}
+	for _, problemType := range codeforces_client.ProblemTypes {
+		if _, ok := c.FolderName[fmt.Sprintf("codeforces-%v", problemType)]; !ok {
+			c.FolderName[fmt.Sprintf("codeforces-%v", problemType)] = problemType
+		}
+	}
 	if _, ok := c.FolderName["szkopul-root"]; !ok {
 		c.FolderName["szkopul-root"] = "st/szkopul"
 	}
-	for _, problemType := range codeforces_client.ProblemTypes {
-		if _, ok := c.FolderName[problemType]; !ok {
-			c.FolderName[problemType] = problemType
+	for _, archive := range szkopul_client.Archives {
+		if _, ok := c.FolderName[fmt.Sprintf("szkopul-%v", archive)]; !ok {
+			c.FolderName[fmt.Sprintf("szkopul-%v", archive)] = archive
 		}
 	}
 	c.save()
