@@ -17,7 +17,6 @@ import (
 
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"
-	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/shirou/gopsutil/process"
 )
 
@@ -61,9 +60,9 @@ func plain(raw []byte) string {
 	return b.String()
 }
 
-func judge(sampleID, command string) error {
-	inPath := fmt.Sprintf("in%v.txt", sampleID)
-	ansPath := fmt.Sprintf("ans%v.txt", sampleID)
+func judge(sampleID, inPathFormat, ansPathFormat, command string) error {
+	inPath := fmt.Sprintf(inPathFormat, sampleID)
+	ansPath := fmt.Sprintf(ansPathFormat, sampleID)
 	input, err := os.Open(inPath)
 	if err != nil {
 		return err
@@ -118,21 +117,11 @@ func judge(sampleID, command string) error {
 	if out == ans {
 		state = color.New(color.FgGreen).Sprintf("Passed #%v", sampleID)
 	} else {
-		input, err := os.ReadFile(inPath)
-		if err != nil {
-			return err
-		}
 		state = color.New(color.FgRed).Sprintf("Failed #%v", sampleID)
-		dmp := diffmatchpatch.New()
-		d := dmp.DiffMain(out, ans, true)
-		diff += color.New(color.FgCyan).Sprintf("-----Input-----\n")
-		diff += string(input) + "\n"
 		diff += color.New(color.FgCyan).Sprintf("-----Output-----\n")
-		diff += dmp.DiffText1(d) + "\n"
+		diff += out + "\n"
 		diff += color.New(color.FgCyan).Sprintf("-----Answer-----\n")
-		diff += dmp.DiffText2(d) + "\n"
-		diff += color.New(color.FgCyan).Sprintf("-----Diff-----\n")
-		diff += dmp.DiffPrettyText(d) + "\n"
+		diff += ans + "\n"
 	}
 
 	parseMemory := func(memory uint64) string {
@@ -148,16 +137,18 @@ func judge(sampleID, command string) error {
 	return nil
 }
 
+func ExtractTaskName(file string) (task string) {
+	task, _, _ = strings.Cut(file, "-")
+	return
+}
+
 // Test command
 func Test() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {
 		return errors.New("you have to add at least one code template by `st config`")
 	}
-	samples := getSampleID()
-	if len(samples) == 0 {
-		return errors.New("cannot find any sample file")
-	}
+
 	filename, index, err := getOneCode(Args.File, cfg.Template)
 	if err != nil {
 		return
@@ -167,6 +158,17 @@ func Test() (err error) {
 	ext := filepath.Ext(filename)
 	file := full[:len(full)-len(ext)]
 	rand := util.RandString(8)
+	task := ExtractTaskName(file)
+
+	samples := getSampleByName(task)
+	samplesWithName := true
+	if len(samples) == 0 {
+		samplesWithName = false
+		samples = getSampleID()
+		if len(samples) == 0 {
+			return errors.New("Cannot find any sample file")
+		}
+	}
 
 	filter := func(cmd string) string {
 		cmd = strings.ReplaceAll(cmd, "$%rand%$", rand)
@@ -193,7 +195,13 @@ func Test() (err error) {
 	}
 	if s := filter(template.Script); len(s) > 0 {
 		for _, i := range samples {
-			err := judge(i, s)
+			var err error
+			if samplesWithName {
+				err = judge(i, fmt.Sprintf("%s%%v.in", file), fmt.Sprintf("%s%%v.out", file), s)
+			} else {
+				err = judge(i, "in%v.txt", "out%v.txt", s)
+			}
+
 			if err != nil {
 				color.Red(err.Error())
 			}

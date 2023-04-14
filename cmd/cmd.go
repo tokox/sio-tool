@@ -77,7 +77,31 @@ func getSampleID() (samples []string) {
 		tmp := reg.FindSubmatch([]byte(name))
 		if tmp != nil {
 			idx := string(tmp[1])
-			ans := fmt.Sprintf("ans%v.txt", idx)
+			ans := fmt.Sprintf("out%v.txt", idx)
+			if _, err := os.Stat(ans); err == nil {
+				samples = append(samples, idx)
+			}
+		}
+	}
+	return
+}
+
+func getSampleByName(filename string) (samples []string) {
+	path, err := os.Getwd()
+	if err != nil {
+		return
+	}
+	paths, err := os.ReadDir(path)
+	if err != nil {
+		return
+	}
+	reg := regexp.MustCompile(fmt.Sprintf("%s(\\d+).in", filename))
+	for _, path := range paths {
+		name := path.Name()
+		tmp := reg.FindSubmatch([]byte(name))
+		if tmp != nil {
+			idx := string(tmp[1])
+			ans := fmt.Sprintf("%s%v.out", filename, idx)
 			if _, err := os.Stat(ans); err == nil {
 				samples = append(samples, idx)
 			}

@@ -45,14 +45,25 @@ func findSample(body []byte) (input [][]byte, output [][]byte, err error) {
 	return
 }
 
+func findName(body []byte) (name string, err error) {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+	name = doc.Find(".title").First().Text()
+	return
+}
+
 // ParseProblem parse problem to path. mu can be nil
-func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (samples int, standardIO bool, err error) {
+func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name string, samples int, standardIO bool, err error) {
 	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
 	}
 
 	_, err = findHandle(body)
+	if err != nil {
+		return
+	}
+
+	name, err = findName(body)
 	if err != nil {
 		return
 	}
@@ -69,7 +80,7 @@ func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (sampl
 
 	for i := 0; i < len(input); i++ {
 		fileIn := filepath.Join(path, fmt.Sprintf("in%v.txt", i+1))
-		fileOut := filepath.Join(path, fmt.Sprintf("ans%v.txt", i+1))
+		fileOut := filepath.Join(path, fmt.Sprintf("out%v.txt", i+1))
 		e := os.WriteFile(fileIn, input[i], 0644)
 		if e != nil {
 			if mu != nil {
@@ -91,7 +102,7 @@ func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (sampl
 			}
 		}
 	}
-	return len(input), standardIO, nil
+	return name, len(input), standardIO, nil
 }
 
 // Parse parse
@@ -138,10 +149,11 @@ func (c *CodeforcesClient) Parse(info Info) (problems []string, paths []string, 
 			}
 			URL := fmt.Sprintf(urlFormatter, problemID)
 
-			samples, standardIO, err := c.ParseProblem(URL, path, &mu)
+			name, samples, standardIO, err := c.ParseProblem(URL, path, &mu)
 			if err != nil {
 				return
 			}
+			name = strings.TrimPrefix(name, fmt.Sprintf("%v. ", strings.ToUpper(problemID)))
 
 			warns := ""
 			if !standardIO {
@@ -151,7 +163,7 @@ func (c *CodeforcesClient) Parse(info Info) (problems []string, paths []string, 
 			if err != nil {
 				color.Red("Failed %v. Error: %v", problemID, err.Error())
 			} else {
-				ansi.Printf("%v %v\n", color.GreenString("Parsed %v with %v samples.", problemID, samples), warns)
+				ansi.Printf("%v %v\n", color.GreenString("Parsed %v. %v with %v samples.", problemID, name, samples), warns)
 			}
 			mu.Unlock()
 		}(problemID, paths[i])
