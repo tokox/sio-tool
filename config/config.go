@@ -54,7 +54,7 @@ func Init(path string) {
 		c.FolderName = map[string]string{}
 	}
 	if _, ok := c.FolderName["codeforces-root"]; !ok {
-		c.FolderName["codeforces-root"] = "st/codeforces"
+		c.FolderName["codeforces-root"] = "~/st/codeforces"
 	}
 	for _, problemType := range codeforces_client.ProblemTypes {
 		if _, ok := c.FolderName[fmt.Sprintf("codeforces-%v", problemType)]; !ok {
@@ -62,7 +62,7 @@ func Init(path string) {
 		}
 	}
 	if _, ok := c.FolderName["szkopul-root"]; !ok {
-		c.FolderName["szkopul-root"] = "st/szkopul"
+		c.FolderName["szkopul-root"] = "~/st/szkopul"
 	}
 	for _, archive := range szkopul_client.Archives {
 		if _, ok := c.FolderName[fmt.Sprintf("szkopul-%v", archive)]; !ok {
