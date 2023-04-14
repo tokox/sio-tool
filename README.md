@@ -103,11 +103,18 @@ Usage:
   st sid [<specifier>...]
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
+  st stress-test <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
   st upgrade
 
 Options:
   -h --help            Show this screen.
   --version            Show version.
+  -s <solve>, --solve <solve>, <solve>
+  					   Path to solve file
+  -b <brute>, --brute <brute>, <brute>
+  					   Path to brute force solution file
+  -g <generator>, --generator <generator>, <generator>
+  					   Path to tests generator file
   -f <file>, --file <file>, <file>
                        Path to file. E.g. "a.cpp", "./temp/a.cpp"
   <specifier>          Any useful text. E.g.
@@ -169,7 +176,9 @@ Examples:
                        "a" of contest 100.
   st pull              Pull the latest codes of current problem into current
                        path.
+  st stress-test abc   Stresstest a program with your solve, brute force solution and tests generator.
   st upgrade           Upgrade the "st" to the latest version from GitHub.
+
 
 File:
   st will save some data in some files:
@@ -259,7 +268,8 @@ Or just google "how to add a path to system environment variable PATH".
 
 ### How to add a new testcase
 
-Create two extra testcase files `inK.txt` and `ansK.txt` (K is a string with 0~9).
+Create two extra testcase files `inK.txt` and `outK.txt` (K is a string with 0~9).
+Or a different possible naming would be `$%file%$K.in` and `$%file%$K.out` where `$%file%$` is the file name of your program
 
 ### Enable tab completion in terminal
 

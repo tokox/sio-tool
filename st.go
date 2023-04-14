@@ -41,10 +41,17 @@ Usage:
   st sid [<specifier>...]
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
+  st stress-test <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
   st upgrade
 Options:
   -h --help            Show this screen.
   --version            Show version.
+  -s <solve>, --solve <solve>, <solve>
+  					   Path to solve file
+  -b <brute>, --brute <brute>, <brute>
+  					   Path to brute force solution file
+  -g <generator>, --generator <generator>, <generator>
+  					   Path to tests generator file
   -f <file>, --file <file>, <file>
                        Path to file. E.g. "a.cpp", "./temp/a.cpp"
   <specifier>          Any useful text. E.g.
@@ -104,6 +111,7 @@ Examples:
                        "a" of contest 100.
   st pull              Pull the latest codes of current problem into current
                        path.
+  st stress-test abc   Stresstest a program with your solve, brute force solution and tests generator.
   st upgrade           Upgrade the "st" to the latest version from GitHub.
 File:
   st will save some data in some files:
@@ -134,7 +142,8 @@ Script in template:
   $%path%$   Path to source file (Excluding $%full%$, e.g. "/home/arapak/")
   $%full%$   Full name of source file (e.g. "a.cpp")
   $%file%$   Name of source file (Excluding suffix, e.g. "a")
-  $%rand%$   Random string with 8 character (including "a-z" "0-9")`
+  $%rand%$   Random string with 8 character (including "a-z" "0-9")
+  $%task%$   Task name supplied when using stress-test command`
 	color.Output = ansi.NewAnsiStdout()
 
 	usage = strings.Replace(usage, `$%version%$`, version, 1)

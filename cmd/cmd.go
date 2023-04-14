@@ -29,6 +29,8 @@ func Eval(opts docopt.Opts) error {
 		return Gen()
 	} else if Args.Test {
 		return Test()
+	} else if Args.StressTest {
+		return StressTest()
 	} else if Args.Upgrade {
 		return Upgrade()
 	} else {

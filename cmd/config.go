@@ -24,7 +24,8 @@ func Config() (err error) {
 	ansi.Println(`5) set host domain`)
 	ansi.Println(`6) set proxy`)
 	ansi.Println(`7) set folders' name`)
-	index := util.ChooseIndex(8)
+	ansi.Println(`8) set default naming`)
+	index := util.ChooseIndex(9)
 	if index == 0 {
 		color.Cyan("Select client")
 		ansi.Println(`0) Codeforces`)
@@ -49,6 +50,8 @@ func Config() (err error) {
 		return cfg.SetProxy()
 	} else if index == 7 {
 		return cfg.SetFolderName()
+	} else if index == 8 {
+		return cfg.SetDefaultNaming()
 	}
 	return
 }

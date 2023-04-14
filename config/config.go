@@ -34,6 +34,7 @@ type Config struct {
 	SzkopulHost    string            `json:"szkopul_host"`
 	Proxy          string            `json:"proxy"`
 	FolderName     map[string]string `json:"folder_name"`
+	DefaultNaming  map[string]string `json:"default_naming"`
 	path           string
 }
 
@@ -68,6 +69,22 @@ func Init(path string) {
 		if _, ok := c.FolderName[fmt.Sprintf("szkopul-%v", archive)]; !ok {
 			c.FolderName[fmt.Sprintf("szkopul-%v", archive)] = archive
 		}
+	}
+
+	if c.DefaultNaming == nil {
+		c.DefaultNaming = map[string]string{}
+	}
+	if _, ok := c.DefaultNaming["solve"]; !ok {
+		c.DefaultNaming["solve"] = "$%task%$.cpp"
+	}
+	if _, ok := c.DefaultNaming["brute"]; !ok {
+		c.DefaultNaming["brute"] = "$%task%$-brute.cpp"
+	}
+	if _, ok := c.DefaultNaming["gen"]; !ok {
+		c.DefaultNaming["gen"] = "$%task%$-gen.cpp"
+	}
+	if _, ok := c.DefaultNaming["test_in"]; !ok {
+		c.DefaultNaming["test_in"] = "$%task%$GenTest$%test%$.in"
 	}
 	c.save()
 	var err error

@@ -16,7 +16,6 @@ import (
 	"sio-tool/util"
 
 	"github.com/fatih/color"
-	ansi "github.com/k0kubun/go-ansi"
 	"github.com/shirou/gopsutil/process"
 )
 
@@ -60,13 +59,22 @@ func plain(raw []byte) string {
 	return b.String()
 }
 
-func judge(sampleID, inPathFormat, ansPathFormat, command string) error {
-	inPath := fmt.Sprintf(inPathFormat, sampleID)
-	ansPath := fmt.Sprintf(ansPathFormat, sampleID)
-	input, err := os.Open(inPath)
-	if err != nil {
-		return err
+func parseMemory(memory uint64) string {
+	if memory > 1024*1024 {
+		return fmt.Sprintf("%.3fMB", float64(memory)/1024.0/1024.0)
+	} else if memory > 1024 {
+		return fmt.Sprintf("%.3fKB", float64(memory)/1024.0)
 	}
+	return fmt.Sprintf("%vB", memory)
+}
+
+type ProcessInfo struct {
+	time   float64
+	memory string
+	output []byte
+}
+
+func runProcess(processID, command string, input io.Reader) (*ProcessInfo, error) {
 	var o bytes.Buffer
 	output := io.Writer(&o)
 
@@ -77,7 +85,7 @@ func judge(sampleID, inPathFormat, ansPathFormat, command string) error {
 	cmd.Stdout = output
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("runtime error #%v ... %v", sampleID, err.Error())
+		return nil, fmt.Errorf("runtime error #%v ... %v", processID, err.Error())
 	}
 
 	pid := int32(cmd.Process.Pid)
@@ -91,7 +99,7 @@ func judge(sampleID, inPathFormat, ansPathFormat, command string) error {
 		select {
 		case err := <-ch:
 			if err != nil {
-				return fmt.Errorf("runtime error #%v ... %v", sampleID, err.Error())
+				return nil, fmt.Errorf("runtime error #%v ... %v", processID, err.Error())
 			}
 			running = false
 		default:
@@ -104,37 +112,51 @@ func judge(sampleID, inPathFormat, ansPathFormat, command string) error {
 			}
 		}
 	}
+	return &ProcessInfo{cmd.ProcessState.UserTime().Seconds(), parseMemory(maxMemory), o.Bytes()}, nil
+}
+
+type Verdict struct {
+	correct bool
+	message string
+	err     error
+}
+
+func generateVerdict(testID, answer string, processInfo ProcessInfo) Verdict {
+	state := ""
+	diff := ""
+	var correct bool
+	output := plain(processInfo.output)
+	if output == answer {
+		correct = true
+		state = color.New(color.FgGreen).Sprintf("Passed #%v", testID)
+	} else {
+		correct = false
+		state = color.New(color.FgRed).Sprintf("Failed #%v", testID)
+		diff += output + "\n"
+		diff += answer + "\n"
+	}
+	return Verdict{correct, fmt.Sprintf("%v ... %.3fs %v\n%v", state, processInfo.time, processInfo.memory, diff), nil}
+}
+
+func judge(sampleID, inPathFormat, ansPathFormat, command string) Verdict {
+	inPath := fmt.Sprintf(inPathFormat, sampleID)
+	ansPath := fmt.Sprintf(ansPathFormat, sampleID)
+	input, err := os.Open(inPath)
+	if err != nil {
+		return Verdict{false, "", err}
+	}
+	defer input.Close()
+
+	processInfo, err := runProcess(sampleID, command, input)
+	if err != nil {
+		return Verdict{false, "", err}
+	}
 
 	b, err := os.ReadFile(ansPath)
 	if err != nil {
-		b = []byte{}
+		return Verdict{false, "", err}
 	}
-	ans := plain(b)
-	out := plain(o.Bytes())
-
-	state := ""
-	diff := ""
-	if out == ans {
-		state = color.New(color.FgGreen).Sprintf("Passed #%v", sampleID)
-	} else {
-		state = color.New(color.FgRed).Sprintf("Failed #%v", sampleID)
-		diff += color.New(color.FgCyan).Sprintf("-----Output-----\n")
-		diff += out + "\n"
-		diff += color.New(color.FgCyan).Sprintf("-----Answer-----\n")
-		diff += ans + "\n"
-	}
-
-	parseMemory := func(memory uint64) string {
-		if memory > 1024*1024 {
-			return fmt.Sprintf("%.3fMB", float64(memory)/1024.0/1024.0)
-		} else if memory > 1024 {
-			return fmt.Sprintf("%.3fKB", float64(memory)/1024.0)
-		}
-		return fmt.Sprintf("%vB", memory)
-	}
-
-	ansi.Printf("%v ... %.3fs %v\n%v", state, cmd.ProcessState.UserTime().Seconds(), parseMemory(maxMemory), diff)
-	return nil
+	return generateVerdict(sampleID, plain(b), *processInfo)
 }
 
 func ExtractTaskName(file string) (task string) {
@@ -195,15 +217,17 @@ func Test() (err error) {
 	}
 	if s := filter(template.Script); len(s) > 0 {
 		for _, i := range samples {
-			var err error
+			var verdict Verdict
 			if samplesWithName {
-				err = judge(i, fmt.Sprintf("%s%%v.in", file), fmt.Sprintf("%s%%v.out", file), s)
+				verdict = judge(i, fmt.Sprintf("%s%%v.in", file), fmt.Sprintf("%s%%v.out", file), s)
 			} else {
-				err = judge(i, "in%v.txt", "out%v.txt", s)
+				verdict = judge(i, "in%v.txt", "out%v.txt", s)
 			}
 
-			if err != nil {
+			if verdict.err != nil {
 				color.Red(err.Error())
+			} else {
+				fmt.Print(verdict.message)
 			}
 		}
 	} else {
