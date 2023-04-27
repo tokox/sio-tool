@@ -6,7 +6,7 @@
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.12-green.svg)](https://github.com/golang)
 [![license](https://img.shields.io/badge/license-MIT-%23373737.svg)](https://raw.githubusercontent.com/Arapak/sio-tool/main/LICENSE)
 
-SIO Tool is a command-line interface tool for [Codeforces](https://codeforces.com), [Szkopul (OI archive)][https://szkopul.edu.pl/task_archive/oi/], [SIO2 (staszic)][https://sio2.staszic.waw.pl] and [SIO2 (mimuw)][https://sio2.mimuw.edu.pl].
+SIO Tool is a command-line interface tool for [Codeforces](https://codeforces.com), [Szkopul (OI archive)](https://szkopul.edu.pl/task_archive/oi/), [SIO2 (staszic)](https://sio2.staszic.waw.pl) and [SIO2 (mimuw)](https://sio2.mimuw.edu.pl).
 
 It's fast, small, cross-platform and powerful.
 
