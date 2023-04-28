@@ -8,19 +8,32 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 
 	"github.com/fatih/color"
 )
 
+const SubmitIDRegStr = `\d+`
+
 func (c *SzkopulClient) Submit(info Info, sourcePath string) (err error) {
 	color.Cyan("Submit " + info.Hint())
 
-	URL, err := info.SubmitURL(c.host)
+	URL, err := info.APISubmitURL(c.host)
+	if err != nil {
+		return
+	}
+	refererURL, err := info.SubmitURL(c.host)
 	if err != nil {
 		return
 	}
 
 	fmt.Printf("Current user: %v\n", c.Username)
+
+	csrf, err := c.GetCsrf(refererURL)
+	if err != nil {
+		return
+	}
 
 	sourceFile, err := os.Open(sourcePath)
 	if err != nil {
@@ -32,6 +45,8 @@ func (c *SzkopulClient) Submit(info Info, sourcePath string) (err error) {
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", filepath.Base(sourceFile.Name()))
 	io.Copy(part, sourceFile)
+	part, err = writer.CreateFormField("csrfmiddlewaretoken")
+	io.Copy(part, strings.NewReader(csrf))
 	writer.Close()
 
 	req, err := http.NewRequest("POST", URL, body)
@@ -39,12 +54,7 @@ func (c *SzkopulClient) Submit(info Info, sourcePath string) (err error) {
 		return
 	}
 	req.Header.Add("Content-Type", writer.FormDataContentType())
-
-	token, err := c.DecryptToken()
-	if err != nil {
-		return
-	}
-	req.Header.Add("Authorization", fmt.Sprintf("Token %v", token))
+	req.Header.Add("Referer", refererURL)
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -56,9 +66,16 @@ func (c *SzkopulClient) Submit(info Info, sourcePath string) (err error) {
 	if err != nil {
 		return err
 	}
-	color.Green("Submitted")
 
-	info.SubmissionID = string(responseBody)
-	c.LastSubmission = &info
+	isSubmitID, err := regexp.MatchString(SubmitIDRegStr, string(responseBody))
+
+	if isSubmitID {
+		color.Green("Submitted")
+		info.SubmissionID = string(responseBody)
+		c.LastSubmission = &info
+	} else {
+		fmt.Print("an error occured: ")
+		color.Red(string(responseBody))
+	}
 	return c.save()
 }

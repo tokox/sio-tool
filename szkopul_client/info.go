@@ -95,12 +95,20 @@ func (info *Info) SubmissionURL(host string) (string, error) {
 	return fmt.Sprintf(host+"/s/%v", info.SubmissionID), nil
 }
 
+// APISubmitURL submit url
+func (info *Info) APISubmitURL(host string) (string, error) {
+	if info.ProblemSecretKey == "" {
+		return "", errors.New(ErrorNeedProblemSecretKey)
+	}
+	return fmt.Sprintf(host+"/api/problemset/submit/%v", info.ProblemSecretKey), nil
+}
+
 // SubmitURL submit url
 func (info *Info) SubmitURL(host string) (string, error) {
 	if info.ProblemSecretKey == "" {
 		return "", errors.New(ErrorNeedProblemSecretKey)
 	}
-	return fmt.Sprintf(host+"/api/problemset/submit/%v", info.ProblemSecretKey), nil
+	return fmt.Sprintf(host+"/problemset/problem/%v/site/?key=submit", info.ProblemSecretKey), nil
 }
 
 // OpenURL open url

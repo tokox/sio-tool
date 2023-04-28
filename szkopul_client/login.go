@@ -10,6 +10,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"regexp"
+	"sio-tool/cookiejar"
 	"sio-tool/util"
 	"strings"
 	"syscall"
@@ -33,44 +36,80 @@ func AesDecrypt(cipherIn []byte, key, iv []byte) ([]byte, error) {
 	return origData, nil
 }
 
-func (c *SzkopulClient) GetUsername(token string) (username string, err error) {
-	req, err := http.NewRequest("GET", c.host+"/api/auth_ping", nil)
+func findUsername(body []byte) (username string, err error) {
+	reg := regexp.MustCompile(`<strong class="username" id="username">([\s\S]+?)</strong>`)
+	tmp := reg.FindSubmatch(body)
+	if len(tmp) < 2 {
+		return "", errors.New(ErrorNotLogged)
+	}
+	return string(tmp[1]), nil
+}
+
+func findCsrf(body []byte) (string, error) {
+	reg := regexp.MustCompile(`<input type="hidden" name="csrfmiddlewaretoken" value="(.+?)">`)
+	tmp := reg.FindSubmatch(body)
+	if len(tmp) < 2 {
+		return "", errors.New("cannot find csrf")
+	}
+	return string(tmp[1]), nil
+}
+
+func (c *SzkopulClient) GetCsrf(URL string) (csrf string, err error) {
+	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("Token %v", token))
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	responseBody, err := io.ReadAll(resp.Body)
-
-	if !strings.Contains(string(responseBody), "pong ") {
-		return "", fmt.Errorf("this token is not valid")
-	}
-
-	username = strings.TrimPrefix(string(responseBody), "\"pong ")
-	username = strings.TrimSuffix(username, "\"")
-
-	return username, nil
+	return findCsrf(body)
 }
 
 // Login codeforces with handler and password
 func (c *SzkopulClient) Login() (err error) {
 	color.Cyan("Login...\n")
 
-	token, err := c.DecryptToken()
+	jar, _ := cookiejar.New(nil)
+
+	c.client.Jar = jar
+	csrf, err := c.GetCsrf(c.host + "/login/")
+	if err != nil {
+		return
+	}
+	password, err := c.DecryptPassword()
 	if err != nil {
 		return
 	}
 
-	c.Username, err = c.GetUsername(token)
+	form := url.Values{}
+	form.Add("csrfmiddlewaretoken", csrf)
+	form.Add("login_view-current_step", "auth")
+	form.Add("auth-username", c.Username)
+	form.Add("auth-password", password)
+
+	req, err := http.NewRequest("POST", c.host+"/login/", strings.NewReader(form.Encode()))
 	if err != nil {
-		return
+		return err
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", c.host+"/login/")
+	req.Header.Set("Origin", c.host)
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	username, err := findUsername(body)
+	if err != nil {
+		return err
+	}
+
+	c.Username = username
+	c.Jar = jar
 
 	color.Green("Succeed!!")
 	color.Green("Welcome %v~", c.Username)
@@ -126,11 +165,11 @@ func decrypt(handle, password string) (ret string, err error) {
 }
 
 // DecryptPassword get real password
-func (c *SzkopulClient) DecryptToken() (string, error) {
-	if len(c.Token) == 0 || len(c.Username) == 0 {
+func (c *SzkopulClient) DecryptPassword() (string, error) {
+	if len(c.Password) == 0 || len(c.Username) == 0 {
 		return "", errors.New("you have to configure your username and password by `st config`")
 	}
-	return decrypt(c.Username, c.Token)
+	return decrypt(c.Username, c.Password)
 }
 
 // ConfigLogin configure handle and password
@@ -138,12 +177,15 @@ func (c *SzkopulClient) ConfigLogin() (err error) {
 	if c.Username != "" {
 		color.Green("Current user: %v", c.Username)
 	}
-	color.Cyan("Configure API token")
-	color.Cyan("Note: The token is invisible, just type/paste it correctly.")
+	color.Cyan("Configure username and password")
+	color.Cyan("Note: The password is invisible, just type it correctly.")
 
-	token := ""
+	fmt.Printf("username: ")
+	username := util.ScanlineTrim()
+
+	password := ""
 	if term.IsTerminal(int(syscall.Stdin)) {
-		fmt.Printf("token: ")
+		fmt.Printf("password: ")
 		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 		if err != nil {
 			fmt.Println()
@@ -153,19 +195,16 @@ func (c *SzkopulClient) ConfigLogin() (err error) {
 			}
 			return err
 		}
-		token = string(bytePassword)
+		password = string(bytePassword)
 		fmt.Println()
 	} else {
 		color.Red("Your terminal does not support the hidden password.")
-		fmt.Printf("token: ")
-		token = util.Scanline()
+		fmt.Printf("password: ")
+		password = util.Scanline()
 	}
 
-	c.Username, err = c.GetUsername(token)
-	if err != nil {
-		return
-	}
-	c.Token, err = encrypt(c.Username, token)
+	c.Username = username
+	c.Password, err = encrypt(username, password)
 	if err != nil {
 		return
 	}

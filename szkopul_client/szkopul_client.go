@@ -17,7 +17,7 @@ import (
 type SzkopulClient struct {
 	Jar            *cookiejar.Jar `json:"cookies"`
 	Username       string         `json:"handle"`
-	Token          string         `json:"token"`
+	Password       string         `json:"password"`
 	LastSubmission *Info          `json:"last_submission"`
 	host           string
 	path           string
