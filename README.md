@@ -26,7 +26,7 @@ It's fast, small, cross-platform and powerful.
 -   Setup a network proxy. Setup a mirror host.
 -   Colorful CLI.
 
-Currently only the submit function is available for szkopul
+Currently only the submit and watch functions are available for szkopul
 
 Pull requests are always welcome.
 

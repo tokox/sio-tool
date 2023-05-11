@@ -71,7 +71,13 @@ func (c *SzkopulClient) Submit(info Info, sourcePath string) (err error) {
 
 	if isSubmitID {
 		color.Green("Submitted")
-		info.SubmissionID = string(responseBody)
+
+		submissions, err := c.WatchSubmission(info, 1, true)
+		if err != nil {
+			return err
+		}
+
+		info.SubmissionID = submissions[0].ParseID()
 		c.LastSubmission = &info
 	} else {
 		fmt.Print("an error occured: ")
