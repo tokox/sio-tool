@@ -10,7 +10,6 @@ import (
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
-	ansi "github.com/k0kubun/go-ansi"
 	"github.com/mitchellh/go-homedir"
 )
 
