@@ -20,10 +20,10 @@ import (
 func StressTest() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {
-		return errors.New("You have to add at least one code template by `st config`")
+		return errors.New("you have to add at least one code template by `st config`")
 	}
 	if len(cfg.DefaultNaming) == 0 || cfg.DefaultNaming["solve"] == "" || cfg.DefaultNaming["brute"] == "" || cfg.DefaultNaming["gen"] == "" || cfg.DefaultNaming["test_in"] == "" {
-		return errors.New("You have to add default naming by `st config`")
+		return errors.New("you have to add default naming by `st config`")
 	}
 
 	task := Args.Specifier[0]
@@ -109,7 +109,7 @@ func StressTest() (err error) {
 	testsGenScript := filter(template.Script, testsGenPath, testsGenFull, testsGenFile)
 
 	if len(solveScript) == 0 || len(bruteScript) == 0 || len(testsGenScript) == 0 {
-		return errors.New("Invalid script command. Please check config file")
+		return errors.New("invalid script command. Please check config file")
 	}
 
 	testInFormat := strings.ReplaceAll(cfg.DefaultNaming["test_in"], "$%task%$", task)

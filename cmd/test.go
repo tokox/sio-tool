@@ -188,7 +188,7 @@ func Test() (err error) {
 		samplesWithName = false
 		samples = getSampleID()
 		if len(samples) == 0 {
-			return errors.New("Cannot find any sample file")
+			return errors.New("cannot find any sample file")
 		}
 	}
 
