@@ -104,6 +104,9 @@ Usage:
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
   st stress-test <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
+  st db add [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
+  st db find [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
+  st db goto [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
   st upgrade
 
 Options:
@@ -117,11 +120,25 @@ Options:
   					   Path to tests generator file
   -f <file>, --file <file>, <file>
                        Path to file. E.g. "a.cpp", "./temp/a.cpp"
+  --source <source>, <source>
+					   For example the site from which the tasks originates (codeforces, szkopul)
+  -n <name>, --name <name>, <name>
+					   Problem name
+  -p <path>, --path <path>, <path>
+					   Path to folder where is a solution to a problem
+  -l <link>, --link <link>, <link>
+					   Link to problem site
+  -c <contest>, --contest <contest>, <contest>
+					   Problem's contest id
+  --shortname <shortname>, <shortname>
+					   Problem shortname
+  --stage <stage>, <stage>
+					   Problem's contest stage id
   <specifier>          Any useful text. E.g.
                        "https://codeforces.com/contest/100",
                        "https://codeforces.com/contest/180/problem/A",
                        "https://codeforces.com/group/Cw4JRyRGXR/contest/269760",
-					   "https://szkopul.edu.pl/problemset/problem/kQ5ExYNkFhx3K2FvVuXAAbn4/site/?key=statement",
+                       "https://szkopul.edu.pl/problemset/problem/kQ5ExYNkFhx3K2FvVuXAAbn4/site/?key=statement",
                        "1111A", "1111", "a", "Cw4JRyRGXR"
                        You can combine multiple specifiers to specify what you
                        want.
@@ -153,7 +170,7 @@ Examples:
                        into current path.
   st test              Run the commands of a template in current path. Then
                        test all samples. If you want to add a new testcase,
-                       create two files "inK.txt" and "ansK.txt" where K is
+                       create two files "inK.txt" and "outK.txt" where K is
                        a string with 0~9.
   st watch             Watch the first 10 submissions of current contest.
   st watch all         Watch all submissions of current contest.
@@ -177,6 +194,11 @@ Examples:
   st pull              Pull the latest codes of current problem into current
                        path.
   st stress-test abc   Stresstest a program with your solve, brute force solution and tests generator.
+  st db add            Add a new task to the database with problems you solved (problems parsed by sio-tool are automatically added)
+  st db find -n "square"
+					   Find all problems in the database which contain the string "square" (ignoring capitalization)
+  st db goto -n "square" -c 100
+					   Returns the path of the task with name that contains "square" and has contest id 100 (if you configure your shell correctly it can automatically cd in to the path (example of .bashrc below))
   st upgrade           Upgrade the "st" to the latest version from GitHub.
 
 
@@ -254,6 +276,28 @@ int main() {
 }
 ```
 
+## Configure your shell
+
+To have some additional features, you can also configure your shell by adding the script below to your `.bashrc` file (or `.zshrc`)
+
+```bash
+st() {
+  if [ "$1" = stress-test ]; then
+    command alacritty --hold -e st "$@"
+  elif [ "$1" = db ] && [ "$2" = goto ]; then
+		res=$(command st "$@")
+		code=$?
+		if [ "$code" = 0 ]; then
+			cd $res
+		else
+			echo -e "$res"
+		fi
+	else
+  	command st "$@"
+  fi
+}
+```
+
 ## FAQ
 
 ### I double click the program but it doesn't work
@@ -262,7 +306,11 @@ SIO Tool is a command-line tool. You should run it in terminal.
 
 ### I cannot use `st` command
 
-You should put the `st` program to a path (e.g. `/usr/bin/` in Linux) which has been added to system environment variable PATH.
+You should put the `st` program to a path (e.g. for Linux `/usr/bin/`, or even better create a `~/.local/bin` and add the whole folder to PATH in your `.bashrc` (or `.zshrc`) using the script below, it is necessary for the upgrade script to work) which has been added to system environment variable PATH.
+
+```bash
+export PATH=$PATH:$HOME/.local/bin
+```
 
 Or just google "how to add a path to system environment variable PATH".
 

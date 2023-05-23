@@ -36,6 +36,7 @@ type Config struct {
 	Proxy          string            `json:"proxy"`
 	FolderName     map[string]string `json:"folder_name"`
 	DefaultNaming  map[string]string `json:"default_naming"`
+	DbPath         string            `json:"db_path"`
 	path           string
 }
 
@@ -44,7 +45,7 @@ var Instance *Config
 
 // Init initialize
 func Init(path string) {
-	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", Proxy: ""}
+	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", DbPath: "~/.st/tasks.db", Proxy: ""}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new configuration in %v", path)
@@ -94,6 +95,10 @@ func Init(path string) {
 		color.Red(err.Error())
 	}
 	c.FolderName["szkopul-root"], err = homedir.Expand(c.FolderName["szkopul-root"])
+	if err != nil {
+		color.Red(err.Error())
+	}
+	c.DbPath, err = homedir.Expand(c.DbPath)
 	if err != nil {
 		color.Red(err.Error())
 	}

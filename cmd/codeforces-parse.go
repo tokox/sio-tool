@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"database/sql"
 	"errors"
+	"fmt"
 	"path/filepath"
 
 	"github.com/Arapak/sio-tool/codeforces_client"
@@ -25,8 +27,16 @@ func CodeforcesParse() (err error) {
 			return
 		}
 	}
+
+	db, err := sql.Open("sqlite3", cfg.DbPath)
+	if err != nil {
+		fmt.Printf("failed to open database connection: %v\n", err)
+		return
+	}
+	defer db.Close()
+
 	work := func() error {
-		_, paths, err := cln.Parse(info)
+		_, paths, err := cln.Parse(info, db)
 		if err != nil {
 			return err
 		}

@@ -9,6 +9,7 @@ import (
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/szkopul_client"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"
@@ -42,6 +43,9 @@ Usage:
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
   st stress-test <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
+  st db add [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
+  st db find [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
+  st db goto [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
   st upgrade
 Options:
   -h --help            Show this screen.
@@ -54,10 +58,25 @@ Options:
   					   Path to tests generator file
   -f <file>, --file <file>, <file>
                        Path to file. E.g. "a.cpp", "./temp/a.cpp"
+  --source <source>, <source>
+					   For example the site from which the tasks originates (codeforces, szkopul)
+  -n <name>, --name <name>, <name>
+					   Problem name
+  -p <path>, --path <path>, <path>
+					   Path to folder where is a solution to a problem
+  -l <link>, --link <link>, <link>
+					   Link to problem site
+  -c <contest>, --contest <contest>, <contest>
+					   Problem's contest id
+  --shortname <shortname>, <shortname>
+					   Problem shortname
+  --stage <stage>, <stage>
+					   Problem's contest stage id
   <specifier>          Any useful text. E.g.
                        "https://codeforces.com/contest/100",
                        "https://codeforces.com/contest/180/problem/A",
-                       "https://codeforces.com/group/Cw4JRyRGXR/contest/269760"
+                       "https://codeforces.com/group/Cw4JRyRGXR/contest/269760",
+                       "https://szkopul.edu.pl/problemset/problem/kQ5ExYNkFhx3K2FvVuXAAbn4/site/?key=statement",
                        "1111A", "1111", "a", "Cw4JRyRGXR"
                        You can combine multiple specifiers to specify what you
                        want.
@@ -159,7 +178,8 @@ Script in template:
 
 	err := cmd.Eval(opts)
 	if err != nil {
-		color.Red(err.Error())
+		fmt.Print(util.RedString(err.Error()))
+		os.Exit(1)
 	}
 	color.Unset()
 }

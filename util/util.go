@@ -145,3 +145,16 @@ func IsURL(str string) bool {
 	}
 	return false
 }
+
+const colorReset = "\033[0m"
+
+const colorRed = "\033[31m"
+const colorGreen = "\033[32m"
+
+func RedString(str string) string {
+	return fmt.Sprintf("%v%v%v", colorRed, str, colorReset)
+}
+
+func GreenString(str string) string {
+	return fmt.Sprintf("%v%v%v", colorGreen, str, colorReset)
+}

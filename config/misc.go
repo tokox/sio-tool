@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"regexp"
@@ -155,5 +156,32 @@ func (c *Config) SetDefaultNaming() (err error) {
 	if value := util.ScanlineTrim(); value != "" {
 		c.DefaultNaming["test_in"] = value
 	}
+	return c.save()
+}
+
+func formatDbPath(path string) (string, error) {
+	if filepath.Ext(path) != ".db" {
+		return "", errors.New("wrong file extension")
+	}
+	return homedir.Expand(path)
+}
+
+func (c *Config) SetDbPath() (err error) {
+	dbPath, err := formatDbPath(c.DbPath)
+	if err != nil {
+		dbPath = "~/.st/tasks.db"
+	}
+	color.Green("Current database path is %v", dbPath)
+	color.Cyan(`Set a new db path (e.g. "~/.st/tasks.db")`)
+	color.Cyan(`Note: Don't forget the ".db" extension`)
+	for {
+		dbPath, err = formatDbPath(util.ScanlineTrim())
+		if err == nil {
+			break
+		}
+		color.Red(err.Error())
+	}
+	c.DbPath = dbPath
+	color.Green("New database path is %v", dbPath)
 	return c.save()
 }

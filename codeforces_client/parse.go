@@ -2,13 +2,16 @@ package codeforces_client
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 
+	"github.com/Arapak/sio-tool/database_client"
 	"github.com/Arapak/sio-tool/util"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
 	"github.com/k0kubun/go-ansi"
@@ -106,7 +109,7 @@ func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name 
 }
 
 // Parse parse
-func (c *CodeforcesClient) Parse(info Info) (problems []string, paths []string, err error) {
+func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, paths []string, err error) {
 	color.Cyan("Parse " + info.Hint())
 
 	problemID := info.ProblemID
@@ -159,7 +162,18 @@ func (c *CodeforcesClient) Parse(info Info) (problems []string, paths []string, 
 			if !standardIO {
 				warns = color.YellowString("Non standard input output format.")
 			}
+
+			task := database_client.Task{
+				Name:      name,
+				Source:    "cf",
+				Path:      path,
+				ShortName: strings.ToUpper(problemID),
+				Link:      URL,
+				ContestID: info.ContestID,
+			}
+
 			mu.Lock()
+			database_client.AddTask(db, task)
 			if err != nil {
 				color.Red("Failed %v. Error: %v", problemID, err.Error())
 			} else {

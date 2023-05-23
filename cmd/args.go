@@ -19,6 +19,13 @@ type ParsedArgs struct {
 	Generator      string
 	Solve          string
 	Brute          string
+	Source         string
+	Name           string
+	Path           string
+	Link           string
+	Shortname      string
+	Contest        string
+	Stage          string
 	Specifier      []string `docopt:"<specifier>"`
 	Alias          string   `docopt:"<alias>"`
 	Accepted       bool     `docopt:"ac"`
@@ -40,6 +47,10 @@ type ParsedArgs struct {
 	Clone          bool     `docopt:"clone"`
 	Upgrade        bool     `docopt:"upgrade"`
 	StressTest     bool     `docopt:"stress-test"`
+	Database       bool     `docopt:"db"`
+	Add            bool     `docopt:"add"`
+	Find           bool     `docopt:"find"`
+	Goto           bool     `docopt:"goto"`
 	Codeforces     bool
 	Szkopul        bool
 }

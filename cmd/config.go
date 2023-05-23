@@ -25,7 +25,8 @@ func Config() (err error) {
 	ansi.Println(`6) set proxy`)
 	ansi.Println(`7) set folders' name`)
 	ansi.Println(`8) set default naming`)
-	index := util.ChooseIndex(9)
+	ansi.Println(`9) set database path`)
+	index := util.ChooseIndex(10)
 	if index == 0 {
 		color.Cyan("Select client")
 		ansi.Println(`0) Codeforces`)
@@ -52,6 +53,8 @@ func Config() (err error) {
 		return cfg.SetFolderName()
 	} else if index == 8 {
 		return cfg.SetDefaultNaming()
+	} else if index == 9 {
+		return cfg.SetDbPath()
 	}
 	return
 }

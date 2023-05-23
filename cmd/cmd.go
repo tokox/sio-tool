@@ -33,6 +33,14 @@ func Eval(opts docopt.Opts) error {
 		return StressTest()
 	} else if Args.Upgrade {
 		return Upgrade()
+	} else if Args.Database {
+		if Args.Add {
+			return DatabaseAdd()
+		} else if Args.Find {
+			return DatabaseFind()
+		} else if Args.Goto {
+			return DatabaseGoto()
+		}
 	} else {
 		if Args.Codeforces {
 			if Args.Submit {
