@@ -80,7 +80,7 @@ func (c *SzkopulClient) Submit(info Info, sourcePath string) (err error) {
 		info.SubmissionID = submissions[0].ParseID()
 		c.LastSubmission = &info
 	} else {
-		fmt.Print("an error occured: ")
+		fmt.Print("an error occurred: ")
 		color.Red(string(responseBody))
 	}
 	return c.save()

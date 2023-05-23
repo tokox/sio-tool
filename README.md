@@ -283,6 +283,7 @@ To have some additional features, you can also configure your shell by adding th
 ```bash
 st() {
   if [ "$1" = stress-test ]; then
+		# the command below runs stress tests in a separate terminal. If you want this behaviour in your terminal, you have to find out what command to use. This example is for alacritty 
     command alacritty --hold -e st "$@"
   elif [ "$1" = db ] && [ "$2" = goto ]; then
 		res=$(command st "$@")
