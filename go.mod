@@ -1,4 +1,4 @@
-module sio-tool
+module github.com/Arapak/sio-tool
 
 go 1.18
 

@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
-	"sio-tool/codeforces_client"
-	"sio-tool/config"
+	"github.com/Arapak/sio-tool/codeforces_client"
+	"github.com/Arapak/sio-tool/config"
 
 	"github.com/fatih/color"
 )

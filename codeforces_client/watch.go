@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"sio-tool/util"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"

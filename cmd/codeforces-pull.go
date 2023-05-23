@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"sio-tool/codeforces_client"
+	"github.com/Arapak/sio-tool/codeforces_client"
 )
 
 // Pull command

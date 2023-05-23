@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"io"
 	"regexp"
-	"sio-tool/util"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"

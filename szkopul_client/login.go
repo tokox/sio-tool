@@ -12,10 +12,11 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"sio-tool/cookiejar"
-	"sio-tool/util"
 	"strings"
 	"syscall"
+
+	"github.com/Arapak/sio-tool/cookiejar"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 	"golang.org/x/term"

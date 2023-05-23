@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"sio-tool/cookiejar"
+	"github.com/Arapak/sio-tool/cookiejar"
 
 	"github.com/fatih/color"
 )

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"sio-tool/codeforces_client"
+	"github.com/Arapak/sio-tool/codeforces_client"
 )
 
 // Watch command

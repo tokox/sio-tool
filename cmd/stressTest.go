@@ -7,11 +7,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sio-tool/config"
-	"sio-tool/util"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 )

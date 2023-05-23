@@ -7,8 +7,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"sio-tool/codeforces_client"
-	"sio-tool/szkopul_client"
+
+	"github.com/Arapak/sio-tool/codeforces_client"
+	"github.com/Arapak/sio-tool/szkopul_client"
 
 	"github.com/fatih/color"
 	"github.com/mitchellh/go-homedir"

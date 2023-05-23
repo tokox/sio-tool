@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"sio-tool/codeforces_client"
-	"sio-tool/szkopul_client"
-	"sio-tool/util"
+	"github.com/Arapak/sio-tool/codeforces_client"
+	"github.com/Arapak/sio-tool/szkopul_client"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"

@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"sio-tool/cmd"
-	"sio-tool/codeforces_client"
-	"sio-tool/config"
-	"sio-tool/szkopul_client"
+	"github.com/Arapak/sio-tool/cmd"
+	"github.com/Arapak/sio-tool/codeforces_client"
+	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/szkopul_client"
 
 	"github.com/fatih/color"
 	ansi "github.com/k0kubun/go-ansi"

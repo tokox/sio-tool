@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"sio-tool/szkopul_client"
+	"github.com/Arapak/sio-tool/szkopul_client"
 )
 
 // Watch command

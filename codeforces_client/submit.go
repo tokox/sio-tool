@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"sio-tool/util"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 )

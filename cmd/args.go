@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"os"
-	"sio-tool/codeforces_client"
-	"sio-tool/config"
-	"sio-tool/szkopul_client"
 	"strings"
+
+	"github.com/Arapak/sio-tool/codeforces_client"
+	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/szkopul_client"
 
 	"github.com/docopt/docopt-go"
 )

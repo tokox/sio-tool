@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sio-tool/util"
 	"strings"
 	"sync"
 
+	"github.com/Arapak/sio-tool/util"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
 	"github.com/k0kubun/go-ansi"

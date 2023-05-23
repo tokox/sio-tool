@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"sio-tool/util"
+	"github.com/Arapak/sio-tool/util"
 )
 
 // StatisInfo statis information

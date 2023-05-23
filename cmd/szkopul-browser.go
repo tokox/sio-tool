@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"sio-tool/config"
-	"sio-tool/szkopul_client"
+	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/szkopul_client"
 )
 
 // Open command

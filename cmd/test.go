@@ -12,8 +12,8 @@ import (
 	"strings"
 	"unicode"
 
-	"sio-tool/config"
-	"sio-tool/util"
+	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 	"github.com/shirou/gopsutil/process"
