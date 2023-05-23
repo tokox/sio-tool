@@ -138,7 +138,7 @@ func (c *Config) SetFolderName() (err error) {
 func (c *Config) SetDefaultNaming() (err error) {
 	color.Cyan(`Set default naming (for stress testing purposes)`)
 	color.Cyan(`Enter empty line if you don't want to change the value`)
-	ansi.Println(`You can insert $%task%$ placeholder in your filenames, which you will provide when using st stress-test command.`)
+	fmt.Printf(`You can insert $%%task%%$ placeholder in your filenames, which you will provide when using st stress-test command.`)
 	color.Green(`Solution file name (current: %v)`, c.DefaultNaming["solve"])
 	if value := util.ScanlineTrim(); value != "" {
 		c.DefaultNaming["solve"] = value
@@ -151,7 +151,7 @@ func (c *Config) SetDefaultNaming() (err error) {
 	if value := util.ScanlineTrim(); value != "" {
 		c.DefaultNaming["gen"] = value
 	}
-	ansi.Println(`Here you can also insert $%test%$ placeholder in your filename, which will indicate the test number.`)
+	fmt.Printf(`Here you can also insert $%%test%%$ placeholder in your filename, which will indicate the test number.`)
 	color.Green(`Generated test filename (current: %v)`, c.DefaultNaming["test_in"])
 	if value := util.ScanlineTrim(); value != "" {
 		c.DefaultNaming["test_in"] = value
