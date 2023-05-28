@@ -24,6 +24,13 @@ func DatabaseFind() (err error) {
 	}
 	defer db.Close()
 	tasks, err := database_client.FindTasks(db, t)
+	if err != nil {
+		return
+	}
+	if len(tasks) == 0 {
+		color.Red(`no task found matching criteria`)
+		return
+	}
 	database_client.Display(tasks)
 	task, selected := getTask(tasks)
 	if selected {

@@ -16,6 +16,26 @@ type Task struct {
 	ContestStageID string
 }
 
+func createTableIfNotExist(db *sql.DB) error {
+	sql := `
+		CREATE TABLE IF NOT EXISTS tasks (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			source TEXT NOT NULL,
+			path TEXT NOT NULL,
+			shortname TEXT,
+			link TEXT,
+			contest_id TEXT,
+			contest_stage_id TEXT
+		);
+  `
+	_, err := db.Exec(sql)
+	if err != nil {
+		return fmt.Errorf("failed to create table: %v", err)
+	}
+	return nil
+}
+
 func AddTask(db *sql.DB, t Task) error {
 	sql := `
         INSERT INTO tasks(name, source, path, shortname, link, contest_id, contest_stage_id)
@@ -23,6 +43,10 @@ func AddTask(db *sql.DB, t Task) error {
     `
 	_, err := db.Exec(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
 	if err != nil {
+		if err.Error() == `no such table: tasks` {
+			createTableIfNotExist(db)
+			return AddTask(db, t)
+		}
 		return fmt.Errorf("failed to add task to database: %v", err)
 	}
 	return nil
@@ -43,6 +67,10 @@ func FindTasks(db *sql.DB, t Task) ([]Task, error) {
 	`
 	rows, err := db.Query(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
 	if err != nil {
+		if err.Error() == `no such table: tasks` {
+			createTableIfNotExist(db)
+			return FindTasks(db, t)
+		}
 		return nil, fmt.Errorf("failed to find tasks in database: %v", err)
 	}
 	defer rows.Close()

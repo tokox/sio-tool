@@ -178,7 +178,7 @@ Script in template:
 
 	err := cmd.Eval(opts)
 	if err != nil {
-		fmt.Print(util.RedString(err.Error()))
+		fmt.Println(util.RedString(err.Error()))
 		os.Exit(1)
 	}
 	color.Unset()

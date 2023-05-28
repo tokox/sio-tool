@@ -38,7 +38,6 @@ func GetTaskFromArgs() database_client.Task {
 
 func checkPath(path string) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		color.Red(err.Error())
 		return errors.New("this path does not exist")
 	}
 	return nil
