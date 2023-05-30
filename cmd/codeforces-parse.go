@@ -28,7 +28,7 @@ func CodeforcesParse() (err error) {
 		}
 	}
 
-	db, err := sql.Open("sqlite3", cfg.DbPath)
+	db, err := sql.Open("sqlite", cfg.DbPath)
 	if err != nil {
 		fmt.Printf("failed to open database connection: %v\n", err)
 		return
