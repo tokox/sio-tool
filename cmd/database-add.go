@@ -12,12 +12,13 @@ import (
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
+	_ "modernc.org/sqlite"
 )
 
 func DatabaseAdd() (err error) {
 	cfg := config.Instance
 	t := GetTaskFromArgs()
-	db, err := sql.Open("sqlite3", cfg.DbPath)
+	db, err := sql.Open("sqlite", cfg.DbPath)
 	if err != nil {
 		fmt.Printf("failed to open database connection: %v\n", err)
 		return

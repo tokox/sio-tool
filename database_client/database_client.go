@@ -3,6 +3,7 @@ package database_client
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 )
 
 type Task struct {
@@ -43,7 +44,7 @@ func AddTask(db *sql.DB, t Task) error {
     `
 	_, err := db.Exec(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
 	if err != nil {
-		if err.Error() == `no such table: tasks` {
+		if strings.Contains(err.Error(), `no such table: tasks`) {
 			createTableIfNotExist(db)
 			return AddTask(db, t)
 		}
@@ -67,7 +68,7 @@ func FindTasks(db *sql.DB, t Task) ([]Task, error) {
 	`
 	rows, err := db.Query(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
 	if err != nil {
-		if err.Error() == `no such table: tasks` {
+		if strings.Contains(err.Error(), `no such table: tasks`) {
 			createTableIfNotExist(db)
 			return FindTasks(db, t)
 		}
