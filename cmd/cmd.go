@@ -73,6 +73,8 @@ func Eval(opts docopt.Opts) error {
 				return SzkopulSid()
 			} else if Args.Open {
 				return SzkopulOpen()
+			} else if Args.List {
+				return SzkopulList()
 			}
 		}
 	}

@@ -9,6 +9,7 @@ import (
 	"github.com/Arapak/sio-tool/util"
 	"github.com/PuerkitoBio/goquery"
 	roman "github.com/StefanSchroeder/Golang-Roman"
+	"github.com/fatih/color"
 )
 
 type StatisInfo struct {
@@ -18,6 +19,23 @@ type StatisInfo struct {
 	Stage   string
 	Contest string
 	Points  string
+}
+
+func (prob *StatisInfo) ParsePoint() string {
+	if prob.Points == "" {
+		return ""
+	}
+	points, err := strconv.Atoi(prob.Points)
+	if err != nil {
+		return ""
+	}
+	if points == 100 {
+		return color.New(color.FgGreen).Sprint(points)
+	} else if points > 0 {
+		return color.New(color.FgCyan).Sprint(points)
+	} else {
+		return color.New(color.FgRed).Sprint(points)
+	}
 }
 
 const idRegExp = `problemgroups-(?P<contestID>\d+)(-e?(?P<stageID>[1-3]|ioi-elem))?`
