@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -55,6 +56,15 @@ func ChooseIndex(maxLen int) int {
 		}
 		color.Red("Invalid index! Please try again: ")
 	}
+}
+
+func Confirm(note string) bool {
+	color.Cyan(note)
+	tmp := ScanlineTrim()
+	if tmp == "y" || tmp == "Y" || tmp == "" {
+		return true
+	}
+	return false
 }
 
 // YesOrNo must choose one
@@ -157,4 +167,37 @@ func RedString(str string) string {
 
 func GreenString(str string) string {
 	return fmt.Sprintf("%v%v%v", colorGreen, str, colorReset)
+}
+
+type Performance struct {
+	fetchingStart time.Time
+	parsingStart  time.Time
+
+	Fetching time.Duration
+	Parsing  time.Duration
+}
+
+func (p *Performance) StartFetching() {
+	p.fetchingStart = time.Now()
+}
+func (p *Performance) StartParsing() {
+	p.parsingStart = time.Now()
+}
+
+func (p *Performance) StopFetching() {
+	p.Fetching = time.Since(p.fetchingStart)
+}
+func (p *Performance) StopParsing() {
+	p.Parsing = time.Since(p.parsingStart)
+}
+
+func (p *Performance) Parse() string {
+	return fmt.Sprintf("Fetching: %v, Parsing: %v", p.Fetching.Round(time.Millisecond).String(), p.Parsing.Round(time.Microsecond*10).String())
+}
+
+func AverageTime(t time.Duration, n int) time.Duration {
+	if n == 0 {
+		return 0
+	}
+	return time.Duration(int64(t) / int64(n))
 }

@@ -10,12 +10,34 @@ import (
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/szkopul_client"
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 )
 
-func parseTemplate(source string, cln *codeforces_client.CodeforcesClient) string {
+func parseTemplateSzkopul(source string, cln *szkopul_client.SzkopulClient) string {
+	now := time.Now()
+	source = strings.ReplaceAll(source, "$%U%$", cln.Username)
+	source = strings.ReplaceAll(source, "$%Y%$", fmt.Sprintf("%v", now.Year()))
+	source = strings.ReplaceAll(source, "$%M%$", fmt.Sprintf("%02v", int(now.Month())))
+	source = strings.ReplaceAll(source, "$%D%$", fmt.Sprintf("%02v", now.Day()))
+	source = strings.ReplaceAll(source, "$%h%$", fmt.Sprintf("%02v", now.Hour()))
+	source = strings.ReplaceAll(source, "$%m%$", fmt.Sprintf("%02v", now.Minute()))
+	source = strings.ReplaceAll(source, "$%s%$", fmt.Sprintf("%02v", now.Second()))
+	return source
+}
+
+func readTemplateSourceSzkopul(path string, cln *szkopul_client.SzkopulClient) (source string, err error) {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return
+	}
+	source = parseTemplateSzkopul(string(b), cln)
+	return
+}
+
+func parseTemplateCodeforces(source string, cln *codeforces_client.CodeforcesClient) string {
 	now := time.Now()
 	source = strings.ReplaceAll(source, "$%U%$", cln.Handle)
 	source = strings.ReplaceAll(source, "$%Y%$", fmt.Sprintf("%v", now.Year()))
@@ -27,12 +49,12 @@ func parseTemplate(source string, cln *codeforces_client.CodeforcesClient) strin
 	return source
 }
 
-func readTemplateSource(path string, cln *codeforces_client.CodeforcesClient) (source string, err error) {
+func readTemplateSourceCodeforces(path string, cln *codeforces_client.CodeforcesClient) (source string, err error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return
 	}
-	source = parseTemplate(string(b), cln)
+	source = parseTemplateCodeforces(string(b), cln)
 	return
 }
 
@@ -84,7 +106,7 @@ func Gen() (err error) {
 	}
 
 	cln := codeforces_client.Instance
-	source, err := readTemplateSource(path, cln)
+	source, err := readTemplateSourceCodeforces(path, cln)
 	if err != nil {
 		return
 	}

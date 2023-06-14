@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"strings"
 
@@ -17,15 +18,16 @@ import (
 func CodeforcesList() (err error) {
 	cln := codeforces_client.Instance
 	info := Args.CodeforcesInfo
-	problems, err := cln.Statis(info)
+	problems, perf, err := cln.Statis(info)
 	if err != nil {
 		if err = loginAgainCodeforces(cln, err); err == nil {
-			problems, err = cln.Statis(info)
+			problems, perf, err = cln.Statis(info)
 		}
 	}
 	if err != nil {
 		return
 	}
+	fmt.Printf("Statis: (%v)\n", perf.Parse())
 	var buf bytes.Buffer
 	output := io.Writer(&buf)
 	table := tablewriter.NewWriter(output)

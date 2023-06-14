@@ -44,17 +44,17 @@ func parseArgsSzkopul(opts docopt.Opts) error {
 			}
 			info.StageID = value
 		}
-		if value, ok := parsed["problemID"]; ok {
-			if info.ProblemID != "" && info.ProblemID != value {
-				return fmt.Errorf("problem ID conflicts: %v %v", info.ProblemID, value)
+		if value, ok := parsed["problemAlias"]; ok {
+			if info.ProblemAlias != "" && info.ProblemAlias != value {
+				return fmt.Errorf("problem alias conflicts: %v %v", info.ProblemAlias, value)
 			}
-			info.ProblemID = value
+			info.ProblemAlias = value
 		}
 		if value, ok := parsed["problemSecretKey"]; ok {
-			if info.ProblemSecretKey != "" && info.ProblemSecretKey != value {
-				return fmt.Errorf("problemSecretKey conflicts: %v %v", info.ProblemSecretKey, value)
+			if info.ProblemID != "" && info.ProblemID != value {
+				return fmt.Errorf("problemID conflicts: %v %v", info.ProblemID, value)
 			}
-			info.ProblemSecretKey = value
+			info.ProblemID = value
 		}
 		if value, ok := parsed["submissionID"]; ok {
 			if info.SubmissionID != "" && info.SubmissionID != value {
@@ -74,12 +74,12 @@ func parseArgsSzkopul(opts docopt.Opts) error {
 		if value, ok := parsed["stageID"]; ok && info.StageID == "" {
 			info.StageID = value
 		}
-		if value, ok := parsed["problemID"]; ok && info.ProblemID == "" {
-			info.ProblemID = value
+		if value, ok := parsed["problemAlias"]; ok && info.ProblemAlias == "" {
+			info.ProblemAlias = value
 		}
 	}
 	// util.DebugJSON(info)
-	info.RootPath = filepath.Join(cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("codeforces-%v", info.Archive)])
+	info.RootPath = filepath.Join(cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("szkopul-%v", info.Archive)])
 	Args.SzkopulInfo = info
 	return nil
 }
@@ -95,7 +95,7 @@ var SzkopulArgRegStr = [...]string{
 	`^[oO][iI]?$`,
 	fmt.Sprintf(`/problemset/problem/(?P<problemSecretKey>%v)(/site(/\?key=\w+)?)?`, SzkopulProblemSecretKeyRegStr),
 	fmt.Sprintf(`^(?P<problemSecretKey>%v)$`, SzkopulProblemSecretKeyRegStr),
-	fmt.Sprintf(`^(?P<problemID>%v)$`, StrictSzkopulProblemRegStr),
+	fmt.Sprintf(`^(?P<problemAlias>%v)$`, StrictSzkopulProblemRegStr),
 	fmt.Sprintf(`^(?P<contestID>%v)$`, OIContestRegStr),
 	fmt.Sprintf(`^(?P<stageID>%v)$`, OIStageRegStr),
 }
@@ -127,7 +127,7 @@ func parseArgSzkopul(arg string) map[string]string {
 }
 
 var SzkopulPathRegStr = [...]string{
-	fmt.Sprintf("%v/%v/((?P<contestID>%v)/((?P<stageID>%v)/((?P<problemID>%v)/)?)?)?", "%v", "%v", OIContestRegStr, OIStageRegStr, StrictSzkopulProblemRegStr),
+	fmt.Sprintf("%v/%v/((?P<contestID>%v)/((?P<stageID>%v)/((?P<problemAlias>%v)/)?)?)?", "%v", "%v", OIContestRegStr, OIStageRegStr, StrictSzkopulProblemRegStr),
 }
 
 func parsePathSzkopul(path string) map[string]string {
@@ -135,7 +135,7 @@ func parsePathSzkopul(path string) map[string]string {
 	output := make(map[string]string)
 	cfg := config.Instance
 	for k, archive := range szkopul_client.Archives {
-		reg := regexp.MustCompile(fmt.Sprintf(SzkopulPathRegStr[k], cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("codeforces-%v", archive)]))
+		reg := regexp.MustCompile(fmt.Sprintf(SzkopulPathRegStr[k], cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("szkopul-%v", archive)]))
 		names := reg.SubexpNames()
 		for i, val := range reg.FindStringSubmatch(path) {
 			if names[i] != "" && val != "" {

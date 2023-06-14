@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/Arapak/sio-tool/database_client"
 	"github.com/Arapak/sio-tool/util"
@@ -55,11 +56,16 @@ func findName(body []byte) (name string, err error) {
 }
 
 // ParseProblem parse problem to path. mu can be nil
-func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name string, samples int, standardIO bool, err error) {
+func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name string, samples int, standardIO bool, perf util.Performance, err error) {
+	perf.StartFetching()
+
 	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
 	}
+
+	perf.StopFetching()
+	perf.StartParsing()
 
 	_, err = findHandle(body)
 	if err != nil {
@@ -80,6 +86,8 @@ func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name 
 	if !bytes.Contains(body, []byte(`<div class="input-file"><div class="property-title">input</div>standard input</div><div class="output-file"><div class="property-title">output</div>standard output</div>`)) {
 		standardIO = false
 	}
+
+	perf.StopParsing()
 
 	for i := 0; i < len(input); i++ {
 		fileIn := filepath.Join(path, fmt.Sprintf("in%v.txt", i+1))
@@ -105,12 +113,14 @@ func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name 
 			}
 		}
 	}
-	return name, len(input), standardIO, nil
+	return name, len(input), standardIO, perf, nil
 }
 
 // Parse parse
 func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, paths []string, err error) {
 	color.Cyan("Parse " + info.Hint())
+
+	start := time.Now()
 
 	problemID := info.ProblemID
 	info.ProblemID = "%v"
@@ -120,10 +130,11 @@ func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, path
 	}
 	info.ProblemID = ""
 	if problemID == "" {
-		statics, err := c.Statis(info)
+		statics, perf, err := c.Statis(info)
 		if err != nil {
 			return nil, nil, err
 		}
+		fmt.Printf("Statis: (%v)\n", perf.Parse())
 		problems = make([]string, len(statics))
 		for i, problem := range statics {
 			problems[i] = problem.ID
@@ -133,6 +144,8 @@ func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, path
 	}
 	contestPath := info.Path()
 	ansi.Printf(color.CyanString("The problem(s) will be saved to %v\n"), color.GreenString(contestPath))
+
+	var avgPerformance util.Performance
 
 	wg := sync.WaitGroup{}
 	wg.Add(len(problems))
@@ -152,10 +165,15 @@ func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, path
 			}
 			URL := fmt.Sprintf(urlFormatter, problemID)
 
-			name, samples, standardIO, err := c.ParseProblem(URL, path, &mu)
+			name, samples, standardIO, perf, err := c.ParseProblem(URL, path, &mu)
 			if err != nil {
 				return
 			}
+			mu.Lock()
+			avgPerformance.Fetching += perf.Fetching
+			avgPerformance.Parsing += perf.Parsing
+			mu.Unlock()
+
 			name = strings.TrimPrefix(name, fmt.Sprintf("%v. ", strings.ToUpper(problemID)))
 
 			warns := ""
@@ -183,5 +201,9 @@ func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, path
 		}(problemID, paths[i])
 	}
 	wg.Wait()
+	avgPerformance.Fetching = util.AverageTime(avgPerformance.Fetching, len(problems))
+	avgPerformance.Parsing = util.AverageTime(avgPerformance.Parsing, len(problems))
+	fmt.Printf("Average: (%v)\n", avgPerformance.Parse())
+	fmt.Printf("Total: %s\n", time.Since(start).Round(time.Millisecond))
 	return
 }

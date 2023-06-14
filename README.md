@@ -26,7 +26,7 @@ It's fast, small, cross-platform and powerful.
 -   Setup a network proxy. Setup a mirror host.
 -   Colorful CLI.
 
-Currently only the submit and watch functions are available for szkopul
+Currently only the submit, watch and parse functions are available for szkopul
 
 Pull requests are always welcome.
 
@@ -325,3 +325,12 @@ Or a different possible naming would be `$%file%$K.in` and `$%file%$K.out` where
 Use this [Infinidat/infi.docopt_completion](https://github.com/Infinidat/infi.docopt_completion).
 
 Note: If there is a new version released (especially a new command added), you should run `docopt-completion st` again.
+
+### Can't parse tasks from szkopul
+
+You get the error: `Error: exec: "pdftotext": executable file not found in $PATH`?
+
+This program depends on package named(on most os's) poppler-utils. Below, example install on a debian-based os (ex. ubuntu, linux mint):
+```bash
+sudo apt install poppler-utils
+```

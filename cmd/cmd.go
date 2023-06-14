@@ -67,6 +67,12 @@ func Eval(opts docopt.Opts) error {
 				return SzkopulSubmit()
 			} else if Args.Watch {
 				return SzkopulWatch()
+			} else if Args.Parse {
+				return SzkopulParse()
+			} else if Args.Sid {
+				return SzkopulSid()
+			} else if Args.Open {
+				return SzkopulOpen()
 			}
 		}
 	}

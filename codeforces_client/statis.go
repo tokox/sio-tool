@@ -73,19 +73,24 @@ func findProblems(body []byte) ([]StatisInfo, error) {
 }
 
 // Statis get statis
-func (c *CodeforcesClient) Statis(info Info) (problems []StatisInfo, err error) {
+func (c *CodeforcesClient) Statis(info Info) (problems []StatisInfo, perf util.Performance, err error) {
 	URL, err := info.ProblemSetURL(c.host)
 	if err != nil {
 		return
 	}
 	if info.ProblemType == "acmsguru" {
-		return nil, errors.New(ErrorNotSupportAcmsguru)
+		return nil, perf, errors.New(ErrorNotSupportAcmsguru)
 	}
+
+	perf.StartFetching()
 
 	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
 	}
+
+	perf.StopFetching()
+	perf.StartParsing()
 
 	if _, err = findHandle(body); err != nil {
 		return
@@ -96,5 +101,8 @@ func (c *CodeforcesClient) Statis(info Info) (problems []StatisInfo, err error) 
 		return
 	}
 
-	return findProblems(block)
+	problems, err = findProblems(block)
+
+	perf.StopParsing()
+	return
 }

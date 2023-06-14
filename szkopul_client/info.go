@@ -13,26 +13,29 @@ var Archives = [...]string{
 
 // Info information
 type Info struct {
-	Archive          string `json:"archive"`
-	ContestID        string `json:"contest_id"`
-	StageID          string `json:"stage_id"`
-	ProblemID        string `json:"problem_id"`
-	ProblemSecretKey string `json:"problem_secret_key"`
-	SubmissionID     string `json:"submission_id"`
-	RootPath         string
+	Archive      string `json:"archive"`
+	ContestID    string `json:"contest_id"`
+	StageID      string `json:"stage_id"`
+	ProblemAlias string `json:"problem_alias"`
+	ProblemID    string `json:"problem_id"`
+	SubmissionID string `json:"submission_id"`
+	RootPath     string
 }
 
 // ErrorNeedProblemID error
 const ErrorNeedProblemID = "you have to specify the Problem ID"
 
-// ErrorNeedProblemSecretKey error
-const ErrorNeedProblemSecretKey = "you have to specify the Problem Secret Key"
+// ErrorNeedProblemID error
+const ErrorNeedProblemAlias = "you have to specify the Problem alias"
 
 // ErrorNeedContestID error
 const ErrorNeedContestID = "you have to specify the Contest ID"
 
 // ErrorNeedSubmissionID error
 const ErrorNeedSubmissionID = "you have to specify the Submission ID"
+
+// ErrorNeedSubmissionID error
+const ErrorNeedArchive = "you have to specify the archive"
 
 // Hint hint text
 func (info *Info) Hint() string {
@@ -41,8 +44,8 @@ func (info *Info) Hint() string {
 		text = "contest " + info.ContestID
 		if info.StageID != "" {
 			text = text + ", stage " + info.StageID
-			if info.ProblemID != "" {
-				text = text + ", problem " + strings.ToLower(info.ProblemID)
+			if info.ProblemAlias != "" {
+				text = text + ", problem " + strings.ToLower(info.ProblemAlias)
 			}
 		}
 	}
@@ -62,28 +65,39 @@ func (info *Info) Path() string {
 		path = filepath.Join(path, info.ContestID)
 		if info.StageID != "" {
 			path = filepath.Join(path, info.StageID)
-			if info.ProblemID != "" {
-				path = filepath.Join(path, strings.ToLower(info.ProblemID))
+			if info.ProblemAlias != "" {
+				path = filepath.Join(path, strings.ToLower(info.ProblemAlias))
 			}
 		}
 	}
 	return path
 }
 
+func ProblemURL(host, problemID string) string {
+	return fmt.Sprintf(host+"/problemset/problem/%v/site", problemID)
+}
+
 // ProblemURL parse problem url
 func (info *Info) ProblemURL(host string) (string, error) {
-	if info.ProblemSecretKey == "" {
-		return "", errors.New(ErrorNeedProblemSecretKey)
+	if info.ProblemID == "" {
+		return "", errors.New(ErrorNeedProblemID)
 	}
-	return fmt.Sprintf(host+"/problemset/problem/%v/site", info.ProblemSecretKey), nil
+	return ProblemURL(host, info.ProblemID), nil
+}
+
+func (info *Info) ProblemSetURL(host string) (string, error) {
+	if info.Archive == "" {
+		return "", errors.New(ErrorNeedArchive)
+	}
+	return fmt.Sprintf(host+"/task_archive/%v/", strings.ToLower(info.Archive)), nil
 }
 
 // MySubmissionURL parse submission url
 func (info *Info) MySubmissionURL(host string) string {
-	if info.ProblemSecretKey == "" {
+	if info.ProblemID == "" {
 		return host + "/submissions/"
 	} else {
-		return fmt.Sprintf(host+"/problemset/problem/%v/site/?key=submissions", info.ProblemSecretKey)
+		return fmt.Sprintf(host+"/problemset/problem/%v/site/?key=submissions", info.ProblemID)
 	}
 }
 
@@ -97,23 +111,23 @@ func (info *Info) SubmissionURL(host string) (string, error) {
 
 // APISubmitURL submit url
 func (info *Info) APISubmitURL(host string) (string, error) {
-	if info.ProblemSecretKey == "" {
-		return "", errors.New(ErrorNeedProblemSecretKey)
+	if info.ProblemID == "" {
+		return "", errors.New(ErrorNeedProblemID)
 	}
-	return fmt.Sprintf(host+"/api/problemset/submit/%v", info.ProblemSecretKey), nil
+	return fmt.Sprintf(host+"/api/problemset/submit/%v", info.ProblemID), nil
 }
 
 // SubmitURL submit url
 func (info *Info) SubmitURL(host string) (string, error) {
-	if info.ProblemSecretKey == "" {
-		return "", errors.New(ErrorNeedProblemSecretKey)
+	if info.ProblemID == "" {
+		return "", errors.New(ErrorNeedProblemID)
 	}
-	return fmt.Sprintf(host+"/problemset/problem/%v/site/?key=submit", info.ProblemSecretKey), nil
+	return fmt.Sprintf(host+"/problemset/problem/%v/site/?key=submit", info.ProblemID), nil
 }
 
 // OpenURL open url
 func (info *Info) OpenURL(host string) (string, error) {
-	if info.ProblemSecretKey != "" {
+	if info.ProblemID != "" {
 		return info.ProblemURL(host)
 	}
 	return host + "/task_archive/oi", nil

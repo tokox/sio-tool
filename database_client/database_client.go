@@ -38,11 +38,19 @@ func createTableIfNotExist(db *sql.DB) error {
 }
 
 func AddTask(db *sql.DB, t Task) error {
+	tasks, err := FindTasks(db, t)
+	if err != nil {
+		return err
+	}
+	if len(tasks) > 0 {
+		return fmt.Errorf("this problem already exists in database")
+	}
+
 	sql := `
         INSERT INTO tasks(name, source, path, shortname, link, contest_id, contest_stage_id)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `
-	_, err := db.Exec(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
+	_, err = db.Exec(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
 	if err != nil {
 		if strings.Contains(err.Error(), `no such table: tasks`) {
 			createTableIfNotExist(db)
