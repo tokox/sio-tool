@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+
+	"github.com/Arapak/sio-tool/database_client"
 )
 
 var Archives = [...]string{
@@ -131,4 +133,8 @@ func (info *Info) OpenURL(host string) (string, error) {
 		return info.ProblemURL(host)
 	}
 	return host + "/task_archive/oi", nil
+}
+
+func (info *Info) ToTask() database_client.Task {
+	return database_client.Task{ShortName: info.ProblemAlias, Source: info.Archive, ContestID: info.ContestID, ContestStageID: info.StageID}
 }

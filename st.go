@@ -8,6 +8,7 @@ import (
 	"github.com/Arapak/sio-tool/cmd"
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
 	"github.com/Arapak/sio-tool/util"
 
@@ -23,6 +24,7 @@ const buildTime = "$CI_BUILD_TIME"
 const configPath = "~/.st/config"
 const codeforcesSessionPath = "~/.st/codeforces_session"
 const szkopulSessionPath = "~/.st/szkopul_session"
+const sioSessionPath = "~/.st/sio_session"
 
 func main() {
 	usage := `SIO Tool $%version%$ (st). https://github.com/Arapak/sio-tool
@@ -172,9 +174,11 @@ Script in template:
 	cfgPath, _ := homedir.Expand(configPath)
 	codeforcesClnPath, _ := homedir.Expand(codeforcesSessionPath)
 	szkopulClnPath, _ := homedir.Expand(szkopulSessionPath)
+	sioClnPath, _ := homedir.Expand(sioSessionPath)
 	config.Init(cfgPath)
 	codeforces_client.Init(codeforcesClnPath, config.Instance.CodeforcesHost, config.Instance.Proxy)
 	szkopul_client.Init(szkopulClnPath, config.Instance.SzkopulHost, config.Instance.Proxy)
+	sio_client.Init(sioClnPath, config.Instance.SioHost, config.Instance.Proxy)
 
 	err := cmd.Eval(opts)
 	if err != nil {

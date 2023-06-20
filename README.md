@@ -26,8 +26,6 @@ It's fast, small, cross-platform and powerful.
 -   Setup a network proxy. Setup a mirror host.
 -   Colorful CLI.
 
-Race and pull functions aren't available for szkopul
-
 Pull requests are always welcome.
 
 ## Installation
@@ -46,9 +44,18 @@ $ go build -ldflags "-s -w" st.go
 
 If you don't know what's the `$GOPATH`, please see here <https://github.com/golang/go/wiki/GOPATH>.
 
+## Configuration
+To configure this program to your preferences you will have to run the command `st config`
+
+You will then be able to: login, add and remove templates, set hosts, set folders naming, change your database path.
+
+Alternatively you can edit the `~/.st/config` file
+
 ## Usage
 
-Let's simulate a competition.
+Let's simulate a codeforces competition.
+
+You will have to start in your codeforces root path (you can configure it, the default is `~/st/codeforces`).
 
 `st race 1136` or `st race https://codeforces.com/contest/1136`
 
@@ -207,7 +214,8 @@ File:
 
   "~/.st/config"        Configuration file, including templates, etc.
   "~/.st/codeforces_session"    Codeforces session file, including cookies, handle, password, etc.
-  "~/.st/szkopul_session"       Szkopul session file, including token
+  "~/.st/szkopul_session"       Szkopul session file, including username and password
+  "~/.st/sio_session"           Sio session file, including username and password
 
   "~" is the home directory of current user in your system.
 

@@ -23,7 +23,7 @@ func SzkopulParse() (err error) {
 		}
 		path := cfg.Template[cfg.Default].Path
 		ext = filepath.Ext(path)
-		if source, err = readTemplateSourceSzkopul(path, cln); err != nil {
+		if source, err = readTemplateSource(path, cln.Username); err != nil {
 			return
 		}
 	}

@@ -33,6 +33,7 @@ type Config struct {
 	GenAfterParse  bool              `json:"gen_after_parse"`
 	CodeforcesHost string            `json:"codeforces_host"`
 	SzkopulHost    string            `json:"szkopul_host"`
+	SioHost        string            `json:"sio_host"`
 	Proxy          string            `json:"proxy"`
 	FolderName     map[string]string `json:"folder_name"`
 	DefaultNaming  map[string]string `json:"default_naming"`
@@ -45,7 +46,7 @@ var Instance *Config
 
 // Init initialize
 func Init(path string) {
-	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", DbPath: "~/.st/tasks.db", Proxy: ""}
+	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioHost: "https://sio2.staszic.waw.pl", DbPath: "~/.st/tasks.db", Proxy: ""}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new configuration in %v", path)
@@ -55,6 +56,9 @@ func Init(path string) {
 	}
 	if c.FolderName == nil {
 		c.FolderName = map[string]string{}
+	}
+	if _, ok := c.FolderName["sio-root"]; !ok {
+		c.FolderName["sio-root"] = "~/st/sio"
 	}
 	if _, ok := c.FolderName["codeforces-root"]; !ok {
 		c.FolderName["codeforces-root"] = "~/st/codeforces"
@@ -90,6 +94,10 @@ func Init(path string) {
 	}
 	c.save()
 	var err error
+	c.FolderName["sio-root"], err = homedir.Expand(c.FolderName["sio-root"])
+	if err != nil {
+		color.Red(err.Error())
+	}
 	c.FolderName["codeforces-root"], err = homedir.Expand(c.FolderName["codeforces-root"])
 	if err != nil {
 		color.Red(err.Error())

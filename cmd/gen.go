@@ -10,15 +10,16 @@ import (
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 )
 
-func parseTemplateSzkopul(source string, cln *szkopul_client.SzkopulClient) string {
+func parseTemplate(source, handle string) string {
 	now := time.Now()
-	source = strings.ReplaceAll(source, "$%U%$", cln.Username)
+	source = strings.ReplaceAll(source, "$%U%$", handle)
 	source = strings.ReplaceAll(source, "$%Y%$", fmt.Sprintf("%v", now.Year()))
 	source = strings.ReplaceAll(source, "$%M%$", fmt.Sprintf("%02v", int(now.Month())))
 	source = strings.ReplaceAll(source, "$%D%$", fmt.Sprintf("%02v", now.Day()))
@@ -28,33 +29,12 @@ func parseTemplateSzkopul(source string, cln *szkopul_client.SzkopulClient) stri
 	return source
 }
 
-func readTemplateSourceSzkopul(path string, cln *szkopul_client.SzkopulClient) (source string, err error) {
+func readTemplateSource(path, handle string) (source string, err error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return
 	}
-	source = parseTemplateSzkopul(string(b), cln)
-	return
-}
-
-func parseTemplateCodeforces(source string, cln *codeforces_client.CodeforcesClient) string {
-	now := time.Now()
-	source = strings.ReplaceAll(source, "$%U%$", cln.Handle)
-	source = strings.ReplaceAll(source, "$%Y%$", fmt.Sprintf("%v", now.Year()))
-	source = strings.ReplaceAll(source, "$%M%$", fmt.Sprintf("%02v", int(now.Month())))
-	source = strings.ReplaceAll(source, "$%D%$", fmt.Sprintf("%02v", now.Day()))
-	source = strings.ReplaceAll(source, "$%h%$", fmt.Sprintf("%02v", now.Hour()))
-	source = strings.ReplaceAll(source, "$%m%$", fmt.Sprintf("%02v", now.Minute()))
-	source = strings.ReplaceAll(source, "$%s%$", fmt.Sprintf("%02v", now.Second()))
-	return source
-}
-
-func readTemplateSourceCodeforces(path string, cln *codeforces_client.CodeforcesClient) (source string, err error) {
-	b, err := os.ReadFile(path)
-	if err != nil {
-		return
-	}
-	source = parseTemplateCodeforces(string(b), cln)
+	source = parseTemplate(string(b), handle)
 	return
 }
 
@@ -105,8 +85,17 @@ func Gen() (err error) {
 		path = cfg.Template[cfg.Default].Path
 	}
 
-	cln := codeforces_client.Instance
-	source, err := readTemplateSourceCodeforces(path, cln)
+	var handle string
+	if Args.Codeforces {
+		handle = codeforces_client.Instance.Handle
+	}
+	if Args.Szkopul {
+		handle = szkopul_client.Instance.Username
+	}
+	if Args.Sio {
+		handle = sio_client.Instance.Username
+	}
+	source, err := readTemplateSource(path, handle)
 	if err != nil {
 		return
 	}

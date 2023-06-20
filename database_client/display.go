@@ -20,29 +20,6 @@ const maxNameLength = 22
 const maxAliasLength = 8
 const maxStageLength = 5
 
-func getPrefix(str string, length int) string {
-	i := 0
-	for j := range str {
-		if i == length {
-			return str[:j]
-		}
-		i++
-	}
-	return str
-}
-
-func (t *Task) ParseName() string {
-	return getPrefix(t.Name, maxNameLength)
-}
-
-func (t *Task) ParseAlias() string {
-	return getPrefix(t.ShortName, maxAliasLength)
-}
-
-func (t *Task) ParseStage() string {
-	return getPrefix(t.ContestStageID, maxStageLength)
-}
-
 func (t *Task) Display() {
 	ansi.Printf("       #: %v\n", t.ParseID())
 	ansi.Printf("    name: %v\n", t.Name)
@@ -66,11 +43,11 @@ func Display(tasks []Task) {
 	for _, t := range tasks {
 		table.Append([]string{
 			util.GreenString(t.ParseID()),
-			t.ParseName(),
+			util.LimitNumOfChars(t.Name, maxNameLength),
 			t.Source,
-			t.ParseAlias(),
+			util.LimitNumOfChars(t.ShortName, maxAliasLength),
 			t.ContestID,
-			t.ParseStage(),
+			util.LimitNumOfChars(t.ContestStageID, maxStageLength),
 		})
 	}
 	table.Render()
