@@ -6,6 +6,7 @@ import (
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
 
 	"github.com/docopt/docopt-go"
@@ -15,6 +16,7 @@ import (
 type ParsedArgs struct {
 	CodeforcesInfo codeforces_client.Info
 	SzkopulInfo    szkopul_client.Info
+	SioInfo        sio_client.Info
 	File           string
 	Generator      string
 	Solve          string
@@ -53,6 +55,7 @@ type ParsedArgs struct {
 	Goto           bool     `docopt:"goto"`
 	Codeforces     bool
 	Szkopul        bool
+	Sio            bool
 }
 
 // Args global variable
@@ -73,6 +76,11 @@ func determineClient() error {
 		Args.Codeforces = true
 		return nil
 	}
+	sioDir := SubPath(path, cfg.FolderName["sio-root"])
+	if sioDir {
+		Args.Sio = true
+		return nil
+	}
 	szkopulDir := SubPath(path, cfg.FolderName["szkopul-root"])
 	if szkopulDir {
 		Args.Szkopul = true
@@ -90,6 +98,9 @@ func parseArgs(opts docopt.Opts) error {
 	determineClient()
 	if Args.Codeforces {
 		return parseArgsCodeforces(opts)
+	}
+	if Args.Sio {
+		return parseArgsSio(opts)
 	}
 	if Args.Szkopul {
 		return parseArgsSzkopul(opts)

@@ -76,6 +76,22 @@ func Eval(opts docopt.Opts) error {
 			} else if Args.List {
 				return SzkopulList()
 			}
+		} else if Args.Sio {
+			if Args.Submit {
+				return SioSubmit()
+			} else if Args.Watch {
+				return SioWatch()
+			} else if Args.List {
+				return SioList()
+			} else if Args.Sid {
+				return SioSid()
+			} else if Args.Open {
+				return SioOpen()
+			} else if Args.Parse {
+				return SioParse()
+			} else if Args.Race {
+				return SioRace()
+			}
 		}
 	}
 	color.Red("This function is not available here. Maybe you are in the wrong folder?")

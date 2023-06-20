@@ -132,6 +132,19 @@ func (c *Config) SetFolderName() (err error) {
 			c.FolderName[fmt.Sprintf("szkopul-%v", archive)] = value
 		}
 	}
+	color.Green(`Sio root path (absolute) (current: %v)`, c.FolderName["sio-root"])
+	if value := util.ScanlineTrim(); value != "" {
+		value, err = homedir.Expand(value)
+		if err != nil {
+			color.Red(err.Error())
+			return
+		}
+		if filepath.IsAbs(value) {
+			c.FolderName["sio-root"] = value
+		} else {
+			color.Red("this is not an absolute path (leaving current)")
+		}
+	}
 	return c.save()
 }
 

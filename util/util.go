@@ -185,10 +185,10 @@ func (p *Performance) StartParsing() {
 }
 
 func (p *Performance) StopFetching() {
-	p.Fetching = time.Since(p.fetchingStart)
+	p.Fetching += time.Since(p.fetchingStart)
 }
 func (p *Performance) StopParsing() {
-	p.Parsing = time.Since(p.parsingStart)
+	p.Parsing += time.Since(p.parsingStart)
 }
 
 func (p *Performance) Parse() string {
@@ -200,4 +200,12 @@ func AverageTime(t time.Duration, n int) time.Duration {
 		return 0
 	}
 	return time.Duration(int64(t) / int64(n))
+}
+
+func LimitNumOfChars(s string, n int) string {
+	unicodeSafeString := []rune(s)
+	if len(unicodeSafeString) > n {
+		return string(unicodeSafeString[:n])
+	}
+	return string(unicodeSafeString)
 }

@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/sio_client"
 )
 
 // Parse command
-func CodeforcesParse() (err error) {
+func SioParse() (err error) {
 	cfg := config.Instance
-	cln := codeforces_client.Instance
-	info := Args.CodeforcesInfo
+	cln := sio_client.Instance
+	info := Args.SioInfo
 	source := ""
 	ext := ""
 	if cfg.GenAfterParse {
@@ -23,7 +23,7 @@ func CodeforcesParse() (err error) {
 		}
 		path := cfg.Template[cfg.Default].Path
 		ext = filepath.Ext(path)
-		if source, err = readTemplateSource(path, cln.Handle); err != nil {
+		if source, err = readTemplateSource(path, cln.Username); err != nil {
 			return
 		}
 	}
@@ -48,7 +48,7 @@ func CodeforcesParse() (err error) {
 		return nil
 	}
 	if err = work(); err != nil {
-		if err = loginAgainCodeforces(cln, err); err == nil {
+		if err = loginAgainSio(cln, err); err == nil {
 			err = work()
 		}
 	}

@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
 	"github.com/Arapak/sio-tool/util"
 
@@ -15,6 +16,7 @@ func Config() (err error) {
 	cfg := config.Instance
 	codeforces_cln := codeforces_client.Instance
 	szkopul_cln := szkopul_client.Instance
+	sio_cln := sio_client.Instance
 	color.Cyan("Configure the tool")
 	ansi.Println(`0) login`)
 	ansi.Println(`1) add a template`)
@@ -31,11 +33,14 @@ func Config() (err error) {
 		color.Cyan("Select client")
 		ansi.Println(`0) Codeforces`)
 		ansi.Println(`1) Szkopul`)
-		index = util.ChooseIndex(2)
+		ansi.Println(`2) Sio2 (staszic.waw.pl)`)
+		index = util.ChooseIndex(3)
 		if index == 0 {
 			return codeforces_cln.ConfigLogin()
 		} else if index == 1 {
 			return szkopul_cln.ConfigLogin()
+		} else if index == 2 {
+			return sio_cln.ConfigLogin()
 		}
 	} else if index == 1 {
 		return cfg.AddTemplate()
