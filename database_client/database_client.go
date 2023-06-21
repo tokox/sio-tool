@@ -18,7 +18,7 @@ type Task struct {
 }
 
 func createTableIfNotExist(db *sql.DB) error {
-	sql := `
+	sqlStatement := `
 		CREATE TABLE IF NOT EXISTS tasks (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL,
@@ -27,10 +27,11 @@ func createTableIfNotExist(db *sql.DB) error {
 			shortname TEXT,
 			link TEXT,
 			contest_id TEXT,
-			contest_stage_id TEXT
+			contest_stage_id TEXT,
+			UNIQUE(name,source,path,shortname,link,contest_id,contest_stage_id)
 		);
   `
-	_, err := db.Exec(sql)
+	_, err := db.Exec(sqlStatement)
 	if err != nil {
 		return fmt.Errorf("failed to create table: %v", err)
 	}
@@ -38,23 +39,20 @@ func createTableIfNotExist(db *sql.DB) error {
 }
 
 func AddTask(db *sql.DB, t Task) error {
-	tasks, err := FindTasks(db, t)
-	if err != nil {
-		return err
-	}
-	if len(tasks) > 0 {
-		return fmt.Errorf("this problem already exists in database")
-	}
-
-	sql := `
+	sqlStatement := `
         INSERT INTO tasks(name, source, path, shortname, link, contest_id, contest_stage_id)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `
-	_, err = db.Exec(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
+	_, err := db.Exec(sqlStatement, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
 	if err != nil {
 		if strings.Contains(err.Error(), `no such table: tasks`) {
-			createTableIfNotExist(db)
+			err = createTableIfNotExist(db)
+			if err != nil {
+				return err
+			}
 			return AddTask(db, t)
+		} else if strings.Contains(err.Error(), `constraint failed: UNIQUE constraint failed`) {
+			return fmt.Errorf("this problem already exists in database")
 		}
 		return fmt.Errorf("failed to add task to database: %v", err)
 	}
@@ -63,7 +61,7 @@ func AddTask(db *sql.DB, t Task) error {
 
 func FindTasks(db *sql.DB, t Task) ([]Task, error) {
 	var tasks []Task
-	sql := `
+	sqlStatement := `
 	    SELECT id, name, source, path, shortname, link, contest_id, contest_stage_id
 	    FROM tasks
 	    WHERE LOWER(name) LIKE '%' || LOWER(?) || '%'
@@ -74,10 +72,13 @@ func FindTasks(db *sql.DB, t Task) ([]Task, error) {
 	    AND LOWER(contest_id) LIKE '%' || LOWER(?) || '%'
 	    AND LOWER(contest_stage_id) LIKE '%' || LOWER(?) || '%'
 	`
-	rows, err := db.Query(sql, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
+	rows, err := db.Query(sqlStatement, t.Name, t.Source, t.Path, t.ShortName, t.Link, t.ContestID, t.ContestStageID)
 	if err != nil {
 		if strings.Contains(err.Error(), `no such table: tasks`) {
-			createTableIfNotExist(db)
+			err = createTableIfNotExist(db)
+			if err != nil {
+				return nil, err
+			}
 			return FindTasks(db, t)
 		}
 		return nil, fmt.Errorf("failed to find tasks in database: %v", err)
@@ -97,11 +98,11 @@ func FindTasks(db *sql.DB, t Task) ([]Task, error) {
 }
 
 func DeleteTask(db *sql.DB, id int) error {
-	sql := `
+	sqlStatement := `
         DELETE FROM tasks
         WHERE id = ?
     `
-	_, err := db.Exec(sql, id)
+	_, err := db.Exec(sqlStatement, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete task from database: %v", err)
 	}
