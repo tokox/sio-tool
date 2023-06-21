@@ -112,6 +112,13 @@ func (info *Info) SubmitURL(host string) (string, error) {
 	return fmt.Sprintf(host+"/c/%v/submit/", info.Contest), nil
 }
 
+func (info *Info) StandingsURL(host string) (string, error) {
+	if info.Contest == "" {
+		return "", errors.New(ErrorNeedContest)
+	}
+	return fmt.Sprintf(host+"/c/%v/r/", info.Contest), nil
+}
+
 func (info *Info) OpenURL(host string) (string, error) {
 	if info.Contest != "" {
 		if info.ProblemAlias != "" {

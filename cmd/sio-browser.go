@@ -29,3 +29,11 @@ func SioSid() (err error) {
 	}
 	return openURL(URL)
 }
+
+func SioStand() (err error) {
+	URL, err := Args.SioInfo.StandingsURL(config.Instance.SioHost)
+	if err != nil {
+		return
+	}
+	return openURL(URL)
+}
