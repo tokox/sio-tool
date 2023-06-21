@@ -70,7 +70,7 @@ func (c *CodeforcesClient) Submit(info Info, langID, source string) (err error) 
 
 	msg, err := findMessage(body)
 	if err != nil {
-		return errors.New("Submit failed")
+		return errors.New("submit failed")
 	}
 	if !strings.Contains(msg, "submitted successfully") {
 		return errors.New(msg)

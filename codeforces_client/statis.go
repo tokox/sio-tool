@@ -32,7 +32,7 @@ func findProblems(body []byte) ([]StatisInfo, error) {
 	if tmp == nil {
 		return nil, errors.New("cannot find any problem")
 	}
-	ret := []StatisInfo{}
+	var ret []StatisInfo
 	scr := regexp.MustCompile(`<script[\s\S]*?>[\s\S]*?</script>`)
 	cls := regexp.MustCompile(`class="(.+?)"`)
 	rep := regexp.MustCompile(`<[\s\S]+?>`)
@@ -49,7 +49,7 @@ func findProblems(body []byte) ([]StatisInfo, error) {
 		b = ton.ReplaceAll(b, []byte("<"))
 		b = rmv.ReplaceAll(b, []byte("<"))
 		data := strings.Split(string(b), "<")
-		tot := []string{}
+		var tot []string
 		for j := 0; j < len(data); j++ {
 			s := strings.TrimSpace(data[j])
 			if s != "" {

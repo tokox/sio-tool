@@ -20,13 +20,13 @@ import (
 )
 
 type Submission struct {
-	name       string
-	short_name string
-	id         uint64
-	status     string
-	points     uint64
-	when       string
-	end        bool
+	name      string
+	shortName string
+	id        uint64
+	status    string
+	points    uint64
+	when      string
+	end       bool
 }
 
 func (s *Submission) ParseStatus() string {
@@ -61,7 +61,7 @@ func (s *Submission) ParsePoints() string {
 
 func refreshLine(n int, maxWidth int) {
 	for i := 0; i < n; i++ {
-		ansi.Printf("%v\n", strings.Repeat(" ", maxWidth))
+		_, _ = ansi.Printf("%v\n", strings.Repeat(" ", maxWidth))
 	}
 	ansi.CursorUp(n)
 }
@@ -75,16 +75,16 @@ func (s *Submission) display(first bool, maxWidth *int) {
 	if !first {
 		ansi.CursorUp(6)
 	}
-	ansi.Printf("      #: %v\n", s.ParseID())
-	ansi.Printf("   when: %v\n", s.when)
-	ansi.Printf("   prob: %v\n", s.name)
-	ansi.Printf("  alias: %v\n", s.short_name)
+	_, _ = ansi.Printf("      #: %v\n", s.ParseID())
+	_, _ = ansi.Printf("   when: %v\n", s.when)
+	_, _ = ansi.Printf("   prob: %v\n", s.name)
+	_, _ = ansi.Printf("  alias: %v\n", s.shortName)
 	refreshLine(1, *maxWidth)
-	ansi.Printf(updateLine(fmt.Sprintf(" status: %v\n", s.ParseStatus()), maxWidth))
-	ansi.Printf(" points: %v\n", s.ParsePoints())
+	_, _ = ansi.Printf(updateLine(fmt.Sprintf(" status: %v\n", s.ParseStatus()), maxWidth))
+	_, _ = ansi.Printf(" points: %v\n", s.ParsePoints())
 }
 
-func display(submissions []Submission, problemID string, first bool, maxWidth *int, line bool) {
+func display(submissions []Submission, first bool, maxWidth *int, line bool) {
 	if line {
 		submissions[0].display(first, maxWidth)
 		return
@@ -102,7 +102,7 @@ func display(submissions []Submission, problemID string, first bool, maxWidth *i
 			sub.ParseID(),
 			sub.when,
 			sub.name,
-			sub.short_name,
+			sub.shortName,
 			sub.ParseStatus(),
 			sub.ParsePoints(),
 		})
@@ -118,7 +118,7 @@ func display(submissions []Submission, problemID string, first bool, maxWidth *i
 	for scanner.Scan() {
 		line := scanner.Text()
 		*maxWidth = len(line)
-		ansi.Println(line)
+		_, _ = ansi.Println(line)
 	}
 }
 
@@ -170,8 +170,8 @@ func parseSubmission(body []byte) (ret Submission, err error) {
 		return strings.TrimSpace(doc.Find(sel).Text())
 	}
 	when := strings.TrimSpace(doc.Find("a").First().Text())
-	combined_name := get(fmt.Sprintf("td#submission%v-problem-instance", id))
-	name, short_name := getProblemNames(combined_name)
+	combinedName := get(fmt.Sprintf("td#submission%v-problem-instance", id))
+	name, shortName := getProblemNames(combinedName)
 	points := toInt(get(fmt.Sprintf("td#submission%v-score", id)))
 	status := strings.ToLower(get(fmt.Sprintf("td#submission%v-status", id)))
 	end := true
@@ -192,13 +192,13 @@ func parseSubmission(body []byte) (ret Submission, err error) {
 		status = fmt.Sprintf("${c-rejected}%v", status)
 	}
 	return Submission{
-		id:         toInt(id),
-		name:       name,
-		short_name: short_name,
-		status:     status,
-		points:     points,
-		when:       when,
-		end:        end,
+		id:        toInt(id),
+		name:      name,
+		shortName: shortName,
+		status:    status,
+		points:    points,
+		when:      when,
+		end:       end,
 	}, nil
 }
 
@@ -226,13 +226,13 @@ func (c *SzkopulClient) getSubmissions(URL string, n int) (submissions []Submiss
 		return
 	}
 
-	name, short_name := getProblemNames(getProblemName(body))
+	name, shortName := getProblemNames(getProblemName(body))
 
 	for _, submissionBody := range submissionsBody {
 		if submission, err := parseSubmission(submissionBody); err == nil {
-			if submission.name == "" && submission.short_name == "" {
+			if submission.name == "" && submission.shortName == "" {
 				submission.name = name
-				submission.short_name = short_name
+				submission.shortName = shortName
 			}
 			submissions = append(submissions, submission)
 		}
@@ -259,7 +259,7 @@ func (c *SzkopulClient) WatchSubmission(info Info, n int, line bool) (submission
 		if err != nil {
 			return
 		}
-		display(submissions, info.ProblemID, first, &maxWidth, line)
+		display(submissions, first, &maxWidth, line)
 		first = false
 		endCount := 0
 		for _, submission := range submissions {
@@ -272,7 +272,7 @@ func (c *SzkopulClient) WatchSubmission(info Info, n int, line bool) (submission
 		}
 		sub := time.Since(st)
 		if sub < time.Second {
-			time.Sleep(time.Duration(time.Second - sub))
+			time.Sleep(time.Second - sub)
 		}
 	}
 }

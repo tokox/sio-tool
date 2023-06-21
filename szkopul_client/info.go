@@ -24,8 +24,6 @@ type Info struct {
 }
 
 const ErrorNeedProblemID = "you have to specify the Problem ID"
-const ErrorNeedProblemAlias = "you have to specify the Problem alias"
-const ErrorNeedContestID = "you have to specify the Contest ID"
 const ErrorNeedSubmissionID = "you have to specify the Submission ID"
 const ErrorNeedArchive = "you have to specify the archive"
 

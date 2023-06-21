@@ -8,11 +8,9 @@ import (
 
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/szkopul_client"
-
-	"github.com/docopt/docopt-go"
 )
 
-func parseArgsSzkopul(opts docopt.Opts) error {
+func parseArgsSzkopul() error {
 	cfg := config.Instance
 	cln := szkopul_client.Instance
 	path, err := os.Getwd()
@@ -84,7 +82,6 @@ func parseArgsSzkopul(opts docopt.Opts) error {
 	return nil
 }
 
-const SzkopulProblemRegStr = `\w+`
 const SzkopulProblemSecretKeyRegStr = `[A-Za-z0-9]{24}`
 
 const StrictSzkopulProblemRegStr = `[a-z]{3}\d*`

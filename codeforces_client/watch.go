@@ -15,7 +15,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
-	ansi "github.com/k0kubun/go-ansi"
+	"github.com/k0kubun/go-ansi"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -77,7 +77,7 @@ func (s *Submission) ParseProblemIndex() string {
 
 func refreshLine(n int, maxWidth int) {
 	for i := 0; i < n; i++ {
-		ansi.Printf("%v\n", strings.Repeat(" ", maxWidth))
+		_, _ = ansi.Printf("%v\n", strings.Repeat(" ", maxWidth))
 	}
 	ansi.CursorUp(n)
 }
@@ -91,14 +91,14 @@ func (s *Submission) display(first bool, maxWidth *int) {
 	if !first {
 		ansi.CursorUp(7)
 	}
-	ansi.Printf("      #: %v\n", s.ParseID())
-	ansi.Printf("   when: %v\n", s.when)
-	ansi.Printf("   prob: %v\n", s.name)
-	ansi.Printf("   lang: %v\n", s.lang)
+	_, _ = ansi.Printf("      #: %v\n", s.ParseID())
+	_, _ = ansi.Printf("   when: %v\n", s.when)
+	_, _ = ansi.Printf("   prob: %v\n", s.name)
+	_, _ = ansi.Printf("   lang: %v\n", s.lang)
 	refreshLine(1, *maxWidth)
-	ansi.Printf(updateLine(fmt.Sprintf(" status: %v\n", s.ParseStatus()), maxWidth))
-	ansi.Printf("   time: %v\n", s.ParseTime())
-	ansi.Printf(" memory: %v\n", s.ParseMemory())
+	_, _ = ansi.Printf(updateLine(fmt.Sprintf(" status: %v\n", s.ParseStatus()), maxWidth))
+	_, _ = ansi.Printf("   time: %v\n", s.ParseTime())
+	_, _ = ansi.Printf(" memory: %v\n", s.ParseMemory())
 }
 
 func display(submissions []Submission, problemID string, first bool, maxWidth *int, line bool) {
@@ -139,7 +139,7 @@ func display(submissions []Submission, problemID string, first bool, maxWidth *i
 	for scanner.Scan() {
 		line := scanner.Text()
 		*maxWidth = len(line)
-		ansi.Println(line)
+		_, _ = ansi.Println(line)
 	}
 }
 
@@ -296,7 +296,7 @@ func (c *CodeforcesClient) WatchSubmission(info Info, n int, line bool) (submiss
 		}
 		sub := time.Since(st)
 		if sub < time.Second {
-			time.Sleep(time.Duration(time.Second - sub))
+			time.Sleep(time.Second - sub)
 		}
 	}
 }

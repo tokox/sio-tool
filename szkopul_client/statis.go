@@ -77,7 +77,7 @@ func getIdFromHref(href string) (string, error) {
 	if len(tmp) < 2 {
 		return "", errors.New(ErrorIDNotFound)
 	}
-	return string(tmp[1]), nil
+	return tmp[1], nil
 }
 
 func findProblems(body []byte) (ret []StatisInfo, err error) {
@@ -87,14 +87,14 @@ func findProblems(body []byte) (ret []StatisInfo, err error) {
 	}
 	doc.Find("#problemgroups").First().Find("table").Each(func(_ int, s *goquery.Selection) {
 		id, _ := s.Parent().Attr("id")
-		global_info := getInfoFromId(id)
-		contest_id, err := strconv.Atoi(global_info.Contest)
+		globalInfo := getInfoFromId(id)
+		contestId, err := strconv.Atoi(globalInfo.Contest)
 		if err != nil {
 			return
 		}
-		global_info.Contest = roman.Roman(contest_id)
+		globalInfo.Contest = roman.Roman(contestId)
 		s.Find("tr").Each(func(_ int, tr *goquery.Selection) {
-			info := global_info
+			info := globalInfo
 			linkElement := tr.Find("a").First()
 			info.Alias, info.Name = GetAliasAndName(strings.TrimSpace(linkElement.Text()))
 			href, hrefExists := linkElement.Attr("href")

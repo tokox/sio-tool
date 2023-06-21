@@ -11,8 +11,8 @@ import (
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
-	ansi "github.com/k0kubun/go-ansi"
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/k0kubun/go-ansi"
+	"github.com/mitchellh/go-homedir"
 )
 
 func (c *Config) AddTemplate() (err error) {
@@ -21,7 +21,7 @@ func (c *Config) AddTemplate() (err error) {
 	type kv struct {
 		K, V string
 	}
-	langs := []kv{}
+	var langs []kv
 	for k, v := range codeforces_client.Langs {
 		langs = append(langs, kv{k, v})
 	}
@@ -51,7 +51,7 @@ func (c *Config) AddTemplate() (err error) {
   $%h%$   Hour   (e.g. 08)
   $%m%$   Minute (e.g. 05)
   $%s%$   Second (e.g. 00)`
-	ansi.Println(note)
+	_, _ = ansi.Println(note)
 	color.Cyan(`Template absolute path(e.g. "~/template/io.cpp"): `)
 	path := ""
 	for {
@@ -70,7 +70,7 @@ func (c *Config) AddTemplate() (err error) {
 	tmpSuffix := strings.Fields(util.ScanlineTrim())
 	tmpSuffix = append(tmpSuffix, strings.Replace(filepath.Ext(path), ".", "", 1))
 	suffixMap := map[string]bool{}
-	suffix := []string{}
+	var suffix []string
 	for _, s := range tmpSuffix {
 		if _, ok := suffixMap[s]; !ok {
 			suffixMap[s] = true
@@ -103,7 +103,7 @@ func (c *Config) AddTemplate() (err error) {
   $%full%$   Full name of source file (e.g. "a.cpp")
   $%file%$   Name of source file (Excluding suffix, e.g. "a")
   $%rand%$   Random string with 8 character (including "a-z" "0-9")`
-	ansi.Println(note)
+	_, _ = ansi.Println(note)
 
 	color.Cyan(`Before script (e.g. "g++ $%full%$ -o $%file%$.e -std=c++17"), empty is ok: `)
 	beforeScript := util.ScanlineTrim()
@@ -143,8 +143,8 @@ func (c *Config) RemoveTemplate() (err error) {
 		if i == c.Default {
 			star = color.New(color.FgGreen).Sprint("*")
 		}
-		ansi.Printf(`%v%2v: "%v" "%v"`, star, i, template.Alias, template.Path)
-		ansi.Println()
+		_, _ = ansi.Printf(`%v%2v: "%v" "%v"`, star, i, template.Alias, template.Path)
+		_, _ = ansi.Println()
 	}
 	idx := util.ChooseIndex(len(c.Template))
 	c.Template = append(c.Template[:idx], c.Template[idx+1:]...)
@@ -167,15 +167,15 @@ func (c *Config) SetDefaultTemplate() error {
 		if i == c.Default {
 			star = color.New(color.FgGreen).Sprint("*")
 		}
-		ansi.Printf(`%v%2v: "%v" "%v"`, star, i, template.Alias, template.Path)
-		ansi.Println()
+		_, _ = ansi.Printf(`%v%2v: "%v" "%v"`, star, i, template.Alias, template.Path)
+		_, _ = ansi.Println()
 	}
 	c.Default = util.ChooseIndex(len(c.Template))
 	return c.save()
 }
 
 func (c *Config) TemplateByAlias(alias string) []CodeTemplate {
-	ret := []CodeTemplate{}
+	var ret []CodeTemplate
 	for _, template := range c.Template {
 		if template.Alias == alias {
 			ret = append(ret, template)

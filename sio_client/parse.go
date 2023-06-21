@@ -23,7 +23,6 @@ import (
 )
 
 const ErrorParsingSamples = `parsing samples failed`
-const ErrorServiceUnavailable = `service unavailable`
 const ErrorFetchingProblemSiteFailed = `fetching problem site failed`
 const ErrorParsingProblemsFailed = `parsing some problems failed`
 const ErrorUnrecognizedStatementFormat = `unrecognized statement format`
@@ -314,7 +313,7 @@ func (c *SioClient) parse(contestID, problemAlias, path string, mu *sync.Mutex) 
 	if err != nil {
 		color.Red("Failed (%v). Error: %v", problemAlias, err.Error())
 	} else {
-		ansi.Printf("%v %v\n", color.GreenString("Parsed %v (%v) with %v samples.", name, problemAlias, samples), warns)
+		_, _ = ansi.Printf("%v %v\n", color.GreenString("Parsed %v (%v) with %v samples.", name, problemAlias, samples), warns)
 	}
 	if mu != nil {
 		mu.Unlock()
@@ -373,7 +372,7 @@ func (c *SioClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, paths [
 		paths = append(paths, pathInfo.Path())
 	}
 	contestPath := info.Path()
-	ansi.Printf(color.CyanString("The problem(s) will be saved to %v\n"), color.GreenString(contestPath))
+	_, _ = ansi.Printf(color.CyanString("The problem(s) will be saved to %v\n"), color.GreenString(contestPath))
 
 	var avgPerformance util.Performance
 

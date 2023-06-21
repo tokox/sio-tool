@@ -88,8 +88,11 @@ func Init(path string) {
 	if _, ok := c.DefaultNaming["test_in"]; !ok {
 		c.DefaultNaming["test_in"] = "$%task%$GenTest$%test%$.in"
 	}
-	c.save()
-	var err error
+	err := c.save()
+	if err != nil {
+		color.Red(err.Error())
+		return
+	}
 	c.FolderName["sio-root"], err = homedir.Expand(c.FolderName["sio-root"])
 	if err != nil {
 		color.Red(err.Error())
@@ -136,8 +139,10 @@ func (c *Config) save() (err error) {
 	encoder.SetEscapeHTML(false)
 	err = encoder.Encode(c)
 	if err == nil {
-		os.MkdirAll(filepath.Dir(c.path), os.ModePerm)
-		err = os.WriteFile(c.path, data.Bytes(), 0644)
+		err = os.MkdirAll(filepath.Dir(c.path), os.ModePerm)
+		if err == nil {
+			err = os.WriteFile(c.path, data.Bytes(), 0644)
+		}
 	}
 	if err != nil {
 		color.Red("Cannot save config to %v\n%v", c.path, err.Error())

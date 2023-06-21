@@ -21,6 +21,9 @@ func SioRace() (err error) {
 	if err != nil {
 		return
 	}
-	openURL(URL)
+	err = openURL(URL)
+	if err != nil {
+		return err
+	}
 	return SioParse()
 }

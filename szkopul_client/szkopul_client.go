@@ -68,8 +68,10 @@ func (c *SzkopulClient) load() (err error) {
 func (c *SzkopulClient) save() (err error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err == nil {
-		os.MkdirAll(filepath.Dir(c.path), os.ModePerm)
-		err = os.WriteFile(c.path, data, 0644)
+		err = os.MkdirAll(filepath.Dir(c.path), os.ModePerm)
+		if err == nil {
+			err = os.WriteFile(c.path, data, 0644)
+		}
 	}
 	if err != nil {
 		color.Red("Cannot save session to %v\n%v", c.path, err.Error())

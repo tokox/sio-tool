@@ -92,15 +92,45 @@ func (c *SioClient) Submit(info Info, sourcePath string) (err error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", filepath.Base(sourceFile.Name()))
-	io.Copy(part, sourceFile)
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, sourceFile)
+	if err != nil {
+		return
+	}
 	part, err = writer.CreateFormField("csrfmiddlewaretoken")
-	io.Copy(part, strings.NewReader(csrf))
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, strings.NewReader(csrf))
+	if err != nil {
+		return
+	}
 	part, err = writer.CreateFormField("problem_instance_id")
-	io.Copy(part, strings.NewReader(info.ProblemID))
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, strings.NewReader(info.ProblemID))
+	if err != nil {
+		return
+	}
 	part, err = writer.CreateFormField("user")
-	io.Copy(part, strings.NewReader(c.Username))
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, strings.NewReader(c.Username))
+	if err != nil {
+		return
+	}
 	part, err = writer.CreateFormField("kind")
-	io.Copy(part, strings.NewReader("NORMAL"))
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, strings.NewReader("NORMAL"))
+	if err != nil {
+		return
+	}
 	writer.Close()
 
 	req, err := http.NewRequest("POST", URL, body)

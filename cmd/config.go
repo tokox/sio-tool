@@ -8,38 +8,38 @@ import (
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
-	ansi "github.com/k0kubun/go-ansi"
+	"github.com/k0kubun/go-ansi"
 )
 
 func Config() (err error) {
 	cfg := config.Instance
-	codeforces_cln := codeforces_client.Instance
-	szkopul_cln := szkopul_client.Instance
-	sio_cln := sio_client.Instance
+	codeforcesCln := codeforces_client.Instance
+	szkopulCln := szkopul_client.Instance
+	sioCln := sio_client.Instance
 	color.Cyan("Configure the tool")
-	ansi.Println(`0) login`)
-	ansi.Println(`1) add a template`)
-	ansi.Println(`2) delete a template`)
-	ansi.Println(`3) set default template`)
-	ansi.Println(`4) run "st gen" after "st parse"`)
-	ansi.Println(`5) set host domain`)
-	ansi.Println(`6) set proxy`)
-	ansi.Println(`7) set folders' name`)
-	ansi.Println(`8) set default naming`)
-	ansi.Println(`9) set database path`)
+	_, _ = ansi.Println(`0) login`)
+	_, _ = ansi.Println(`1) add a template`)
+	_, _ = ansi.Println(`2) delete a template`)
+	_, _ = ansi.Println(`3) set default template`)
+	_, _ = ansi.Println(`4) run "st gen" after "st parse"`)
+	_, _ = ansi.Println(`5) set host domain`)
+	_, _ = ansi.Println(`6) set proxy`)
+	_, _ = ansi.Println(`7) set folders' name`)
+	_, _ = ansi.Println(`8) set default naming`)
+	_, _ = ansi.Println(`9) set database path`)
 	index := util.ChooseIndex(10)
 	if index == 0 {
 		color.Cyan("Select client")
-		ansi.Println(`0) Codeforces`)
-		ansi.Println(`1) Szkopul`)
-		ansi.Println(`2) Sio2 (staszic.waw.pl)`)
+		_, _ = ansi.Println(`0) Codeforces`)
+		_, _ = ansi.Println(`1) Szkopul`)
+		_, _ = ansi.Println(`2) Sio2 (staszic.waw.pl)`)
 		index = util.ChooseIndex(3)
 		if index == 0 {
-			return codeforces_cln.ConfigLogin()
+			return codeforcesCln.ConfigLogin()
 		} else if index == 1 {
-			return szkopul_cln.ConfigLogin()
+			return szkopulCln.ConfigLogin()
 		} else if index == 2 {
-			return sio_cln.ConfigLogin()
+			return sioCln.ConfigLogin()
 		}
 	} else if index == 1 {
 		return cfg.AddTemplate()

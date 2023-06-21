@@ -209,17 +209,6 @@ func findSubstring(body []byte, before, after string, group int) (result [][]byt
 	return
 }
 
-func findOneSubstring(body []byte, before, after string) ([]byte, error) {
-	results := findSubstring(body, before, after, 1)
-	if len(results) > 1 {
-		return nil, errors.New("found to many results, expected one")
-	}
-	if len(results) == 0 {
-		return nil, errors.New("found no results")
-	}
-	return results[0], nil
-}
-
 func addNewLine(body []byte) []byte {
 	if !bytes.HasSuffix(body, []byte("\n")) {
 		return append(body, byte('\n'))
@@ -322,7 +311,7 @@ func (c *SzkopulClient) parse(problemID, path string, mu *sync.Mutex) (perf util
 	if err != nil {
 		color.Red("Failed (%v). Error: %v", problemID, err.Error())
 	} else {
-		ansi.Printf("%v %v\n", color.GreenString("Parsed %v (%v) with %v samples.", name, alias, samples), warns)
+		_, _ = ansi.Printf("%v %v\n", color.GreenString("Parsed %v (%v) with %v samples.", name, alias, samples), warns)
 	}
 	if mu != nil {
 		mu.Unlock()
@@ -350,11 +339,11 @@ func (c *SzkopulClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, pat
 	}
 
 	for _, problem := range problems {
-		path_info := Info{RootPath: info.RootPath, ProblemAlias: problem.Alias, ContestID: problem.Contest, StageID: problem.Stage}
-		paths = append(paths, path_info.Path())
+		pathInfo := Info{RootPath: info.RootPath, ProblemAlias: problem.Alias, ContestID: problem.Contest, StageID: problem.Stage}
+		paths = append(paths, pathInfo.Path())
 	}
 	contestPath := info.Path()
-	ansi.Printf(color.CyanString("The problem(s) will be saved to %v\n"), color.GreenString(contestPath))
+	_, _ = ansi.Printf(color.CyanString("The problem(s) will be saved to %v\n"), color.GreenString(contestPath))
 
 	var retry []int
 	var avgPerformance util.Performance

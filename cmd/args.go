@@ -93,15 +93,18 @@ func parseArgs(opts docopt.Opts) error {
 	} else if file, ok := opts["<file>"].(string); ok {
 		Args.File = file
 	}
-	determineClient()
+	err := determineClient()
+	if err != nil {
+		return err
+	}
 	if Args.Codeforces {
-		return parseArgsCodeforces(opts)
+		return parseArgsCodeforces()
 	}
 	if Args.Sio {
-		return parseArgsSio(opts)
+		return parseArgsSio()
 	}
 	if Args.Szkopul {
-		return parseArgsSzkopul(opts)
+		return parseArgsSzkopul()
 	}
 	return nil
 }

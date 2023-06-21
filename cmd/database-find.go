@@ -35,8 +35,8 @@ func DatabaseFind() (err error) {
 	task, selected := getTask(tasks)
 	if selected {
 		task.Display()
-		delete := askForDeletion()
-		if delete {
+		deleteTask := askForDeletion()
+		if deleteTask {
 			err = database_client.DeleteTask(db, task.ID)
 			if err != nil {
 				return err

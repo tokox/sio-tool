@@ -94,20 +94,6 @@ func PostBody(client *http.Client, URL string, data url.Values) ([]byte, error) 
 	return io.ReadAll(resp.Body)
 }
 
-func GetJSONBody(client *http.Client, url string) (map[string]interface{}, error) {
-	resp, err := client.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	decoder := json.NewDecoder(resp.Body)
-	var data map[string]interface{}
-	if err = decoder.Decode(&data); err != nil {
-		return nil, err
-	}
-	return data, nil
-}
-
 func DebugSave(data interface{}) {
 	f, err := os.OpenFile("./tmp/body", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -135,13 +121,6 @@ func DebugSave(data interface{}) {
 func DebugJSON(data interface{}) {
 	text, _ := json.MarshalIndent(data, "", "  ")
 	fmt.Println(string(text))
-}
-
-func IsURL(str string) bool {
-	if _, err := url.ParseRequestURI(str); err == nil {
-		return true
-	}
-	return false
 }
 
 const colorReset = "\033[0m"

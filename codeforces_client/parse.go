@@ -139,7 +139,7 @@ func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, path
 		problems = []string{problemID}
 	}
 	contestPath := info.Path()
-	ansi.Printf(color.CyanString("The problem(s) will be saved to %v\n"), color.GreenString(contestPath))
+	_, _ = ansi.Printf(color.CyanString("The problem(s) will be saved to %v\n"), color.GreenString(contestPath))
 
 	var avgPerformance util.Performance
 
@@ -177,21 +177,23 @@ func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, path
 				warns = color.YellowString("Non standard input output format.")
 			}
 
-			task := database_client.Task{
-				Name:      name,
-				Source:    "cf",
-				Path:      path,
-				ShortName: strings.ToUpper(problemID),
-				Link:      URL,
-				ContestID: info.ContestID,
-			}
-
 			mu.Lock()
-			database_client.AddTask(db, task)
 			if err != nil {
 				color.Red("Failed %v. Error: %v", problemID, err.Error())
 			} else {
-				ansi.Printf("%v %v\n", color.GreenString("Parsed %v. %v with %v samples.", problemID, name, samples), warns)
+				_, _ = ansi.Printf("%v %v\n", color.GreenString("Parsed %v. %v with %v samples.", problemID, name, samples), warns)
+				task := database_client.Task{
+					Name:      name,
+					Source:    "cf",
+					Path:      path,
+					ShortName: strings.ToUpper(problemID),
+					Link:      URL,
+					ContestID: info.ContestID,
+				}
+				err = database_client.AddTask(db, task)
+				if err != nil {
+					color.Red(err.Error())
+				}
 			}
 			mu.Unlock()
 		}(problemID, paths[i])

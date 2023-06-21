@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/fatih/color"
 	"path/filepath"
 
 	"github.com/Arapak/sio-tool/config"
@@ -41,7 +42,10 @@ func SioParse() (err error) {
 		}
 		if cfg.GenAfterParse {
 			for _, path := range paths {
-				GenFiles(source, path, ext)
+				err = GenFiles(source, path, ext)
+				if err != nil {
+					color.Red(err.Error())
+				}
 			}
 		}
 		return nil

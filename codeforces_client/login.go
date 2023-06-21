@@ -30,7 +30,7 @@ func genBfaa() string {
 	return "f1b3f18c715565b589b7823cda7448ce"
 }
 
-var ErrorNotLogged = "Not logged in"
+var ErrorNotLogged = "not logged in"
 
 func findHandle(body []byte) (string, error) {
 	reg := regexp.MustCompile(`handle = "([\s\S]+?)"`)
@@ -209,9 +209,9 @@ func (c *CodeforcesClient) ConfigLogin() (err error) {
 	handleOrEmail := util.ScanlineTrim()
 
 	password := ""
-	if term.IsTerminal(int(syscall.Stdin)) {
+	if term.IsTerminal(syscall.Stdin) {
 		fmt.Printf("password: ")
-		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+		bytePassword, err := term.ReadPassword(syscall.Stdin)
 		if err != nil {
 			fmt.Println()
 			if err.Error() == "EOF" {

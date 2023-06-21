@@ -44,10 +44,25 @@ func (c *SzkopulClient) Submit(info Info, sourcePath string) (err error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", filepath.Base(sourceFile.Name()))
-	io.Copy(part, sourceFile)
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, sourceFile)
+	if err != nil {
+		return
+	}
 	part, err = writer.CreateFormField("csrfmiddlewaretoken")
-	io.Copy(part, strings.NewReader(csrf))
-	writer.Close()
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, strings.NewReader(csrf))
+	if err != nil {
+		return
+	}
+	err = writer.Close()
+	if err != nil {
+		return
+	}
 
 	req, err := http.NewRequest("POST", URL, body)
 	if err != nil {

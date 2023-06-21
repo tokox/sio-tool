@@ -78,7 +78,10 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 		return
 	}
 	result := make(map[string]interface{})
-	json.Unmarshal(body, &result)
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return
+	}
 	version = result["tag_name"].(string)
 	note = result["body"].(string)
 	tm, _ := time.Parse("2006-01-02T15:04:05Z", result["published_at"].(string))

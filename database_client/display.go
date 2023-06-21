@@ -21,14 +21,14 @@ const maxAliasLength = 8
 const maxStageLength = 5
 
 func (t *Task) Display() {
-	ansi.Printf("       #: %v\n", t.ParseID())
-	ansi.Printf("    name: %v\n", t.Name)
-	ansi.Printf("  source: %v\n", t.Source)
-	ansi.Printf("    path: %v\n", t.Path)
-	ansi.Printf("   alias: %v\n", t.ShortName)
-	ansi.Printf("    link: %v\n", t.Link)
-	ansi.Printf(" contest: %v\n", t.ContestID)
-	ansi.Printf("   stage: %v\n", t.ContestStageID)
+	_, _ = ansi.Printf("       #: %v\n", t.ParseID())
+	_, _ = ansi.Printf("    name: %v\n", t.Name)
+	_, _ = ansi.Printf("  source: %v\n", t.Source)
+	_, _ = ansi.Printf("    path: %v\n", t.Path)
+	_, _ = ansi.Printf("   alias: %v\n", t.ShortName)
+	_, _ = ansi.Printf("    link: %v\n", t.Link)
+	_, _ = ansi.Printf(" contest: %v\n", t.ContestID)
+	_, _ = ansi.Printf("   stage: %v\n", t.ContestStageID)
 }
 
 func Display(tasks []Task) {
@@ -54,6 +54,6 @@ func Display(tasks []Task) {
 	scanner := bufio.NewScanner(io.Reader(&buf))
 	for scanner.Scan() {
 		line := scanner.Text()
-		ansi.Println(line)
+		_, _ = ansi.Println(line)
 	}
 }

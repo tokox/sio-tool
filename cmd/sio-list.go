@@ -8,7 +8,7 @@ import (
 
 	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/util"
-	ansi "github.com/k0kubun/go-ansi"
+	"github.com/k0kubun/go-ansi"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -46,7 +46,7 @@ func SioList() (err error) {
 	scanner := bufio.NewScanner(io.Reader(&buf))
 	for i := -2; scanner.Scan(); i++ {
 		line := scanner.Text()
-		ansi.Println(line)
+		_, _ = ansi.Println(line)
 	}
 	return
 }

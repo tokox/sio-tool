@@ -7,7 +7,7 @@ import (
 	"io"
 
 	"github.com/Arapak/sio-tool/szkopul_client"
-	ansi "github.com/k0kubun/go-ansi"
+	"github.com/k0kubun/go-ansi"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -46,7 +46,7 @@ func SzkopulList() (err error) {
 	scanner := bufio.NewScanner(io.Reader(&buf))
 	for i := -2; scanner.Scan(); i++ {
 		line := scanner.Text()
-		ansi.Println(line)
+		_, _ = ansi.Println(line)
 	}
 	return
 }

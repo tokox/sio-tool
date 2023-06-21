@@ -39,7 +39,7 @@ func getLinkToProblemFromDatabase(task database_client.Task) (link string, err e
 	return
 }
 
-func getLinkToProblemFromStatis(info szkopul_client.Info) (link string, err error) {
+func getLinkToProblemFromStatis() (link string, err error) {
 	cln := szkopul_client.Instance
 	var problems []szkopul_client.StatisInfo
 	var perf util.Performance
@@ -70,7 +70,7 @@ func SzkopulOpen() (err error) {
 			}
 			if err.Error() == ErrorNoProblemFound || err.Error() == ErrorMultipleProblemsFound {
 				color.Red(err.Error())
-				URL, err = getLinkToProblemFromStatis(Args.SzkopulInfo)
+				URL, err = getLinkToProblemFromStatis()
 				if err == nil {
 					return openURL(URL)
 				}

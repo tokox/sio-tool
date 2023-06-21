@@ -21,7 +21,13 @@ func CodeforcesRace() (err error) {
 	if err != nil {
 		return
 	}
-	openURL(URL)
-	openURL(URL + "/problems")
+	err = openURL(URL)
+	if err != nil {
+		return err
+	}
+	err = openURL(URL + "/problems")
+	if err != nil {
+		return err
+	}
 	return CodeforcesParse()
 }

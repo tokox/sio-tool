@@ -41,7 +41,7 @@ func findProblems(body []byte) (ret []StatisInfo, err error) {
 	if err != nil {
 		return
 	}
-	var round string = "none"
+	var round = "none"
 	doc.Find("table tbody").First().Find("tr").Each(func(_ int, s *goquery.Selection) {
 		class, _ := s.Attr("class")
 		if strings.Contains(class, "problemlist-subheader") {

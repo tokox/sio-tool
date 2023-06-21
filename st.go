@@ -13,10 +13,10 @@ import (
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
-	ansi "github.com/k0kubun/go-ansi"
+	"github.com/k0kubun/go-ansi"
 	"github.com/mitchellh/go-homedir"
 
-	docopt "github.com/docopt/docopt-go"
+	"github.com/docopt/docopt-go"
 )
 
 const version = "$CI_VERSION"

@@ -8,11 +8,9 @@ import (
 
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/sio_client"
-
-	"github.com/docopt/docopt-go"
 )
 
-func parseArgsSio(opts docopt.Opts) error {
+func parseArgsSio() error {
 	cfg := config.Instance
 	cln := sio_client.Instance
 	path, err := os.Getwd()

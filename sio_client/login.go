@@ -24,18 +24,6 @@ import (
 
 var ErrorNotLogged = "not logged in"
 
-func AesDecrypt(cipherIn []byte, key, iv []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-	blockSize := block.BlockSize()
-	blockMode := cipher.NewCBCDecrypter(block, iv[:blockSize])
-	origData := make([]byte, len(cipherIn))
-	blockMode.CryptBlocks(origData, cipherIn)
-	return origData, nil
-}
-
 func findUsername(body []byte) (username string, err error) {
 	reg := regexp.MustCompile(`<strong class="username" id="username">([\s\S]+?)</strong>`)
 	tmp := reg.FindSubmatch(body)
@@ -180,9 +168,9 @@ func (c *SioClient) ConfigLogin() (err error) {
 	username := util.ScanlineTrim()
 
 	password := ""
-	if term.IsTerminal(int(syscall.Stdin)) {
+	if term.IsTerminal(syscall.Stdin) {
 		fmt.Printf("password: ")
-		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+		bytePassword, err := term.ReadPassword(syscall.Stdin)
 		if err != nil {
 			fmt.Println()
 			if err.Error() == "EOF" {

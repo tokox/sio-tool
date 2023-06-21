@@ -10,7 +10,7 @@ SIO Tool is a command-line interface tool for [Codeforces](https://codeforces.co
 
 It's fast, small, cross-platform and powerful.
 
-[Installation](##installation) | [Usage](##usage) | [FAQ](##faq)
+[Installation](#installation) | [Usage](#usage) | [FAQ](#faq)
 
 ## Features
 
@@ -23,7 +23,7 @@ It's fast, small, cross-platform and powerful.
 -   Generate codes from the specified template (including timestamp, author, etc.)
 -   List problems' stats of one contest.
 -   Use default web browser to open problems' pages, standings' page, etc.
--   Setup a network proxy. Setup a mirror host.
+-   Set up a network proxy. Set up a mirror host.
 -   Colorful CLI.
 
 Pull requests are always welcome.
@@ -309,7 +309,7 @@ st() {
 
 ## FAQ
 
-### I double click the program but it doesn't work
+### I double-click the program but it doesn't work
 
 SIO Tool is a command-line tool. You should run it in terminal.
 

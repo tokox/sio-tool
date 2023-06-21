@@ -171,7 +171,8 @@ func StressTest() (err error) {
 					}
 					workerError = true
 					fmt.Print(verdict.message)
-					os.WriteFile(strings.ReplaceAll(testInFormat, "$%test%$", testID), genProcessInfo.output, 0644)
+					err = os.WriteFile(strings.ReplaceAll(testInFormat, "$%test%$", testID), genProcessInfo.output, 0644)
+					color.Red(err.Error())
 					mu.Unlock()
 					return
 				}

@@ -33,7 +33,6 @@ func findMessage(body []byte) (string, error) {
 }
 
 const ErrorSkip = "exists, skip"
-const ErrorTooManyRequest = "too many requests"
 
 func (c *CodeforcesClient) PullCode(URL, path, ext string, rename bool) (filename string, err error) {
 	filename = path + ext
@@ -85,7 +84,7 @@ func (c *CodeforcesClient) Pull(info Info, rootPath string, ac bool) (err error)
 		return
 	}
 
-	used := []Submission{}
+	var used []Submission
 
 	for _, submission := range submissions {
 		problemID := strings.ToLower(strings.Split(submission.name, " ")[0])

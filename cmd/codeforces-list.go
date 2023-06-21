@@ -10,7 +10,7 @@ import (
 	"github.com/Arapak/sio-tool/codeforces_client"
 
 	"github.com/fatih/color"
-	ansi "github.com/k0kubun/go-ansi"
+	"github.com/k0kubun/go-ansi"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -56,7 +56,10 @@ func CodeforcesList() (err error) {
 				line = color.New(color.BgRed).Sprint(line)
 			}
 		}
-		ansi.Println(line)
+		_, err := ansi.Println(line)
+		if err != nil {
+			return err
+		}
 	}
 	return
 }

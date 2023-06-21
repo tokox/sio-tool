@@ -8,11 +8,9 @@ import (
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
-
-	"github.com/docopt/docopt-go"
 )
 
-func parseArgsCodeforces(opts docopt.Opts) error {
+func parseArgsCodeforces() error {
 	cfg := config.Instance
 	cln := codeforces_client.Instance
 	path, err := os.Getwd()
