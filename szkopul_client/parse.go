@@ -340,6 +340,11 @@ func (c *SzkopulClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, pat
 	}
 	fmt.Printf("Statis: (%v)\n", statisPerf.Parse())
 
+	if len(problems) == 0 {
+		color.Red("no problems to parse")
+		return
+	}
+
 	if len(problems) >= 10 && !util.Confirm(fmt.Sprintf("Are you sure you want to parse %v problems? (Y/n): ", len(problems))) {
 		return
 	}

@@ -359,6 +359,11 @@ func (c *SioClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, paths [
 		}
 	}
 
+	if len(problems) == 0 {
+		color.Red("no problems to parse")
+		return
+	}
+
 	if len(problems) >= 10 && !util.Confirm(fmt.Sprintf("Are you sure you want to parse %v problems? (Y/n): ", len(problems))) {
 		return
 	}
