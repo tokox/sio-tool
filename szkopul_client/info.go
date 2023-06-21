@@ -44,12 +44,12 @@ func (info *Info) Hint() string {
 	text := ""
 	if info.ContestID != "" {
 		text = "contest " + info.ContestID
-		if info.StageID != "" {
-			text = text + ", stage " + info.StageID
-			if info.ProblemAlias != "" {
-				text = text + ", problem " + strings.ToLower(info.ProblemAlias)
-			}
-		}
+	}
+	if info.StageID != "" {
+		text = text + ", stage " + info.StageID
+	}
+	if info.ProblemAlias != "" {
+		text = text + ", problem " + strings.ToLower(info.ProblemAlias)
 	}
 	if info.SubmissionID != "" {
 		if text != "" {

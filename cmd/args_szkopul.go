@@ -63,19 +63,20 @@ func parseArgsSzkopul(opts docopt.Opts) error {
 			info.SubmissionID = value
 		}
 	}
-	if info.Archive == "" {
-		parsed := parsePathSzkopul(path)
-		if value, ok := parsed["archive"]; ok {
-			info.Archive = value
-		}
-		if value, ok := parsed["contestID"]; ok && info.ContestID == "" {
+	parsedPath := parsePathSzkopul(path)
+	if info.ContestID == "" {
+		if value, ok := parsedPath["contestID"]; ok {
 			info.ContestID = value
 		}
-		if value, ok := parsed["stageID"]; ok && info.StageID == "" {
-			info.StageID = value
-		}
-		if value, ok := parsed["problemAlias"]; ok && info.ProblemAlias == "" {
-			info.ProblemAlias = value
+		if info.StageID == "" {
+			if value, ok := parsedPath["stageID"]; ok {
+				info.StageID = value
+			}
+			if info.ProblemAlias == "" {
+				if value, ok := parsedPath["problemAlias"]; ok {
+					info.ProblemAlias = value
+				}
+			}
 		}
 	}
 	info.RootPath = filepath.Join(cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("szkopul-%v", info.Archive)])
