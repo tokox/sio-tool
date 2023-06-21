@@ -209,9 +209,9 @@ func (c *CodeforcesClient) ConfigLogin() (err error) {
 	handleOrEmail := util.ScanlineTrim()
 
 	password := ""
-	if term.IsTerminal(syscall.Stdin) {
+	if term.IsTerminal(int(syscall.Stdin)) {
 		fmt.Printf("password: ")
-		bytePassword, err := term.ReadPassword(syscall.Stdin)
+		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 		if err != nil {
 			fmt.Println()
 			if err.Error() == "EOF" {
