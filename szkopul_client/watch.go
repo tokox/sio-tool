@@ -176,17 +176,17 @@ func parseSubmission(body []byte) (ret Submission, err error) {
 	combined_name := get(fmt.Sprintf("td#submission%v-problem-instance", id))
 	name, short_name := getProblemNames(combined_name)
 	points := toInt(get(fmt.Sprintf("td#submission%v-score", id)))
-	status := get(fmt.Sprintf("td#submission%v-status", id))
+	status := strings.ToLower(get(fmt.Sprintf("td#submission%v-status", id)))
 	end := true
-	if status == "Oczekuje" || status == "PENDING" {
+	if strings.Contains(strings.ToLower(status), "oczekuje") || strings.Contains(strings.ToLower(status), "pending") {
 		end = false
 	}
-	if strings.Contains(status, "OK") {
+	if strings.Contains(strings.ToLower(status), "ok") {
 		status = fmt.Sprintf("${c-accepted}%v", status)
 		if points == inf {
 			end = false
 		}
-	} else if strings.Contains(status, "błąd") {
+	} else if strings.Contains(strings.ToLower(status), "błąd") || strings.Contains(strings.ToLower(status), "failed") {
 		status = fmt.Sprintf("${c-failed}%v", status)
 		if points == inf {
 			end = false

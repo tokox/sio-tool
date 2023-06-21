@@ -17,7 +17,7 @@ import (
 const ErrorNoProblemFound = "no problem found matching criteria"
 const ErrorMultipleProblemsFound = "more than one problem found matching criteria"
 
-func getLinkToProblemFromDatabase(info szkopul_client.Info) (link string, err error) {
+func getLinkToProblemFromDatabase(task database_client.Task) (link string, err error) {
 	cfg := config.Instance
 	db, err := sql.Open("sqlite", cfg.DbPath)
 	if err != nil {
@@ -25,7 +25,6 @@ func getLinkToProblemFromDatabase(info szkopul_client.Info) (link string, err er
 		return
 	}
 	defer db.Close()
-	task := database_client.Task{ShortName: info.ProblemAlias, Source: info.Archive, ContestID: info.ContestID, ContestStageID: info.StageID}
 	tasks, err := database_client.FindTasks(db, task)
 	if err != nil {
 		return
@@ -66,7 +65,7 @@ func SzkopulOpen() (err error) {
 	if Args.SzkopulInfo.ProblemID == "" && Args.SzkopulInfo.ProblemAlias != "" {
 		if util.Confirm("You didn't specify the problemID, but have given a problem alias, do you want to search for the problem with given criteria (Y/n):") {
 			color.Green("Searching in database...")
-			URL, err = getLinkToProblemFromDatabase(Args.SzkopulInfo)
+			URL, err = getLinkToProblemFromDatabase(Args.SzkopulInfo.ToTask())
 			if err == nil {
 				return openURL(URL)
 			}

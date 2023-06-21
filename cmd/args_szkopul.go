@@ -78,7 +78,6 @@ func parseArgsSzkopul(opts docopt.Opts) error {
 			info.ProblemAlias = value
 		}
 	}
-	// util.DebugJSON(info)
 	info.RootPath = filepath.Join(cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("szkopul-%v", info.Archive)])
 	Args.SzkopulInfo = info
 	return nil
