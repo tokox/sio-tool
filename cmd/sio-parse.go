@@ -10,7 +10,6 @@ import (
 	"github.com/Arapak/sio-tool/sio_client"
 )
 
-// Parse command
 func SioParse() (err error) {
 	cfg := config.Instance
 	cln := sio_client.Instance

@@ -12,7 +12,6 @@ import (
 	"github.com/docopt/docopt-go"
 )
 
-// ParsedArgs parsed arguments
 type ParsedArgs struct {
 	CodeforcesInfo codeforces_client.Info
 	SzkopulInfo    szkopul_client.Info
@@ -58,7 +57,6 @@ type ParsedArgs struct {
 	Sio            bool
 }
 
-// Args global variable
 var Args *ParsedArgs
 
 func SubPath(parent, sub string) bool {

@@ -7,7 +7,6 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-// Open command
 func SioOpen() (err error) {
 	var URL string
 	URL, err = Args.SioInfo.OpenURL(config.Instance.SioHost)
@@ -17,7 +16,6 @@ func SioOpen() (err error) {
 	return openURL(URL)
 }
 
-// Sid command
 func SioSid() (err error) {
 	info := Args.SioInfo
 	if info.SubmissionID == "" && sio_client.Instance.LastSubmission != nil {

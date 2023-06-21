@@ -57,7 +57,6 @@ func GenFiles(source, currentPath, ext string) error {
 	return err
 }
 
-// Gen command
 func Gen() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {

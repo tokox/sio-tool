@@ -7,7 +7,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// Submit command
 func SzkopulSubmit() (err error) {
 	cln := szkopul_client.Instance
 	cfg := config.Instance
@@ -17,7 +16,6 @@ func SzkopulSubmit() (err error) {
 		return
 	}
 
-	// lang := cfg.Template[index].Lang
 	if err = cln.Submit(info, filename); err != nil {
 		if err = loginAgainSzkopul(cln, err); err == nil {
 			err = cln.Submit(info, filename)

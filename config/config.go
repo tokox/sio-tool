@@ -15,7 +15,6 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-// CodeTemplate config parse code template
 type CodeTemplate struct {
 	Alias        string   `json:"alias"`
 	Lang         string   `json:"lang"`
@@ -26,7 +25,6 @@ type CodeTemplate struct {
 	AfterScript  string   `json:"after_script"`
 }
 
-// Config load and save configuration
 type Config struct {
 	Template       []CodeTemplate    `json:"template"`
 	Default        int               `json:"default"`
@@ -41,10 +39,8 @@ type Config struct {
 	path           string
 }
 
-// Instance global configuration
 var Instance *Config
 
-// Init initialize
 func Init(path string) {
 	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioHost: "https://sio2.staszic.waw.pl", DbPath: "~/.st/tasks.db", Proxy: ""}
 	if err := c.load(); err != nil {
@@ -113,7 +109,6 @@ func Init(path string) {
 	Instance = c
 }
 
-// load from path
 func (c *Config) load() (err error) {
 	file, err := os.Open(c.path)
 	if err != nil {
@@ -134,7 +129,6 @@ func (c *Config) load() (err error) {
 	return nil
 }
 
-// save file to path
 func (c *Config) save() (err error) {
 	var data bytes.Buffer
 	encoder := json.NewEncoder(&data)

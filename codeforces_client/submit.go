@@ -21,7 +21,6 @@ func findErrorMessage(body []byte) (string, error) {
 	return string(tmp[1]), nil
 }
 
-// Submit submit (block while pending)
 func (c *CodeforcesClient) Submit(info Info, langID, source string) (err error) {
 	color.Cyan("Submit " + info.Hint())
 

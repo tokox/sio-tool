@@ -10,7 +10,6 @@ import (
 	"github.com/Arapak/sio-tool/szkopul_client"
 )
 
-// Parse command
 func SzkopulParse() (err error) {
 	cfg := config.Instance
 	cln := szkopul_client.Instance

@@ -14,7 +14,6 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// List command
 func CodeforcesList() (err error) {
 	cln := codeforces_client.Instance
 	info := Args.CodeforcesInfo

@@ -17,7 +17,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// Stress test command
 func StressTest() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {

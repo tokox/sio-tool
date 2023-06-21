@@ -4,7 +4,6 @@ import (
 	"github.com/Arapak/sio-tool/szkopul_client"
 )
 
-// Watch command
 func SzkopulWatch() (err error) {
 	cln := szkopul_client.Instance
 	info := Args.SzkopulInfo

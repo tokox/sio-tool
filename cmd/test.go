@@ -164,7 +164,6 @@ func ExtractTaskName(file string) (task string) {
 	return
 }
 
-// Test command
 func Test() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {

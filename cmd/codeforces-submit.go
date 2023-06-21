@@ -9,7 +9,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// Submit command
 func CodeforcesSubmit() (err error) {
 	cln := codeforces_client.Instance
 	cfg := config.Instance

@@ -59,7 +59,6 @@ func getLinkToProblemFromStatis(info szkopul_client.Info) (link string, err erro
 	return
 }
 
-// Open command
 func SzkopulOpen() (err error) {
 	var URL string
 	if Args.SzkopulInfo.ProblemID == "" && Args.SzkopulInfo.ProblemAlias != "" {
@@ -86,7 +85,6 @@ func SzkopulOpen() (err error) {
 	return openURL(URL)
 }
 
-// Sid command
 func SzkopulSid() (err error) {
 	info := Args.SzkopulInfo
 	if info.SubmissionID == "" && szkopul_client.Instance.LastSubmission != nil {

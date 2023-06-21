@@ -95,13 +95,11 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 	return
 }
 
-// WriteCounter progress counter
 type WriteCounter struct {
 	Count, Total uint
 	last         uint
 }
 
-// Print print progress
 func (w *WriteCounter) Print() {
 	fmt.Printf("\rProgress: %v/%v KB  Speed: %v KB/s  Remain: %.0f s           ",
 		w.Count/1024, w.Total/1024, (w.Count-w.last)/1024, float64(w.Total-w.Count)/float64(w.Count-w.last))
@@ -191,7 +189,6 @@ func upgrade(url, exePath string, size uint) (err error) {
 	return
 }
 
-// Upgrade itself
 func Upgrade() (err error) {
 	color.Cyan("Checking version")
 	latest, note, ptime, url, size, err := getLatest()

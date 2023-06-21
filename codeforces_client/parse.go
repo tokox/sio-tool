@@ -24,7 +24,6 @@ func findSample(body []byte) (input [][]byte, output [][]byte, err error) {
 		// For each item found, get the title
 		inputCase := ""
 		s.Find("pre").Contents().Each(func(_ int, s1 *goquery.Selection) {
-			//fmt.Println(s1.Text())
 			inputCase += s1.Text() + "\n"
 		})
 		for strings.HasSuffix(inputCase, "\n\n") {
@@ -36,7 +35,6 @@ func findSample(body []byte) (input [][]byte, output [][]byte, err error) {
 		// For each item found, get the title
 		outputCase := ""
 		s.Find("pre").Contents().Each(func(_ int, s1 *goquery.Selection) {
-			//fmt.Println(s1.Text())
 			outputCase += s1.Text() + "\n"
 		})
 		for strings.HasSuffix(outputCase, "\n\n") {
@@ -55,7 +53,6 @@ func findName(body []byte) (name string, err error) {
 	return
 }
 
-// ParseProblem parse problem to path. mu can be nil
 func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name string, samples int, standardIO bool, perf util.Performance, err error) {
 	perf.StartFetching()
 
@@ -116,7 +113,6 @@ func (c *CodeforcesClient) ParseProblem(URL, path string, mu *sync.Mutex) (name 
 	return name, len(input), standardIO, perf, nil
 }
 
-// Parse parse
 func (c *CodeforcesClient) Parse(info Info, db *sql.DB) (problems []string, paths []string, err error) {
 	color.Cyan("Parse " + info.Hint())
 

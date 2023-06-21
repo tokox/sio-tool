@@ -8,7 +8,6 @@ import (
 	"github.com/Arapak/sio-tool/util"
 )
 
-// StatisInfo statis information
 type StatisInfo struct {
 	ID     string
 	Name   string
@@ -72,7 +71,6 @@ func findProblems(body []byte) ([]StatisInfo, error) {
 	return ret, nil
 }
 
-// Statis get statis
 func (c *CodeforcesClient) Statis(info Info) (problems []StatisInfo, perf util.Performance, err error) {
 	URL, err := info.ProblemSetURL(c.host)
 	if err != nil {

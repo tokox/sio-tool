@@ -17,10 +17,8 @@ import (
 	"github.com/fatih/color"
 )
 
-// CHA map
 const CHA = "abcdefghijklmnopqrstuvwxyz0123456789"
 
-// RandString n is the length. a-z 0-9
 func RandString(n int) string {
 	b := make([]byte, n)
 	for i := range b {
@@ -29,7 +27,6 @@ func RandString(n int) string {
 	return string(b)
 }
 
-// Scanline scan line
 func Scanline() string {
 	scanner := bufio.NewScanner(os.Stdin)
 	if scanner.Scan() {
@@ -40,12 +37,10 @@ func Scanline() string {
 	return ""
 }
 
-// ScanlineTrim scan line and trim
 func ScanlineTrim() string {
 	return strings.TrimSpace(Scanline())
 }
 
-// ChooseIndex return valid index in [0, maxLen)
 func ChooseIndex(maxLen int) int {
 	color.Cyan("Please choose one (index): ")
 	for {
@@ -67,7 +62,6 @@ func Confirm(note string) bool {
 	return false
 }
 
-// YesOrNo must choose one
 func YesOrNo(note string) bool {
 	color.Cyan(note)
 	for {
@@ -82,7 +76,6 @@ func YesOrNo(note string) bool {
 	}
 }
 
-// GetBody read body
 func GetBody(client *http.Client, URL string) ([]byte, error) {
 	resp, err := client.Get(URL)
 	if err != nil {
@@ -92,7 +85,6 @@ func GetBody(client *http.Client, URL string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-// PostBody read post body
 func PostBody(client *http.Client, URL string, data url.Values) ([]byte, error) {
 	resp, err := client.PostForm(URL, data)
 	if err != nil {
@@ -102,7 +94,6 @@ func PostBody(client *http.Client, URL string, data url.Values) ([]byte, error) 
 	return io.ReadAll(resp.Body)
 }
 
-// GetJSONBody read json body
 func GetJSONBody(client *http.Client, url string) (map[string]interface{}, error) {
 	resp, err := client.Get(url)
 	if err != nil {
@@ -117,7 +108,6 @@ func GetJSONBody(client *http.Client, url string) (map[string]interface{}, error
 	return data, nil
 }
 
-// DebugSave write data to temperary file
 func DebugSave(data interface{}) {
 	f, err := os.OpenFile("./tmp/body", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -142,13 +132,11 @@ func DebugSave(data interface{}) {
 	}
 }
 
-// DebugJSON debug
 func DebugJSON(data interface{}) {
 	text, _ := json.MarshalIndent(data, "", "  ")
 	fmt.Println(string(text))
 }
 
-// IsURL returns true if a given string is an url
 func IsURL(str string) bool {
 	if _, err := url.ParseRequestURI(str); err == nil {
 		return true

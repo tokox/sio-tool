@@ -11,7 +11,6 @@ import (
 	ansi "github.com/k0kubun/go-ansi"
 )
 
-// Config command
 func Config() (err error) {
 	cfg := config.Instance
 	codeforces_cln := codeforces_client.Instance

@@ -49,7 +49,6 @@ func Init(path, host, proxy string) {
 	Instance = c
 }
 
-// load from path
 func (c *SioClient) load() (err error) {
 	file, err := os.Open(c.path)
 	if err != nil {
@@ -66,7 +65,6 @@ func (c *SioClient) load() (err error) {
 	return json.Unmarshal(bytes, c)
 }
 
-// save file to path
 func (c *SioClient) save() (err error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err == nil {

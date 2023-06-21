@@ -5,7 +5,6 @@ import (
 	"github.com/Arapak/sio-tool/config"
 )
 
-// Race command
 func CodeforcesRace() (err error) {
 	cfg := config.Instance
 	cln := codeforces_client.Instance

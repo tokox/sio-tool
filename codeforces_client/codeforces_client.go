@@ -13,7 +13,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// CodeforcesClient codeforces client
 type CodeforcesClient struct {
 	Jar            *cookiejar.Jar `json:"cookies"`
 	Handle         string         `json:"handle"`
@@ -28,10 +27,8 @@ type CodeforcesClient struct {
 	client         *http.Client
 }
 
-// Instance global client
 var Instance *CodeforcesClient
 
-// Init initialize
 func Init(path, host, proxy string) {
 	jar, _ := cookiejar.New(nil)
 	c := &CodeforcesClient{Jar: jar, LastSubmission: nil, path: path, host: host, proxy: proxy, client: nil}
@@ -56,7 +53,6 @@ func Init(path, host, proxy string) {
 	Instance = c
 }
 
-// load from path
 func (c *CodeforcesClient) load() (err error) {
 	file, err := os.Open(c.path)
 	if err != nil {
@@ -73,7 +69,6 @@ func (c *CodeforcesClient) load() (err error) {
 	return json.Unmarshal(bytes, c)
 }
 
-// save file to path
 func (c *CodeforcesClient) save() (err error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err == nil {

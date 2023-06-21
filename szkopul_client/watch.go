@@ -19,7 +19,6 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// Submission submit state
 type Submission struct {
 	name       string
 	short_name string
@@ -41,14 +40,12 @@ func (s *Submission) ParseStatus() string {
 	return status
 }
 
-// ParseID formatter
 func (s *Submission) ParseID() string {
 	return fmt.Sprintf("%v", s.id)
 }
 
 const inf = 1000000009
 
-// ParsePoints formatter
 func (s *Submission) ParsePoints() string {
 	if s.points == inf {
 		return ""
@@ -248,7 +245,6 @@ func (c *SzkopulClient) getSubmissions(URL string, n int) (submissions []Submiss
 	return
 }
 
-// WatchSubmission n is the number of submissions
 func (c *SzkopulClient) WatchSubmission(info Info, n int, line bool) (submissions []Submission, err error) {
 	URL := info.MySubmissionURL(c.host)
 	if err != nil {

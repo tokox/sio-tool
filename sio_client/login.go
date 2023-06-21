@@ -22,7 +22,6 @@ import (
 	"golang.org/x/term"
 )
 
-// ErrorNotLogged not logged in
 var ErrorNotLogged = "not logged in"
 
 func AesDecrypt(cipherIn []byte, key, iv []byte) ([]byte, error) {

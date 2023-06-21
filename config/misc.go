@@ -14,7 +14,6 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-// SetGenAfterParse set it yes or no
 func (c *Config) SetGenAfterParse() (err error) {
 	c.GenAfterParse = util.YesOrNo(`Run "st gen" after "st parse" (y/n)? `)
 	return c.save()
@@ -39,7 +38,6 @@ func formatProxy(proxy string) (string, error) {
 	return proxy, nil
 }
 
-// SetHost set host for Codeforces
 func (c *Config) SetHost() (err error) {
 	host, err := formatHost(c.CodeforcesHost)
 	if err != nil {
@@ -60,7 +58,6 @@ func (c *Config) SetHost() (err error) {
 	return c.save()
 }
 
-// SetProxy set proxy for codeforces client
 func (c *Config) SetProxy() (err error) {
 	proxy, err := formatProxy(c.Proxy)
 	if err != nil {
@@ -90,7 +87,6 @@ func (c *Config) SetProxy() (err error) {
 	return c.save()
 }
 
-// SetFolderName set folder name
 func (c *Config) SetFolderName() (err error) {
 	color.Cyan(`Set folders' name`)
 	color.Cyan(`Enter empty line if you don't want to change the value`)

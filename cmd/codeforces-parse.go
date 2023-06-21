@@ -10,7 +10,6 @@ import (
 	"github.com/Arapak/sio-tool/config"
 )
 
-// Parse command
 func CodeforcesParse() (err error) {
 	cfg := config.Instance
 	cln := codeforces_client.Instance

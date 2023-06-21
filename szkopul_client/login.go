@@ -22,7 +22,6 @@ import (
 	"golang.org/x/term"
 )
 
-// ErrorNotLogged not logged in
 var ErrorNotLogged = "Not logged in"
 
 func AesDecrypt(cipherIn []byte, key, iv []byte) ([]byte, error) {
@@ -63,7 +62,6 @@ func (c *SzkopulClient) GetCsrf(URL string) (csrf string, err error) {
 	return findCsrf(body)
 }
 
-// Login codeforces with handler and password
 func (c *SzkopulClient) Login() (err error) {
 	color.Cyan("Login...\n")
 
@@ -165,7 +163,6 @@ func decrypt(handle, password string) (ret string, err error) {
 	return
 }
 
-// DecryptPassword get real password
 func (c *SzkopulClient) DecryptPassword() (string, error) {
 	if len(c.Password) == 0 || len(c.Username) == 0 {
 		return "", errors.New("you have to configure your username and password by `st config`")
@@ -173,7 +170,6 @@ func (c *SzkopulClient) DecryptPassword() (string, error) {
 	return decrypt(c.Username, c.Password)
 }
 
-// ConfigLogin configure handle and password
 func (c *SzkopulClient) ConfigLogin() (err error) {
 	if c.Username != "" {
 		color.Green("Current user: %v", c.Username)

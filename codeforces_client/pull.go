@@ -32,13 +32,9 @@ func findMessage(body []byte) (string, error) {
 	return "", errors.New("cannot find any message")
 }
 
-// ErrorSkip error
 const ErrorSkip = "exists, skip"
-
-// ErrorTooManyRequest error
 const ErrorTooManyRequest = "too many requests"
 
-// PullCode pull problem's code to path
 func (c *CodeforcesClient) PullCode(URL, path, ext string, rename bool) (filename string, err error) {
 	filename = path + ext
 	if rename {
@@ -76,7 +72,6 @@ func (c *CodeforcesClient) PullCode(URL, path, ext string, rename bool) (filenam
 	return
 }
 
-// Pull pull all latest codes or ac codes
 func (c *CodeforcesClient) Pull(info Info, rootPath string, ac bool) (err error) {
 	color.Cyan("Pull " + info.Hint())
 

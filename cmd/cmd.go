@@ -16,7 +16,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// Eval opts
 func Eval(opts docopt.Opts) error {
 	Args = &ParsedArgs{}
 	opts.Bind(Args)

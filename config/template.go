@@ -15,7 +15,6 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 )
 
-// AddTemplate add template
 func (c *Config) AddTemplate() (err error) {
 	color.Cyan("Add a template")
 	color.Cyan("Language list:")
@@ -133,7 +132,6 @@ func (c *Config) AddTemplate() (err error) {
 	return c.save()
 }
 
-// RemoveTemplate remove template
 func (c *Config) RemoveTemplate() (err error) {
 	color.Cyan("Remove a template")
 	if len(c.Template) == 0 {
@@ -158,7 +156,6 @@ func (c *Config) RemoveTemplate() (err error) {
 	return c.save()
 }
 
-// SetDefaultTemplate set default template index
 func (c *Config) SetDefaultTemplate() error {
 	color.Cyan("Set default template")
 	if len(c.Template) == 0 {
@@ -177,7 +174,6 @@ func (c *Config) SetDefaultTemplate() error {
 	return c.save()
 }
 
-// TemplateByAlias return all template which alias equals to alias
 func (c *Config) TemplateByAlias(alias string) []CodeTemplate {
 	ret := []CodeTemplate{}
 	for _, template := range c.Template {

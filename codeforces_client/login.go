@@ -22,20 +22,16 @@ import (
 	"golang.org/x/term"
 )
 
-// genFtaa generate a random one
 func genFtaa() string {
 	return util.RandString(18)
 }
 
-// genBfaa generate a bfaa
 func genBfaa() string {
 	return "f1b3f18c715565b589b7823cda7448ce"
 }
 
-// ErrorNotLogged not logged in
 var ErrorNotLogged = "Not logged in"
 
-// findHandle if logged return (handle, nil), else return ("", ErrorNotLogged)
 func findHandle(body []byte) (string, error) {
 	reg := regexp.MustCompile(`handle = "([\s\S]+?)"`)
 	tmp := reg.FindSubmatch(body)
@@ -92,7 +88,6 @@ func addRCPC(c *CodeforcesClient, body []byte) ([]byte, error) {
 	return body, nil
 }
 
-// Login codeforces with handler and password
 func (c *CodeforcesClient) Login() (err error) {
 	color.Cyan("Login %v...\n", c.HandleOrEmail)
 
@@ -103,7 +98,6 @@ func (c *CodeforcesClient) Login() (err error) {
 
 	jar, _ := cookiejar.New(nil)
 
-	//jar.SetCookies()
 	c.client.Jar = jar
 	body, err := util.GetBody(c.client, c.host+"/enter")
 	if err != nil {
@@ -197,7 +191,6 @@ func decrypt(handle, password string) (ret string, err error) {
 	return
 }
 
-// DecryptPassword get real password
 func (c *CodeforcesClient) DecryptPassword() (string, error) {
 	if len(c.Password) == 0 || len(c.HandleOrEmail) == 0 {
 		return "", errors.New("you have to configure your handle and password by `st config`")
@@ -205,7 +198,6 @@ func (c *CodeforcesClient) DecryptPassword() (string, error) {
 	return decrypt(c.HandleOrEmail, c.Password)
 }
 
-// ConfigLogin configure handle and password
 func (c *CodeforcesClient) ConfigLogin() (err error) {
 	if c.Handle != "" {
 		color.Green("Current user: %v", c.Handle)

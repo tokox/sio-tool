@@ -5,7 +5,6 @@ import (
 	"github.com/Arapak/sio-tool/sio_client"
 )
 
-// Race command
 func SioRace() (err error) {
 	cfg := config.Instance
 	cln := sio_client.Instance

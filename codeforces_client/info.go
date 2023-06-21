@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// ProblemTypes problem types
 var ProblemTypes = [...]string{
 	"contest",
 	"gym",
@@ -15,7 +14,6 @@ var ProblemTypes = [...]string{
 	"acmsguru",
 }
 
-// Info information
 type Info struct {
 	ProblemType  string `json:"problem_type"`
 	ContestID    string `json:"contest_id"`
@@ -25,25 +23,12 @@ type Info struct {
 	RootPath     string
 }
 
-// ErrorNeedProblemID error
 const ErrorNeedProblemID = "you have to specify the Problem ID"
-
-// ErrorNeedContestID error
 const ErrorNeedContestID = "you have to specify the Contest ID"
-
-// ErrorNeedGymID error
 const ErrorNeedGymID = "you have to specify the Gym ID"
-
-// ErrorNeedGroupID error
 const ErrorNeedGroupID = "you have to specify the Group ID"
-
-// ErrorNeedSubmissionID error
 const ErrorNeedSubmissionID = "you have to specify the Submission ID"
-
-// ErrorUnknownType error
 const ErrorUnknownType = "unknown type"
-
-// ErrorNotSupportAcmsguru error
 const ErrorNotSupportAcmsguru = "not support acmsguru"
 
 func (info *Info) errorContest() (string, error) {
@@ -53,7 +38,6 @@ func (info *Info) errorContest() (string, error) {
 	return "", errors.New(ErrorNeedContestID)
 }
 
-// Hint hint text
 func (info *Info) Hint() string {
 	text := strings.ToUpper(info.ProblemType)
 	if info.GroupID != "" {
@@ -75,7 +59,6 @@ func (info *Info) Hint() string {
 	return text
 }
 
-// Path path
 func (info *Info) Path() string {
 	path := info.RootPath
 	if info.GroupID != "" {
@@ -90,7 +73,6 @@ func (info *Info) Path() string {
 	return path
 }
 
-// ProblemSetURL parse problem set url
 func (info *Info) ProblemSetURL(host string) (string, error) {
 	if info.ContestID == "" {
 		return info.errorContest()
@@ -111,7 +93,6 @@ func (info *Info) ProblemSetURL(host string) (string, error) {
 	return "", errors.New(ErrorUnknownType)
 }
 
-// ProblemURL parse problem url
 func (info *Info) ProblemURL(host string) (string, error) {
 	if info.ProblemID == "" {
 		return "", errors.New(ErrorNeedProblemID)
@@ -135,7 +116,6 @@ func (info *Info) ProblemURL(host string) (string, error) {
 	return "", errors.New(ErrorUnknownType)
 }
 
-// MySubmissionURL parse submission url
 func (info *Info) MySubmissionURL(host string) (string, error) {
 	if info.ContestID == "" {
 		return info.errorContest()
@@ -156,7 +136,6 @@ func (info *Info) MySubmissionURL(host string) (string, error) {
 	return "", errors.New(ErrorUnknownType)
 }
 
-// SubmissionURL parse submission url
 func (info *Info) SubmissionURL(host string) (string, error) {
 	if info.SubmissionID == "" {
 		return "", errors.New(ErrorNeedSubmissionID)
@@ -180,7 +159,6 @@ func (info *Info) SubmissionURL(host string) (string, error) {
 	return "", errors.New(ErrorUnknownType)
 }
 
-// StandingsURL parse standings url
 func (info *Info) StandingsURL(host string) (string, error) {
 	if info.ContestID == "" {
 		return info.errorContest()
@@ -201,7 +179,6 @@ func (info *Info) StandingsURL(host string) (string, error) {
 	return "", errors.New(ErrorUnknownType)
 }
 
-// SubmitURL submit url
 func (info *Info) SubmitURL(host string) (string, error) {
 	URL, err := info.ProblemSetURL(host)
 	if err != nil {
@@ -210,7 +187,6 @@ func (info *Info) SubmitURL(host string) (string, error) {
 	return URL + "/submit", nil
 }
 
-// OpenURL open url
 func (info *Info) OpenURL(host string) (string, error) {
 	switch info.ProblemType {
 	case "contest":

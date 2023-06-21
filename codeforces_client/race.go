@@ -26,7 +26,6 @@ func findCountdown(body []byte) (int, error) {
 	return h*60*60 + m*60 + s, nil
 }
 
-// RaceContest wait for contest starting
 func (c *CodeforcesClient) RaceContest(info Info) (err error) {
 	color.Cyan("Race " + info.Hint())
 

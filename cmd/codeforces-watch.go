@@ -4,7 +4,6 @@ import (
 	"github.com/Arapak/sio-tool/codeforces_client"
 )
 
-// Watch command
 func CodeforcesWatch() (err error) {
 	cln := codeforces_client.Instance
 	info := Args.CodeforcesInfo

@@ -13,7 +13,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// SzkopulClient szkopul client
 type SzkopulClient struct {
 	Jar            *cookiejar.Jar `json:"cookies"`
 	Username       string         `json:"handle"`
@@ -24,10 +23,8 @@ type SzkopulClient struct {
 	client         *http.Client
 }
 
-// Instance global client
 var Instance *SzkopulClient
 
-// Init initialize
 func Init(path, host, proxy string) {
 	jar, _ := cookiejar.New(nil)
 	c := &SzkopulClient{Jar: jar, LastSubmission: nil, path: path, host: host, client: nil}
@@ -52,7 +49,6 @@ func Init(path, host, proxy string) {
 	Instance = c
 }
 
-// load from path
 func (c *SzkopulClient) load() (err error) {
 	file, err := os.Open(c.path)
 	if err != nil {
@@ -69,7 +65,6 @@ func (c *SzkopulClient) load() (err error) {
 	return json.Unmarshal(bytes, c)
 }
 
-// save file to path
 func (c *SzkopulClient) save() (err error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err == nil {

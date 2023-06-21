@@ -13,7 +13,6 @@ func openURL(url string) error {
 	return open.Run(url)
 }
 
-// Open command
 func CodeforcesOpen() (err error) {
 	URL, err := Args.CodeforcesInfo.OpenURL(config.Instance.CodeforcesHost)
 	if err != nil {
@@ -22,7 +21,6 @@ func CodeforcesOpen() (err error) {
 	return openURL(URL)
 }
 
-// Stand command
 func CodeforcesStand() (err error) {
 	URL, err := Args.CodeforcesInfo.StandingsURL(config.Instance.CodeforcesHost)
 	if err != nil {
@@ -31,7 +29,6 @@ func CodeforcesStand() (err error) {
 	return openURL(URL)
 }
 
-// Sid command
 func CodeforcesSid() (err error) {
 	info := Args.CodeforcesInfo
 	if info.SubmissionID == "" && codeforces_client.Instance.LastSubmission != nil {

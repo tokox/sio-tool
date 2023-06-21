@@ -6,7 +6,6 @@ import (
 	"github.com/Arapak/sio-tool/codeforces_client"
 )
 
-// Pull command
 func CodeforcesPull() (err error) {
 	cln := codeforces_client.Instance
 	info := Args.CodeforcesInfo

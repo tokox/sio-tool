@@ -19,7 +19,6 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// Submission submit state
 type Submission struct {
 	name   string
 	id     uint64
@@ -38,7 +37,6 @@ func isWait(verdict string) bool {
 	return verdict == "null" || verdict == "TESTING" || verdict == "SUBMITTED"
 }
 
-// ParseStatus with color
 func (s *Submission) ParseStatus() string {
 	status := strings.ReplaceAll(s.status, "${f-points}", fmt.Sprintf("%v", s.points))
 	status = strings.ReplaceAll(status, "${f-passed}", fmt.Sprintf("%v", s.passed))
@@ -52,12 +50,10 @@ func (s *Submission) ParseStatus() string {
 	return status
 }
 
-// ParseID formatter
 func (s *Submission) ParseID() string {
 	return fmt.Sprintf("%v", s.id)
 }
 
-// ParseMemory formatter
 func (s *Submission) ParseMemory() string {
 	if s.memory > 1024*1024 {
 		return fmt.Sprintf("%.2f MB", float64(s.memory)/1024.0/1024.0)
@@ -67,12 +63,10 @@ func (s *Submission) ParseMemory() string {
 	return fmt.Sprintf("%v B", s.memory)
 }
 
-// ParseTime formatter
 func (s *Submission) ParseTime() string {
 	return fmt.Sprintf("%v ms", s.time)
 }
 
-// ParseProblemIndex get problem's index
 func (s *Submission) ParseProblemIndex() string {
 	p := strings.Index(s.name, " ")
 	if p == -1 {
@@ -275,7 +269,6 @@ func (c *CodeforcesClient) getSubmissions(URL string, n int) (submissions []Subm
 	return
 }
 
-// WatchSubmission n is the number of submissions
 func (c *CodeforcesClient) WatchSubmission(info Info, n int, line bool) (submissions []Submission, err error) {
 	URL, err := info.MySubmissionURL(c.host)
 	if err != nil {

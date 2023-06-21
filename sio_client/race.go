@@ -21,7 +21,6 @@ type RoundInfo struct {
 	Username       string  `json:"user"`
 }
 
-// RaceContest wait for contest starting
 func (c *SioClient) RaceContest(info Info) (round string, err error) {
 	color.Cyan("Race " + info.Hint())
 

@@ -2,7 +2,6 @@ package cmd
 
 import "github.com/Arapak/sio-tool/sio_client"
 
-// Watch command
 func SioWatch() (err error) {
 	cln := sio_client.Instance
 	info := Args.SioInfo

@@ -7,7 +7,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// Submit command
 func SioSubmit() (err error) {
 	cln := sio_client.Instance
 	cfg := config.Instance
