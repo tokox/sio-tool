@@ -2,19 +2,20 @@ package util
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/fatih/color"
 	"io"
 	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 const CHA = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -175,4 +176,23 @@ func LimitNumOfChars(s string, n int) string {
 		return string(unicodeSafeString[:n])
 	}
 	return string(unicodeSafeString)
+}
+
+func PdfToText(body []byte) ([]byte, error) {
+	cmd := exec.Command("pdftotext", "-", "-")
+	cmd.Stdin = bytes.NewReader(body)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	return out.Bytes(), nil
+}
+
+func AddNewLine(body []byte) []byte {
+	if !bytes.HasSuffix(body, []byte("\n")) {
+		return append(body, byte('\n'))
+	}
+	return body
 }
