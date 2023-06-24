@@ -62,17 +62,20 @@ func parseArgsSzkopul() error {
 		}
 	}
 	parsedPath := parsePathSzkopul(path)
-	if info.ContestID == "" {
-		if value, ok := parsedPath["contestID"]; ok {
-			info.ContestID = value
-		}
-		if info.StageID == "" {
-			if value, ok := parsedPath["stageID"]; ok {
-				info.StageID = value
+	if value, ok := parsedPath["archive"]; ok && (info.Archive == "" || value == info.Archive) {
+		info.Archive = value
+		if info.ContestID == "" {
+			if value, ok := parsedPath["contestID"]; ok {
+				info.ContestID = value
 			}
-			if info.ProblemAlias == "" {
-				if value, ok := parsedPath["problemAlias"]; ok {
-					info.ProblemAlias = value
+			if info.StageID == "" {
+				if value, ok := parsedPath["stageID"]; ok {
+					info.StageID = value
+				}
+				if info.ProblemAlias == "" {
+					if value, ok := parsedPath["problemAlias"]; ok {
+						info.ProblemAlias = value
+					}
 				}
 			}
 		}
