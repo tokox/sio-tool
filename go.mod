@@ -3,6 +3,7 @@ module github.com/Arapak/sio-tool
 go 1.18
 
 require (
+	github.com/AlecAivazis/survey/v2 v2.0.5
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/StefanSchroeder/Golang-Roman v1.0.0
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
@@ -12,7 +13,6 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	golang.org/x/term v0.6.0
 	modernc.org/sqlite v1.22.1
 )
 
@@ -34,11 +34,11 @@ require (
 
 require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
+	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.11 // indirect

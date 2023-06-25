@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,8 +13,6 @@ import (
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
-	"github.com/Arapak/sio-tool/util"
-
 	"github.com/fatih/color"
 )
 
@@ -72,13 +71,17 @@ func Gen() (err error) {
 		} else if len(templates) == 1 {
 			path = templates[0].Path
 		} else {
-			fmt.Printf("There are multiple templates with alias %v\n", alias)
+			templatePaths := make([]string, len(templates))
 			for i, template := range templates {
-				fmt.Printf(`%3v: "%v"`, i, template.Path)
-				fmt.Println()
+				templatePaths[i] = template.Path
 			}
-			i := util.ChooseIndex(len(templates))
-			path = templates[i].Path
+			prompt := &survey.Select{
+				Message: fmt.Sprintf("There are multiple templates with alias %v\n", alias),
+				Options: templatePaths,
+			}
+			if err = survey.AskOne(prompt, &path); err != nil {
+				return
+			}
 		}
 	} else {
 		path = cfg.Template[cfg.Default].Path

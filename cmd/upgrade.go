@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"io"
 	"net/http"
 	"os"
@@ -13,8 +14,6 @@ import (
 	"runtime"
 	"strconv"
 	"time"
-
-	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 )
@@ -208,7 +207,12 @@ func Upgrade() (err error) {
 	color.Green("The latest version is %v, published at %v", latest, ptime)
 	fmt.Println(note)
 
-	if !util.YesOrNo("Do you want to upgrade (y/n)? ") {
+	doUpgrade := true
+	prompt := &survey.Confirm{Message: "Do you want to upgrade?", Default: true}
+	if err = survey.AskOne(prompt, &doUpgrade); err != nil {
+		return
+	}
+	if !doUpgrade {
 		return
 	}
 

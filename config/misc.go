@@ -3,64 +3,68 @@ package config
 import (
 	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"path/filepath"
 	"regexp"
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
-	"github.com/Arapak/sio-tool/util"
-
 	"github.com/fatih/color"
 	"github.com/mitchellh/go-homedir"
 )
 
 func (c *Config) SetGenAfterParse() (err error) {
-	c.GenAfterParse = util.YesOrNo(`Run "st gen" after "st parse" (y/n)? `)
+	prompt := &survey.Confirm{Message: `Run "st gen" after "st parse"?`, Default: false}
+	if err = survey.AskOne(prompt, &c.GenAfterParse); err != nil {
+		return
+	}
 	return c.save()
 }
 
-func formatHost(host string) (string, error) {
+func validateHost(host interface{}) error {
 	reg := regexp.MustCompile(`https?://[\w\-]+(\.[\w\-]+)+/?`)
-	if !reg.MatchString(host) {
-		return "", fmt.Errorf(`invalid host "%v"`, host)
+	if !reg.MatchString(host.(string)) {
+		return fmt.Errorf(`invalid host "%v"`, host)
 	}
+	return nil
+}
+
+func formatHost(host string) string {
 	for host[len(host)-1:] == "/" {
 		host = host[:len(host)-1]
 	}
-	return host, nil
+	return host
 }
 
-func formatProxy(proxy string) (string, error) {
-	reg := regexp.MustCompile(`[\w\-]+?://[\w\-]+(\.[\w\-]+)*(:\d+)?`)
-	if !reg.MatchString(proxy) {
-		return "", fmt.Errorf(`invalid proxy "%v"`, proxy)
+func validateProxy(proxy interface{}) error {
+	reg := regexp.MustCompile(`^$|[\w\-]+?://[\w\-]+(\.[\w\-]+)*(:\d+)?`)
+	if !reg.MatchString(proxy.(string)) {
+		return fmt.Errorf(`invalid proxy "%v"`, proxy)
 	}
-	return proxy, nil
+	return nil
 }
 
 func (c *Config) SetHost() (err error) {
-	host, err := formatHost(c.CodeforcesHost)
-	if err != nil {
+	var host string
+	if validateHost(c.CodeforcesHost) == nil {
+		host = formatHost(c.CodeforcesHost)
+	} else {
 		host = "https://codeforces.com"
 	}
 	color.Green("Current host domain is %v", host)
-	color.Cyan(`Set a new host domain (e.g. "https://codeforces.com"`)
+	color.Cyan(`Set a new host domain (e.g. "https://codeforces.com")`)
 	color.Cyan(`Note: Don't forget the "http://" or "https://"`)
-	for {
-		host, err = formatHost(util.ScanlineTrim())
-		if err == nil {
-			break
-		}
-		color.Red(err.Error())
+	if err = survey.AskOne(&survey.Input{Message: `host:`}, &host, survey.WithValidator(validateHost)); err != nil {
+		return
 	}
-	c.CodeforcesHost = host
+	c.CodeforcesHost = formatHost(host)
 	color.Green("New host domain is %v", host)
 	return c.save()
 }
 
 func (c *Config) SetProxy() (err error) {
-	proxy, err := formatProxy(c.Proxy)
-	if err != nil {
+	proxy := c.Proxy
+	if validateProxy(c.Proxy) != nil {
 		proxy = ""
 	}
 	if len(proxy) == 0 {
@@ -68,15 +72,11 @@ func (c *Config) SetProxy() (err error) {
 	} else {
 		color.Green("Current proxy is %v", proxy)
 	}
-	color.Cyan(`Set a new proxy (e.g. "http://127.0.0.1:2333", "socks5://127.0.0.1:1080"`)
+	color.Cyan(`Set a new proxy (e.g. "http://127.0.0.1:2333", "socks5://127.0.0.1:1080")`)
 	color.Cyan(`Enter empty line if you want to use default proxy from environment`)
 	color.Cyan(`Note: Proxy URL should match "protocol://host[:port]"`)
-	for {
-		proxy, err = formatProxy(util.ScanlineTrim())
-		if err == nil {
-			break
-		}
-		color.Red(err.Error())
+	if err = survey.AskOne(&survey.Input{Message: `proxy:`}, &proxy, survey.WithValidator(validateProxy)); err != nil {
+		return
 	}
 	c.Proxy = proxy
 	if len(proxy) == 0 {
@@ -87,59 +87,64 @@ func (c *Config) SetProxy() (err error) {
 	return c.save()
 }
 
+func validateAbsolutePath(path interface{}) (err error) {
+	if path.(string) != "" {
+		path, err = homedir.Expand(path.(string))
+		if err != nil {
+			return
+		}
+		if !filepath.IsAbs(path.(string)) {
+			return fmt.Errorf("this is not an absolute path: %v", path)
+		}
+	}
+	return nil
+}
+
+func inputDontOverwriteEmpty(message string, value string, validator survey.Validator) (newValue string, err error) {
+	message = fmt.Sprintf("%v (current: %v)", message, value)
+	if validator == nil {
+		if err = survey.AskOne(&survey.Input{Message: message}, &newValue); err != nil {
+			return
+		}
+	} else {
+		if err = survey.AskOne(&survey.Input{Message: message}, &newValue, survey.WithValidator(validator)); err != nil {
+			return
+		}
+	}
+	if newValue == "" {
+		newValue = value
+	}
+	return
+}
+
 func (c *Config) SetFolderName() (err error) {
 	color.Cyan(`Set folders' name`)
 	color.Cyan(`Enter empty line if you don't want to change the value`)
-	color.Green(`Codeforces root path (absolute) (current: %v)`, c.FolderName["codeforces-root"])
-	if value := util.ScanlineTrim(); value != "" {
-		value, err = homedir.Expand(value)
-		if err != nil {
-			color.Red(err.Error())
-			return
-		}
-		if filepath.IsAbs(value) {
-			c.FolderName["codeforces-root"] = value
-		} else {
-			color.Red("this is not an absolute path (leaving current)")
-		}
+	if c.FolderName["codeforces-root"], err = inputDontOverwriteEmpty(`Codeforces root path (absolute)`, c.FolderName["codeforces-root"], validateAbsolutePath); err != nil {
+		return
+	}
+	if c.FolderName["codeforces-root"], err = homedir.Expand(c.FolderName["codeforces-root"]); err != nil {
+		return
 	}
 	for _, problemType := range codeforces_client.ProblemTypes {
-		color.Green(`%v path (current: %v)`, problemType, c.FolderName[fmt.Sprintf("codeforces-%v", problemType)])
-		if value := util.ScanlineTrim(); value != "" {
-			c.FolderName[fmt.Sprintf("codeforces-%v", problemType)] = value
-		}
+		c.FolderName[fmt.Sprintf("codeforces-%v", problemType)], err = inputDontOverwriteEmpty(fmt.Sprintf(`Codeforces %v path`, problemType), c.FolderName[fmt.Sprintf("codeforces-%v", problemType)], nil)
 	}
-	color.Green(`Szkopul root path (absolute) (current: %v)`, c.FolderName["szkopul-root"])
-	if value := util.ScanlineTrim(); value != "" {
-		value, err = homedir.Expand(value)
-		if err != nil {
-			color.Red(err.Error())
-			return
-		}
-		if filepath.IsAbs(value) {
-			c.FolderName["szkopul-root"] = value
-		} else {
-			color.Red("this is not an absolute path (leaving current)")
-		}
+	if c.FolderName["szkopul-root"], err = inputDontOverwriteEmpty(`Szkopul root path (absolute)`, c.FolderName["szkopul-root"], validateAbsolutePath); err != nil {
+		return
+	}
+	if c.FolderName["szkopul-root"], err = homedir.Expand(c.FolderName["szkopul-root"]); err != nil {
+		return
 	}
 	for _, archive := range szkopul_client.Archives {
-		color.Green(`%v path (current: %v)`, archive, c.FolderName[fmt.Sprintf("szkopul-%v", archive)])
-		if value := util.ScanlineTrim(); value != "" {
-			c.FolderName[fmt.Sprintf("szkopul-%v", archive)] = value
-		}
-	}
-	color.Green(`Sio root path (absolute) (current: %v)`, c.FolderName["sio-root"])
-	if value := util.ScanlineTrim(); value != "" {
-		value, err = homedir.Expand(value)
-		if err != nil {
-			color.Red(err.Error())
+		if c.FolderName[fmt.Sprintf("szkopul-%v", archive)], err = inputDontOverwriteEmpty(fmt.Sprintf(`Szkopul %v archive path`, archive), c.FolderName[fmt.Sprintf("szkopul-%v", archive)], nil); err != nil {
 			return
 		}
-		if filepath.IsAbs(value) {
-			c.FolderName["sio-root"] = value
-		} else {
-			color.Red("this is not an absolute path (leaving current)")
-		}
+	}
+	if c.FolderName["sio-root"], err = inputDontOverwriteEmpty(`Sio root path (absolute)`, c.FolderName["sio-root"], validateAbsolutePath); err != nil {
+		return
+	}
+	if c.FolderName["sio-root"], err = homedir.Expand(c.FolderName["sio-root"]); err != nil {
+		return
 	}
 	return c.save()
 }
@@ -148,49 +153,44 @@ func (c *Config) SetDefaultNaming() (err error) {
 	color.Cyan(`Set default naming (for stress testing purposes)`)
 	color.Cyan(`Enter empty line if you don't want to change the value`)
 	fmt.Printf(`You can insert $%%task%%$ placeholder in your filenames, which you will provide when using st stress-test command.`)
-	color.Green(`Solution file name (current: %v)`, c.DefaultNaming["solve"])
-	if value := util.ScanlineTrim(); value != "" {
-		c.DefaultNaming["solve"] = value
+	if c.DefaultNaming["solve"], err = inputDontOverwriteEmpty(`Solution file name`, c.DefaultNaming["solve"], nil); err != nil {
+		return
 	}
-	color.Green(`Brute forces solution filename (current: %v)`, c.DefaultNaming["brute"])
-	if value := util.ScanlineTrim(); value != "" {
-		c.DefaultNaming["brute"] = value
+	if c.DefaultNaming["brute"], err = inputDontOverwriteEmpty(`Bruteforce solution filename`, c.DefaultNaming["brute"], nil); err != nil {
+		return
 	}
-	color.Green(`Tests generator filename (current: %v)`, c.DefaultNaming["gen"])
-	if value := util.ScanlineTrim(); value != "" {
-		c.DefaultNaming["gen"] = value
+	if c.DefaultNaming["gen"], err = inputDontOverwriteEmpty(`Tests generator filename`, c.DefaultNaming["gen"], nil); err != nil {
+		return
 	}
 	fmt.Printf(`Here you can also insert $%%test%%$ placeholder in your filename, which will indicate the test number.`)
-	color.Green(`Generated test filename (current: %v)`, c.DefaultNaming["test_in"])
-	if value := util.ScanlineTrim(); value != "" {
-		c.DefaultNaming["test_in"] = value
+	if c.DefaultNaming["test_in"], err = inputDontOverwriteEmpty(`Generated test filename`, c.DefaultNaming["test_in"], nil); err != nil {
+		return
 	}
 	return c.save()
 }
 
-func formatDbPath(path string) (string, error) {
-	if filepath.Ext(path) != ".db" {
-		return "", errors.New("wrong file extension")
+func validateDbPath(path interface{}) (err error) {
+	err = validateAbsolutePath(path)
+	if filepath.Ext(path.(string)) != ".db" {
+		err = errors.New("wrong file extension")
 	}
-	return homedir.Expand(path)
+	return
 }
 
 func (c *Config) SetDbPath() (err error) {
-	dbPath, err := formatDbPath(c.DbPath)
+	dbPath, err := homedir.Expand(c.DbPath)
 	if err != nil {
 		dbPath = "~/.st/tasks.db"
 	}
 	color.Green("Current database path is %v", dbPath)
 	color.Cyan(`Set a new db path (e.g. "~/.st/tasks.db")`)
 	color.Cyan(`Note: Don't forget the ".db" extension`)
-	for {
-		dbPath, err = formatDbPath(util.ScanlineTrim())
-		if err == nil {
-			break
-		}
-		color.Red(err.Error())
+	if err = survey.AskOne(&survey.Input{Message: `db path:`}, &dbPath, survey.WithValidator(validateDbPath)); err != nil {
+		return
 	}
-	c.DbPath = dbPath
+	if c.DbPath, err = homedir.Expand(dbPath); err != nil {
+		return
+	}
 	color.Green("New database path is %v", dbPath)
 	return c.save()
 }

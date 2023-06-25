@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/Arapak/sio-tool/database_client"
 	"github.com/Arapak/sio-tool/sio_samples"
 	"github.com/Arapak/sio-tool/util"
@@ -196,14 +197,15 @@ func (c *SioClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, paths [
 			}
 		}
 		if len(rounds) > 1 {
-			color.Cyan("Which round do you want to parse?")
-			for i, round := range rounds {
-				fmt.Printf("(%v) %v\n", i, round)
+			prompt := &survey.Select{
+				Message: "Which round do you want to parse?",
+				Options: append(rounds, "ALL"),
 			}
-			fmt.Printf("(%v) all\n", len(rounds))
-			index := util.ChooseIndex(len(rounds) + 1)
-			if index < len(rounds) {
-				info.Round = rounds[index]
+			if err = survey.AskOne(prompt, &info.Round); err != nil {
+				return
+			}
+
+			if info.Round != "ALL" {
 				var filteredProblems []StatisInfo
 				for _, problem := range problems {
 					if problem.Round == info.Round {
@@ -211,6 +213,8 @@ func (c *SioClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, paths [
 					}
 				}
 				problems = filteredProblems
+			} else {
+				info.Round = ""
 			}
 		}
 	}
@@ -220,8 +224,15 @@ func (c *SioClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, paths [
 		return
 	}
 
-	if len(problems) >= 10 && !util.Confirm(fmt.Sprintf("Are you sure you want to parse %v problems? (Y/n): ", len(problems))) {
-		return
+	if len(problems) >= 10 {
+		parseAll := true
+		prompt := &survey.Confirm{Message: fmt.Sprintf("Are you sure you want to parse %v problems?", len(problems)), Default: true}
+		if err = survey.AskOne(prompt, &parseAll); err != nil {
+			return
+		}
+		if !parseAll {
+			return
+		}
 	}
 
 	for _, problem := range problems {

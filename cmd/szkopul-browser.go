@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/database_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
@@ -62,7 +63,12 @@ func getLinkToProblemFromStatis() (link string, err error) {
 func SzkopulOpen() (err error) {
 	var URL string
 	if Args.SzkopulInfo.ProblemID == "" && Args.SzkopulInfo.ProblemAlias != "" {
-		if util.Confirm("You didn't specify the problemID, but have given a problem alias, do you want to search for the problem with given criteria (Y/n):") {
+		search := true
+		prompt := &survey.Confirm{Message: "You didn't specify the problemID, but have given a problem alias, do you want to search for the problem with given criteria?", Default: true}
+		if err = survey.AskOne(prompt, &search); err != nil {
+			return
+		}
+		if search {
 			color.Green("Searching in database...")
 			URL, err = getLinkToProblemFromDatabase(Args.SzkopulInfo.ToTask())
 			if err == nil {

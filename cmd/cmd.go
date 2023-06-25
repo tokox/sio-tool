@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -11,8 +12,6 @@ import (
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
-	"github.com/Arapak/sio-tool/util"
-
 	"github.com/fatih/color"
 )
 
@@ -206,20 +205,32 @@ func getOneCode(filename string, templates []config.CodeTemplate) (name string, 
 		return "", 0, errors.New("cannot find any code,\nmaybe you should add a new template by `st config`")
 	}
 	if len(codes) > 1 {
-		color.Cyan("There are multiple files can be selected.")
+		codeNames := make([]string, len(codes))
 		for i, code := range codes {
-			fmt.Printf("%3v: %v\n", i, code.Name)
+			codeNames[i] = code.Name
 		}
-		i := util.ChooseIndex(len(codes))
-		codes[0] = codes[i]
+		codeIndex := 0
+		prompt := &survey.Select{
+			Message: "Multiple files can be selected.",
+			Options: codeNames,
+		}
+		if err = survey.AskOne(prompt, &codeIndex); err != nil {
+			return
+		}
+		codes[0] = codes[codeIndex]
 	}
 	if len(codes[0].Index) > 1 {
-		color.Cyan("There are multiple languages match the file.")
+		langs := make([]string, len(codes[0].Index))
 		for i, idx := range codes[0].Index {
-			fmt.Printf("%3v: %v\n", i, codeforces_client.Langs[templates[idx].Lang])
+			langs[i] = codeforces_client.Langs[templates[idx].Lang]
 		}
-		i := util.ChooseIndex(len(codes[0].Index))
-		codes[0].Index[0] = codes[0].Index[i]
+		prompt := &survey.Select{
+			Message: "Multiple languages match the file.",
+			Options: langs,
+		}
+		if err = survey.AskOne(prompt, &codes[0].Index[0]); err != nil {
+			return
+		}
 	}
 	return codes[0].Name, codes[0].Index[0], nil
 }

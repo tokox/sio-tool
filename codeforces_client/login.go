@@ -8,18 +8,16 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/Arapak/sio-tool/cookiejar"
+	"github.com/Arapak/sio-tool/util"
 	"io"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
-	"syscall"
-
-	"github.com/Arapak/sio-tool/cookiejar"
-	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
-	"golang.org/x/term"
 )
 
 func genFtaa() string {
@@ -203,29 +201,13 @@ func (c *CodeforcesClient) ConfigLogin() (err error) {
 		color.Green("Current user: %v", c.Handle)
 	}
 	color.Cyan("Configure handle/email and password")
-	color.Cyan("Note: The password is invisible, just type it correctly.")
 
-	fmt.Printf("handle/email: ")
-	handleOrEmail := util.ScanlineTrim()
+	handleOrEmail := ""
+	util.GetValue("handle/email:", &handleOrEmail, true)
 
 	password := ""
-	if term.IsTerminal(int(syscall.Stdin)) {
-		fmt.Printf("password: ")
-		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-		if err != nil {
-			fmt.Println()
-			if err.Error() == "EOF" {
-				fmt.Println("Interrupted.")
-				return nil
-			}
-			return err
-		}
-		password = string(bytePassword)
-		fmt.Println()
-	} else {
-		color.Red("Your terminal does not support the hidden password.")
-		fmt.Printf("password: ")
-		password = util.Scanline()
+	if err = survey.AskOne(&survey.Password{Message: `password:`}, &password); err != nil {
+		return
 	}
 
 	c.HandleOrEmail = handleOrEmail

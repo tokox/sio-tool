@@ -4,13 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/Arapak/sio-tool/util"
 	"os"
 	"path/filepath"
 
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/database_client"
-	"github.com/Arapak/sio-tool/util"
-
 	"github.com/fatih/color"
 	_ "modernc.org/sqlite"
 )
@@ -44,21 +44,12 @@ func checkPath(path string) error {
 	return nil
 }
 
-func readValue(valueName string, nilable bool) (value string) {
-	for {
-		fmt.Printf("%v: ", valueName)
-		value = util.ScanlineTrim()
-		if !nilable && value == "" {
-			color.Red(`value cannot be empty`)
-		} else {
-			return
-		}
-	}
-}
-
 func ReadTask(task database_client.Task) database_client.Task {
 	if task.Source == "" {
-		task.Source = readValue("source", false)
+		if err := survey.AskOne(&survey.Input{Message: "source"}, &task.Source, survey.WithValidator(survey.Required)); err != nil {
+			color.Red(err.Error())
+			os.Exit(1)
+		}
 	}
 	props := getValuesProperties(task.Source)
 	return ExtendTaskInfo(task, props)
@@ -66,17 +57,20 @@ func ReadTask(task database_client.Task) database_client.Task {
 
 func ExtendTaskInfo(task database_client.Task, props valuesProperties) database_client.Task {
 	if task.Source == "" {
-		task.Source = readValue("source", true)
+		if err := survey.AskOne(&survey.Input{Message: "source"}, &task.Source); err != nil {
+			color.Red(err.Error())
+			os.Exit(1)
+		}
 	}
 	if task.Name == "" && props.Name.needed {
-		task.Name = readValue("name", props.Name.nilable)
+		util.GetValue("name", &task.Name, props.Name.required)
 	}
 	if props.Path.needed {
 		for {
 			if task.Path == "" {
-				task.Path = readValue("path", props.Path.nilable)
+				util.GetValue("path", &task.Path, props.Path.required)
 			}
-			if task.Path == "" && props.Path.nilable {
+			if task.Path == "" && props.Path.required {
 				break
 			}
 			err := checkPath(task.Path)
@@ -91,23 +85,23 @@ func ExtendTaskInfo(task database_client.Task, props valuesProperties) database_
 		}
 	}
 	if task.ShortName == "" && props.ShortName.needed {
-		task.ShortName = readValue("shortname", props.ShortName.nilable)
+		util.GetValue("shortname", &task.ShortName, props.ShortName.required)
 	}
 	if task.Link == "" && props.Link.needed {
-		task.Link = readValue("link", props.Link.nilable)
+		util.GetValue("link", &task.Link, props.Link.required)
 	}
 	if task.ContestID == "" && props.ContestID.needed {
-		task.ContestID = readValue("contest", props.ContestID.nilable)
+		util.GetValue("contest", &task.ContestID, props.ContestID.required)
 	}
 	if task.ContestStageID == "" && props.ContestStageID.needed {
-		task.ContestStageID = readValue("stage", props.ContestStageID.nilable)
+		util.GetValue("stage", &task.ContestStageID, props.ContestStageID.required)
 	}
 	return task
 }
 
 type properties struct {
-	needed  bool
-	nilable bool
+	needed   bool
+	required bool
 }
 
 type valuesProperties struct {
@@ -123,39 +117,39 @@ func getValuesProperties(source string) valuesProperties {
 	switch source {
 	case "cf":
 		return valuesProperties{
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
-			properties{false, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
+			properties{false, false},
 		}
 	case "sio", "sio2":
 		return valuesProperties{
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
 			properties{true, true},
-			properties{false, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, false},
+			properties{false, false},
 		}
 	case "oi":
 		return valuesProperties{
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
-			properties{true, false},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
+			properties{true, true},
 		}
 	default:
 		return valuesProperties{
+			properties{true, true},
+			properties{true, true},
 			properties{true, false},
 			properties{true, false},
-			properties{true, true},
-			properties{true, true},
-			properties{true, true},
-			properties{true, true},
+			properties{true, false},
+			properties{true, false},
 		}
 	}
 }

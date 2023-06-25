@@ -1,10 +1,10 @@
 package util
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
 	"io"
 	"log"
@@ -13,8 +13,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -26,55 +24,6 @@ func RandString(n int) string {
 		b[i] = CHA[rand.Intn(len(CHA))]
 	}
 	return string(b)
-}
-
-func Scanline() string {
-	scanner := bufio.NewScanner(os.Stdin)
-	if scanner.Scan() {
-		return scanner.Text()
-	}
-	fmt.Println("\nInterrupted.")
-	os.Exit(1)
-	return ""
-}
-
-func ScanlineTrim() string {
-	return strings.TrimSpace(Scanline())
-}
-
-func ChooseIndex(maxLen int) int {
-	color.Cyan("Please choose one (index): ")
-	for {
-		index := ScanlineTrim()
-		i, err := strconv.Atoi(index)
-		if err == nil && i >= 0 && i < maxLen {
-			return i
-		}
-		color.Red("Invalid index! Please try again: ")
-	}
-}
-
-func Confirm(note string) bool {
-	color.Cyan(note)
-	tmp := ScanlineTrim()
-	if tmp == "y" || tmp == "Y" || tmp == "" {
-		return true
-	}
-	return false
-}
-
-func YesOrNo(note string) bool {
-	color.Cyan(note)
-	for {
-		tmp := ScanlineTrim()
-		if tmp == "y" || tmp == "Y" {
-			return true
-		}
-		if tmp == "n" || tmp == "N" {
-			return false
-		}
-		color.Red("Invalid input. Please input again: ")
-	}
 }
 
 func GetBody(client *http.Client, URL string) ([]byte, error) {
@@ -195,4 +144,18 @@ func AddNewLine(body []byte) []byte {
 		return append(body, byte('\n'))
 	}
 	return body
+}
+
+func GetValue(message string, val *string, required bool) {
+	if required {
+		if err := survey.AskOne(&survey.Input{Message: message}, val, survey.WithValidator(survey.Required)); err != nil {
+			color.Red(err.Error())
+			os.Exit(1)
+		}
+	} else {
+		if err := survey.AskOne(&survey.Input{Message: message}, val); err != nil {
+			color.Red(err.Error())
+			os.Exit(1)
+		}
+	}
 }

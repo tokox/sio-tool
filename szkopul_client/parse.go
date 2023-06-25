@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/Arapak/sio-tool/database_client"
 	"github.com/Arapak/sio-tool/sio_samples"
 	"github.com/Arapak/sio-tool/util"
@@ -192,8 +193,15 @@ func (c *SzkopulClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, pat
 		return
 	}
 
-	if len(problems) >= 10 && !util.Confirm(fmt.Sprintf("Are you sure you want to parse %v problems? (Y/n): ", len(problems))) {
-		return
+	if len(problems) >= 10 {
+		parseAll := true
+		prompt := &survey.Confirm{Message: fmt.Sprintf("Are you sure you want to parse %v problems?", len(problems)), Default: true}
+		if err = survey.AskOne(prompt, &parseAll); err != nil {
+			return
+		}
+		if !parseAll {
+			return
+		}
 	}
 
 	for _, problem := range problems {

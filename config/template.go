@@ -1,23 +1,41 @@
 package config
 
 import (
+	"errors"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/Arapak/sio-tool/util"
+	"github.com/mitchellh/go-homedir"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/Arapak/sio-tool/codeforces_client"
-	"github.com/Arapak/sio-tool/util"
-
 	"github.com/fatih/color"
 	"github.com/k0kubun/go-ansi"
-	"github.com/mitchellh/go-homedir"
 )
+
+func validateTemplatePath(path interface{}) (err error) {
+	path, err = homedir.Expand(path.(string))
+	if err != nil {
+		return
+	}
+	if !filepath.IsAbs(path.(string)) {
+		return fmt.Errorf("this is not an absolute path: %v", path)
+	}
+	stats, err := os.Stat(path.(string))
+	if err != nil {
+		return
+	}
+	if stats.IsDir() {
+		return errors.New("this is a directory")
+	}
+	return
+}
 
 func (c *Config) AddTemplate() (err error) {
 	color.Cyan("Add a template")
-	color.Cyan("Language list:")
 	type kv struct {
 		K, V string
 	}
@@ -26,18 +44,13 @@ func (c *Config) AddTemplate() (err error) {
 		langs = append(langs, kv{k, v})
 	}
 	sort.Slice(langs, func(i, j int) bool { return langs[i].V < langs[j].V })
-	for _, t := range langs {
-		fmt.Printf("%5v: %v\n", t.K, t.V)
+	langValues := make([]string, len(langs))
+	for i, t := range langs {
+		langValues[i] = t.V
 	}
-	color.Cyan(`Select a language (e.g. "54"): `)
-	lang := ""
-	for {
-		lang = util.ScanlineTrim()
-		if val, ok := codeforces_client.Langs[lang]; ok {
-			color.Green(val)
-			break
-		}
-		color.Red("Invalid index. Please input again")
+	langID := 0
+	if err = survey.AskOne(&survey.Select{Message: `Select a language`, Options: langValues}, &langID); err != nil {
+		return
 	}
 
 	note := `Template:
@@ -54,20 +67,14 @@ func (c *Config) AddTemplate() (err error) {
 	_, _ = ansi.Println(note)
 	color.Cyan(`Template absolute path(e.g. "~/template/io.cpp"): `)
 	path := ""
-	for {
-		path = util.ScanlineTrim()
-		path, err = homedir.Expand(path)
-		if err == nil {
-			if _, err := os.Stat(path); err == nil {
-				break
-			}
-		}
-		color.Red("%v is invalid. Please input again: ", path)
+	if err = survey.AskOne(&survey.Input{Message: `Template absolute path(e.g. "~/template/io.cpp"):`}, &path, survey.WithValidator(validateTemplatePath)); err != nil {
+		return
 	}
 
 	color.Cyan(`The suffix of template above will be added by default.`)
-	color.Cyan(`Other suffix? (e.g. "cxx cc"), empty is ok: `)
-	tmpSuffix := strings.Fields(util.ScanlineTrim())
+	suffixes := ""
+	util.GetValue(`Other suffix? (e.g. "cxx cc"), empty is ok:`, &suffixes, false)
+	tmpSuffix := strings.Fields(suffixes)
 	tmpSuffix = append(tmpSuffix, strings.Replace(filepath.Ext(path), ".", "", 1))
 	suffixMap := map[string]bool{}
 	var suffix []string
@@ -78,15 +85,8 @@ func (c *Config) AddTemplate() (err error) {
 		}
 	}
 
-	color.Cyan(`Template's alias (e.g. "cpp" "py"): `)
 	alias := ""
-	for {
-		alias = util.ScanlineTrim()
-		if len(alias) > 0 {
-			break
-		}
-		color.Red("Alias can not be empty. Please input again: ")
-	}
+	util.GetValue(`Template's alias (e.g. "cpp" "py"):`, &alias, true)
 
 	color.Green("Script in template:")
 	note = `Template will run 3 scripts in sequence when you run "st test":
@@ -105,48 +105,52 @@ func (c *Config) AddTemplate() (err error) {
   $%rand%$   Random string with 8 character (including "a-z" "0-9")`
 	_, _ = ansi.Println(note)
 
-	color.Cyan(`Before script (e.g. "g++ $%full%$ -o $%file%$.e -std=c++17"), empty is ok: `)
-	beforeScript := util.ScanlineTrim()
+	beforeScript := ""
+	util.GetValue(`Before script (e.g. "g++ $%full%$ -o $%file%$.e -std=c++17"), empty is ok:`, &beforeScript, false)
 
-	color.Cyan(`Script (e.g. "./$%file%$.e" "python3 $%full%$"): `)
 	script := ""
-	for {
-		script = util.ScanlineTrim()
-		if len(script) > 0 {
-			break
-		}
-		color.Red("Script can not be empty. Please input again: ")
-	}
+	util.GetValue(`Script (e.g. "./$%file%$.e" "python3 $%full%$"):`, &script, true)
 
-	color.Cyan(`After script (e.g. "rm $%file%$.e"), empty is ok: `)
-	afterScript := util.ScanlineTrim()
+	afterScript := ""
+	util.GetValue(`After script (e.g. "rm $%file%$.e"), empty is ok:`, &afterScript, false)
 
 	c.Template = append(c.Template, CodeTemplate{
-		alias, lang, path, suffix,
+		alias, langs[langID].K, path, suffix,
 		beforeScript, script, afterScript,
 	})
-
-	if util.YesOrNo("Make it default (y/n)? ") {
+	makeItDefault := true
+	prompt := &survey.Confirm{Message: `Make it default?`, Default: true}
+	if err = survey.AskOne(prompt, &makeItDefault); err != nil {
+		return
+	}
+	if makeItDefault {
 		c.Default = len(c.Template) - 1
 	}
 	return c.save()
 }
 
 func (c *Config) RemoveTemplate() (err error) {
-	color.Cyan("Remove a template")
 	if len(c.Template) == 0 {
 		color.Red("There is no template. Please add one")
 		return nil
 	}
+
+	templates := make([]string, len(c.Template))
 	for i, template := range c.Template {
 		star := " "
 		if i == c.Default {
 			star = color.New(color.FgGreen).Sprint("*")
 		}
-		_, _ = ansi.Printf(`%v%2v: "%v" "%v"`, star, i, template.Alias, template.Path)
-		_, _ = ansi.Println()
+		templates[i] = fmt.Sprintf(`%v "%v" "%v"`, star, template.Alias, template.Path)
 	}
-	idx := util.ChooseIndex(len(c.Template))
+	prompt := &survey.Select{
+		Message: "Remove a template",
+		Options: templates,
+	}
+	idx := 0
+	if err = survey.AskOne(prompt, &idx); err != nil {
+		return
+	}
 	c.Template = append(c.Template[:idx], c.Template[idx+1:]...)
 	if idx == c.Default {
 		c.Default = 0
@@ -156,21 +160,27 @@ func (c *Config) RemoveTemplate() (err error) {
 	return c.save()
 }
 
-func (c *Config) SetDefaultTemplate() error {
-	color.Cyan("Set default template")
+func (c *Config) SetDefaultTemplate() (err error) {
 	if len(c.Template) == 0 {
 		color.Red("There is no template. Please add one")
 		return nil
 	}
+
+	templates := make([]string, len(c.Template))
 	for i, template := range c.Template {
 		star := " "
 		if i == c.Default {
 			star = color.New(color.FgGreen).Sprint("*")
 		}
-		_, _ = ansi.Printf(`%v%2v: "%v" "%v"`, star, i, template.Alias, template.Path)
-		_, _ = ansi.Println()
+		templates[i] = fmt.Sprintf(`%v "%v" "%v"`, star, template.Alias, template.Path)
 	}
-	c.Default = util.ChooseIndex(len(c.Template))
+	prompt := &survey.Select{
+		Message: "Set default template",
+		Options: templates,
+	}
+	if err = survey.AskOne(prompt, &c.Default); err != nil {
+		return
+	}
 	return c.save()
 }
 

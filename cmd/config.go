@@ -1,14 +1,11 @@
 package cmd
 
 import (
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
-	"github.com/Arapak/sio-tool/util"
-
-	"github.com/fatih/color"
-	"github.com/k0kubun/go-ansi"
 )
 
 func Config() (err error) {
@@ -16,24 +13,39 @@ func Config() (err error) {
 	codeforcesCln := codeforces_client.Instance
 	szkopulCln := szkopul_client.Instance
 	sioCln := sio_client.Instance
-	color.Cyan("Configure the tool")
-	_, _ = ansi.Println(`0) login`)
-	_, _ = ansi.Println(`1) add a template`)
-	_, _ = ansi.Println(`2) delete a template`)
-	_, _ = ansi.Println(`3) set default template`)
-	_, _ = ansi.Println(`4) run "st gen" after "st parse"`)
-	_, _ = ansi.Println(`5) set host domain`)
-	_, _ = ansi.Println(`6) set proxy`)
-	_, _ = ansi.Println(`7) set folders' name`)
-	_, _ = ansi.Println(`8) set default naming`)
-	_, _ = ansi.Println(`9) set database path`)
-	index := util.ChooseIndex(10)
+
+	index := 0
+	prompt := &survey.Select{
+		Message: "Configure the tool",
+		Options: []string{
+			`login`,
+			`add a template`,
+			`delete a template`,
+			`set default template`,
+			`run "st gen" after "st parse"`,
+			`set host domain`,
+			`set proxy`,
+			`set folders' name`,
+			`set default naming`,
+			`set database path`,
+		},
+		PageSize: 10,
+	}
+	if err = survey.AskOne(prompt, &index); err != nil {
+		return
+	}
 	if index == 0 {
-		color.Cyan("Select client")
-		_, _ = ansi.Println(`0) Codeforces`)
-		_, _ = ansi.Println(`1) Szkopul`)
-		_, _ = ansi.Println(`2) Sio2 (staszic.waw.pl)`)
-		index = util.ChooseIndex(3)
+		prompt := &survey.Select{
+			Message: "Select client",
+			Options: []string{
+				`Codeforces`,
+				`Szkopul`,
+				`Sio2 (staszic.waw.pl)`,
+			},
+		}
+		if err = survey.AskOne(prompt, &index); err != nil {
+			return
+		}
 		if index == 0 {
 			return codeforcesCln.ConfigLogin()
 		} else if index == 1 {
