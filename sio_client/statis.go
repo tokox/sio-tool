@@ -46,7 +46,7 @@ func findProblems(body []byte) (ret []StatisInfo, err error) {
 		class, _ := s.Attr("class")
 		if strings.Contains(class, "problemlist-subheader") {
 			space := regexp.MustCompile(`\s+`)
-			round = space.ReplaceAllString(strings.TrimSpace(s.Text()), " ")
+			round = space.ReplaceAllString(s.Find("strong").Text(), " ")
 			return
 		}
 		info := StatisInfo{Round: round}

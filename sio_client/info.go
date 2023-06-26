@@ -45,12 +45,40 @@ func (info *Info) Hint() string {
 	return text
 }
 
+var polishCharMap = map[rune]rune{
+	'ą': 'a',
+	'ć': 'c',
+	'ę': 'e',
+	'ł': 'l',
+	'ń': 'n',
+	'ó': 'o',
+	'ś': 's',
+	'ź': 'z',
+	'ż': 'z',
+}
+
+func replacePolishChars(str string) string {
+	runes := []rune(str)
+	for i := range runes {
+		if val, ok := polishCharMap[runes[i]]; ok == true {
+			runes[i] = val
+		}
+	}
+	return string(runes)
+}
+
 var nonAlphanumericRegExp = regexp.MustCompile(`\W+`)
+var underscoreRegex = regexp.MustCompile("_+")
 
 func clearString(str string) string {
 	str = strings.ToLower(str)
-	str = strings.Replace(str, " ", "_", -1)
-	return nonAlphanumericRegExp.ReplaceAllString(str, "")
+	str = replacePolishChars(str)
+	str = strings.ReplaceAll(str, " ", "_")
+	str = strings.ReplaceAll(str, ".", "_")
+	str = strings.ReplaceAll(str, "-", "_")
+
+	str = nonAlphanumericRegExp.ReplaceAllString(str, "")
+	return underscoreRegex.ReplaceAllString(str, "_")
 }
 
 func (info *Info) Path() string {
