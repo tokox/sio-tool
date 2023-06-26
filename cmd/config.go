@@ -23,7 +23,7 @@ func Config() (err error) {
 			`delete a template`,
 			`set default template`,
 			`run "st gen" after "st parse"`,
-			`set host domain`,
+			`set codeforces host domain`,
 			`set proxy`,
 			`set folders' name`,
 			`set default naming`,
@@ -62,7 +62,7 @@ func Config() (err error) {
 	} else if index == 4 {
 		return cfg.SetGenAfterParse()
 	} else if index == 5 {
-		return cfg.SetHost()
+		return cfg.SetCodeforcesHost()
 	} else if index == 6 {
 		return cfg.SetProxy()
 	} else if index == 7 {

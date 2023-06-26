@@ -44,7 +44,7 @@ func validateProxy(proxy interface{}) error {
 	return nil
 }
 
-func (c *Config) SetHost() (err error) {
+func (c *Config) SetCodeforcesHost() (err error) {
 	var host string
 	if validateHost(c.CodeforcesHost) == nil {
 		host = formatHost(c.CodeforcesHost)
