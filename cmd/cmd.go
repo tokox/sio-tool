@@ -134,7 +134,7 @@ func getSampleByName(filename string) (samples []string) {
 	if err != nil {
 		return
 	}
-	reg := regexp.MustCompile(fmt.Sprintf("%s(\\d+).in", filename))
+	reg := regexp.MustCompile(fmt.Sprintf("%s(\\d+).in", regexp.QuoteMeta(filename)))
 	for _, path := range paths {
 		name := path.Name()
 		tmp := reg.FindSubmatch([]byte(name))

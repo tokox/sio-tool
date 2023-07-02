@@ -135,7 +135,7 @@ func parsePathSzkopul(path string) map[string]string {
 	output := make(map[string]string)
 	cfg := config.Instance
 	for k, archive := range szkopul_client.Archives {
-		reg := regexp.MustCompile(fmt.Sprintf(SzkopulPathRegStr[k], cfg.FolderName["szkopul-root"], cfg.FolderName[fmt.Sprintf("szkopul-%v", archive)]))
+		reg := regexp.MustCompile(fmt.Sprintf(SzkopulPathRegStr[k], regexp.QuoteMeta(cfg.FolderName["szkopul-root"]), regexp.QuoteMeta(cfg.FolderName[fmt.Sprintf("szkopul-%v", archive)])))
 		names := reg.SubexpNames()
 		for i, val := range reg.FindStringSubmatch(path) {
 			if names[i] != "" && val != "" {

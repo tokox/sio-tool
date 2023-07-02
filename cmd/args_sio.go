@@ -99,7 +99,7 @@ var SioPathRegStr = fmt.Sprintf("%v/((?P<contestID>%v)/((?P<round>%v)/((?P<probl
 func parsePathSio(dir, path string) map[string]string {
 	path = filepath.ToSlash(path) + "/"
 	output := make(map[string]string)
-	reg := regexp.MustCompile(fmt.Sprintf(SioPathRegStr, dir))
+	reg := regexp.MustCompile(fmt.Sprintf(SioPathRegStr, regexp.QuoteMeta(dir)))
 	names := reg.SubexpNames()
 	for i, val := range reg.FindStringSubmatch(path) {
 		if names[i] != "" && val != "" {
