@@ -52,6 +52,9 @@ func Init(path, host, proxy string) {
 func (c *SzkopulClient) load() (err error) {
 	file, err := os.Open(c.path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
 		return
 	}
 	defer file.Close()
