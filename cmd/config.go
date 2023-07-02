@@ -12,7 +12,8 @@ func Config() (err error) {
 	cfg := config.Instance
 	codeforcesCln := codeforces_client.Instance
 	szkopulCln := szkopul_client.Instance
-	sioCln := sio_client.Instance
+	sioStaszicCln := sio_client.StaszicInstance
+	sioMimuwCln := sio_client.MimuwInstance
 
 	index := 0
 	prompt := &survey.Select{
@@ -41,6 +42,7 @@ func Config() (err error) {
 				`Codeforces`,
 				`Szkopul`,
 				`Sio2 (staszic.waw.pl)`,
+				`Sio2 (mimuw.edu.pl)`,
 			},
 		}
 		if err = survey.AskOne(prompt, &index); err != nil {
@@ -51,7 +53,9 @@ func Config() (err error) {
 		} else if index == 1 {
 			return szkopulCln.ConfigLogin()
 		} else if index == 2 {
-			return sioCln.ConfigLogin()
+			return sioStaszicCln.ConfigLogin()
+		} else if index == 3 {
+			return sioMimuwCln.ConfigLogin()
 		}
 	} else if index == 1 {
 		return cfg.AddTemplate()

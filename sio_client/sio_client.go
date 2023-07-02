@@ -13,6 +13,13 @@ import (
 	"github.com/fatih/color"
 )
 
+type SioInstanceClient int
+
+const (
+	Staszic SioInstanceClient = 0
+	Mimuw   SioInstanceClient = 1
+)
+
 type SioClient struct {
 	Jar            *cookiejar.Jar `json:"cookies"`
 	Username       string         `json:"handle"`
@@ -21,11 +28,13 @@ type SioClient struct {
 	host           string
 	path           string
 	client         *http.Client
+	instanceClient SioInstanceClient
 }
 
-var Instance *SioClient
+var StaszicInstance *SioClient
+var MimuwInstance *SioClient
 
-func Init(path, host, proxy string) {
+func Init(path, host, proxy string, instanceClient SioInstanceClient) {
 	jar, _ := cookiejar.New(nil)
 	c := &SioClient{Jar: jar, LastSubmission: nil, path: path, host: host, client: nil}
 	if err := c.load(); err != nil {
@@ -46,7 +55,12 @@ func Init(path, host, proxy string) {
 	if err := c.save(); err != nil {
 		color.Red(err.Error())
 	}
-	Instance = c
+	c.instanceClient = instanceClient
+	if instanceClient == Staszic {
+		StaszicInstance = c
+	} else if instanceClient == Mimuw {
+		MimuwInstance = c
+	}
 }
 
 func (c *SioClient) load() (err error) {

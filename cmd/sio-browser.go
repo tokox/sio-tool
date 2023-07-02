@@ -9,7 +9,7 @@ import (
 
 func SioOpen() (err error) {
 	var URL string
-	URL, err = Args.SioInfo.OpenURL(config.Instance.SioHost)
+	URL, err = Args.SioInfo.OpenURL(getSioHost())
 	if err != nil {
 		return
 	}
@@ -18,10 +18,11 @@ func SioOpen() (err error) {
 
 func SioSid() (err error) {
 	info := Args.SioInfo
-	if info.SubmissionID == "" && sio_client.Instance.LastSubmission != nil {
-		info = *sio_client.Instance.LastSubmission
+	cln := getSioClient()
+	if info.SubmissionID == "" && cln.LastSubmission != nil {
+		info = *cln.LastSubmission
 	}
-	URL, err := info.SubmissionURL(config.Instance.SioHost)
+	URL, err := info.SubmissionURL(getSioHost())
 	if err != nil {
 		return
 	}
@@ -29,9 +30,27 @@ func SioSid() (err error) {
 }
 
 func SioStand() (err error) {
-	URL, err := Args.SioInfo.StandingsURL(config.Instance.SioHost)
+	URL, err := Args.SioInfo.StandingsURL(getSioHost())
 	if err != nil {
 		return
 	}
 	return openURL(URL)
+}
+
+func getSioClient() *sio_client.SioClient {
+	if Args.SioStaszic {
+		return sio_client.StaszicInstance
+	} else if Args.SioMimuw {
+		return sio_client.MimuwInstance
+	}
+	return nil
+}
+
+func getSioHost() string {
+	if Args.SioStaszic {
+		return config.Instance.SioStaszicHost
+	} else if Args.SioMimuw {
+		return config.Instance.SioMimuwHost
+	}
+	return ""
 }

@@ -6,14 +6,13 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Arapak/sio-tool/sio_client"
 	"github.com/Arapak/sio-tool/util"
 	"github.com/k0kubun/go-ansi"
 	"github.com/olekukonko/tablewriter"
 )
 
 func SioList() (err error) {
-	cln := sio_client.Instance
+	cln := getSioClient()
 	info := Args.SioInfo
 	problems, perf, err := cln.Statis(info)
 	if err != nil {

@@ -77,7 +77,7 @@ func Eval(opts docopt.Opts) error {
 			} else if Args.List {
 				return SzkopulList()
 			}
-		} else if Args.Sio {
+		} else if Args.SioStaszic || Args.SioMimuw {
 			if Args.Submit {
 				return SioSubmit()
 			} else if Args.Watch {

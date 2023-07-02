@@ -140,10 +140,17 @@ func (c *Config) SetFolderName() (err error) {
 			return
 		}
 	}
-	if c.FolderName["sio-root"], err = inputDontOverwriteEmpty(`Sio root path (absolute)`, c.FolderName["sio-root"], validateAbsolutePath); err != nil {
+	if c.FolderName["sio-staszic-root"], err = inputDontOverwriteEmpty(`Sio staszic root path (absolute)`, c.FolderName["sio-staszic-root"], validateAbsolutePath); err != nil {
 		return
 	}
-	if c.FolderName["sio-root"], err = homedir.Expand(c.FolderName["sio-root"]); err != nil {
+	if c.FolderName["sio-staszic-root"], err = homedir.Expand(c.FolderName["sio-staszic-root"]); err != nil {
+		return
+	}
+
+	if c.FolderName["sio-mimuw-root"], err = inputDontOverwriteEmpty(`Sio mimuw root path (absolute)`, c.FolderName["sio-mimuw-root"], validateAbsolutePath); err != nil {
+		return
+	}
+	if c.FolderName["sio-mimuw-root"], err = homedir.Expand(c.FolderName["sio-mimuw-root"]); err != nil {
 		return
 	}
 	return c.save()

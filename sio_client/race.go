@@ -1,53 +1,21 @@
 package sio_client
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/Arapak/sio-tool/util"
 	"github.com/fatih/color"
 	"github.com/k0kubun/go-ansi"
 	"math"
-	"strings"
 	"time"
 )
 
-const ErrorNoRoundToRace = "there is no round to race in this contest"
-
-type RoundInfo struct {
-	Time           float64 `json:"time"`
-	RoundStartDate float64 `json:"round_start_date"`
-	RoundName      string  `json:"round_name"`
-	Username       string  `json:"user"`
-}
-
 func (c *SioClient) RaceContest(info Info) (round string, err error) {
 	color.Cyan("Race " + info.Hint())
-
-	URL, err := info.ContestURL(c.host)
-	if err != nil {
-		return
-	}
-
-	body, err := util.GetBody(c.client, strings.TrimSuffix(URL, "/p")+"/status")
-	if err != nil {
-		return
-	}
-	roundInfo := RoundInfo{}
-	err = json.Unmarshal(body, &roundInfo)
-	if err != nil {
-		return
-	}
-	if roundInfo.Username == "" {
-		err = errors.New(ErrorNotLogged)
-		return
-	}
-	if roundInfo.RoundName == "" {
-		err = errors.New(ErrorNoRoundToRace)
-		return
-	}
+	roundInfo, err := c.status(info)
 	color.Cyan("Round %v", roundInfo.RoundName)
 	timeLeft := int64(math.Round(roundInfo.RoundStartDate - roundInfo.Time))
+	if timeLeft <= 0 {
+		return roundInfo.RoundName, nil
+	}
 	color.Green("Countdown: ")
 	for timeLeft > 0 {
 		h := timeLeft / 60 / 60

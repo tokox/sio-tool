@@ -20,7 +20,7 @@ import (
 const ErrorNeedProblemIdentification = "you have to specify the problem alias or the problem instance id"
 const ErrorNeedCantFindProblemID = "couldn't find problem instance id (maybe a problem with this alias doesn't exist in this contest)"
 
-const SubmissionsPageRegExp = `<title>My submissions[\S\s]+</title>`
+const SubmissionsPageRegExp = `<title>My submissions[\S\s]+</title>|<title>Moje zgłoszenia[\S\s]+</title>`
 const LoginPageRegExp = `<h1>Log in</h1>`
 
 func getErrorsFromBody(body []byte) (err error) {
@@ -52,6 +52,11 @@ func findProblemID(body []byte, info *Info) (err error) {
 	return
 }
 
+func checkSubmitOption(body []byte) bool {
+	return bytes.Contains(body, []byte("Sorry, there are no problems for which you could submit a solution...")) ||
+		bytes.Contains(body, []byte("Niestety nie ma tu żadnych zadań, do których możesz przysłać rozwiązanie…"))
+}
+
 func (c *SioClient) Submit(info Info, sourcePath string) (err error) {
 	URL, err := info.SubmitURL(c.host)
 	if err != nil {
@@ -66,6 +71,10 @@ func (c *SioClient) Submit(info Info, sourcePath string) (err error) {
 	_, err = findUsername(submitPageBody)
 	if err != nil {
 		return
+	}
+
+	if checkSubmitOption(submitPageBody) {
+		return errors.New("can't submit to any problem in this contest")
 	}
 
 	csrf, err := findCsrf(submitPageBody)

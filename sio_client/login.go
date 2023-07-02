@@ -64,15 +64,24 @@ func (c *SioClient) Login() (err error) {
 
 	form := url.Values{}
 	form.Add("csrfmiddlewaretoken", csrf)
-	form.Add("username", c.Username)
-	form.Add("password", password)
+	var URL string
+	if c.instanceClient == Staszic {
+		form.Add("username", c.Username)
+		form.Add("password", password)
+		URL = c.host + "/login/"
+	} else if c.instanceClient == Mimuw {
+		form.Add("auth-username", c.Username)
+		form.Add("auth-password", password)
+		form.Add("login_view-current_step", "auth")
+		URL = c.host + "/c/oi30-3/login/"
+	}
 
-	req, err := http.NewRequest("POST", c.host+"/login/", strings.NewReader(form.Encode()))
+	req, err := http.NewRequest("POST", URL, strings.NewReader(form.Encode()))
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", c.host+"/login/")
+	req.Header.Set("Referer", URL)
 	req.Header.Set("Origin", c.host)
 
 	resp, err := c.client.Do(req)

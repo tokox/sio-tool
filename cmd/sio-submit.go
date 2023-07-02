@@ -8,7 +8,7 @@ import (
 )
 
 func SioSubmit() (err error) {
-	cln := sio_client.Instance
+	cln := getSioClient()
 	cfg := config.Instance
 	info := Args.SioInfo
 	filename, _, err := getOneCode(Args.File, cfg.Template)

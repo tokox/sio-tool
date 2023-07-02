@@ -94,8 +94,11 @@ func Gen() (err error) {
 	if Args.Szkopul {
 		handle = szkopul_client.Instance.Username
 	}
-	if Args.Sio {
-		handle = sio_client.Instance.Username
+	if Args.SioStaszic {
+		handle = sio_client.StaszicInstance.Username
+	}
+	if Args.SioMimuw {
+		handle = sio_client.MimuwInstance.Username
 	}
 	source, err := readTemplateSource(path, handle)
 	if err != nil {

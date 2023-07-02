@@ -8,12 +8,11 @@ import (
 	"path/filepath"
 
 	"github.com/Arapak/sio-tool/config"
-	"github.com/Arapak/sio-tool/sio_client"
 )
 
 func SioParse() (err error) {
 	cfg := config.Instance
-	cln := sio_client.Instance
+	cln := getSioClient()
 	info := Args.SioInfo
 	source := ""
 	ext := ""

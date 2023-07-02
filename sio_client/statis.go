@@ -41,7 +41,7 @@ func findProblems(body []byte) (ret []StatisInfo, err error) {
 	if err != nil {
 		return
 	}
-	var round = "none"
+	var round = ""
 	doc.Find("table tbody").First().Find("tr").Each(func(_ int, s *goquery.Selection) {
 		class, _ := s.Attr("class")
 		if strings.Contains(class, "problemlist-subheader") {
@@ -53,13 +53,18 @@ func findProblems(body []byte) (ret []StatisInfo, err error) {
 		info.Name = strings.TrimPrefix(strings.TrimSpace(s.Find("a").First().Text()), "Zadanie ")
 		info.Alias = strings.TrimSpace(s.Find("td").First().Text())
 		info.ID = strings.TrimPrefix(s.Find("div").First().AttrOr("id", ""), "limits_")
-		if info.ID == "" {
-			return
-		}
 		info.Points = strings.TrimSpace(s.Find(".label").First().Text())
 		ret = append(ret, info)
 	})
 	return
+}
+
+func (c *SioClient) getActiveRoundName(info Info) string {
+	roundInfo, err := c.status(info)
+	if err != nil {
+		return ""
+	}
+	return roundInfo.RoundName
 }
 
 func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performance, err error) {
@@ -70,6 +75,9 @@ func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performa
 
 	var body []byte
 	var problemsOnPage []StatisInfo
+
+	activeRoundName := c.getActiveRoundName(info)
+
 	pageNum := 1
 	for {
 		perf.StartFetching()
@@ -95,6 +103,11 @@ func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performa
 		}
 		if len(problemsOnPage) == 0 {
 			break
+		}
+		for i, _ := range problemsOnPage {
+			if problemsOnPage[i].Round == "" {
+				problemsOnPage[i].Round = activeRoundName
+			}
 		}
 		problems = append(problems, problemsOnPage...)
 	}

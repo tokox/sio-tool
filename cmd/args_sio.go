@@ -6,20 +6,13 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/sio_client"
 )
 
-func parseArgsSio() error {
-	cfg := config.Instance
-	cln := sio_client.Instance
+func parseArgsSio(dir string) error {
 	path, err := os.Getwd()
 	if err != nil {
 		return err
-	}
-
-	if Args.Handle == "" {
-		Args.Handle = cln.Username
 	}
 	info := sio_client.Info{}
 	for _, arg := range Args.Specifier {
@@ -49,7 +42,7 @@ func parseArgsSio() error {
 			info.SubmissionID = value
 		}
 	}
-	parsedPath := parsePathSio(path)
+	parsedPath := parsePathSio(dir, path)
 	if info.Contest == "" {
 		if value, ok := parsedPath["contestID"]; ok {
 			info.Contest = value
@@ -65,7 +58,7 @@ func parseArgsSio() error {
 			}
 		}
 	}
-	info.RootPath = filepath.Join(cfg.FolderName["sio-root"])
+	info.RootPath = filepath.Join(dir)
 	Args.SioInfo = info
 	return nil
 }
@@ -76,7 +69,6 @@ const SioContestRegStr = `[\w-]+?`
 const SioRoundRegStr = `\w+?`
 
 var SioArgRegStr = [...]string{
-	`^[sS][iI][oO]?$`,
 	fmt.Sprintf(`/c/(?P<contestID>%v)/(p/(?P<problemAlias>%v)?)?`, SioContestRegStr, SioProblemRegStr),
 	fmt.Sprintf(`^(?P<problemID>%v)$`, SioProblemIdRegStr),
 	fmt.Sprintf(`^(?P<problemAlias>%v)$`, SioProblemRegStr),
@@ -104,11 +96,10 @@ func parseArgSio(arg string) map[string]string {
 
 var SioPathRegStr = fmt.Sprintf("%v/((?P<contestID>%v)/((?P<round>%v)/((?P<problemAlias>%v)/)?)?)?", "%v", SioContestRegStr, SioRoundRegStr, SioProblemRegStr)
 
-func parsePathSio(path string) map[string]string {
+func parsePathSio(dir, path string) map[string]string {
 	path = filepath.ToSlash(path) + "/"
 	output := make(map[string]string)
-	cfg := config.Instance
-	reg := regexp.MustCompile(fmt.Sprintf(SioPathRegStr, cfg.FolderName["sio-root"]))
+	reg := regexp.MustCompile(fmt.Sprintf(SioPathRegStr, dir))
 	names := reg.SubexpNames()
 	for i, val := range reg.FindStringSubmatch(path) {
 		if names[i] != "" && val != "" {

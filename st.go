@@ -24,7 +24,8 @@ const buildTime = "$CI_BUILD_TIME"
 const configPath = "~/.st/config"
 const codeforcesSessionPath = "~/.st/codeforces_session"
 const szkopulSessionPath = "~/.st/szkopul_session"
-const sioSessionPath = "~/.st/sio_session"
+const sioStaszicSessionPath = "~/.st/sio_staszic_session"
+const sioMimuwSessionPath = "~/.st/sio_mimuw_session"
 
 func main() {
 	usage := `SIO Tool $%version%$ (st). https://github.com/Arapak/sio-tool
@@ -174,11 +175,13 @@ Script in template:
 	cfgPath, _ := homedir.Expand(configPath)
 	codeforcesClnPath, _ := homedir.Expand(codeforcesSessionPath)
 	szkopulClnPath, _ := homedir.Expand(szkopulSessionPath)
-	sioClnPath, _ := homedir.Expand(sioSessionPath)
+	sioStaszicClnPath, _ := homedir.Expand(sioStaszicSessionPath)
+	sioMimuwClnPath, _ := homedir.Expand(sioMimuwSessionPath)
 	config.Init(cfgPath)
 	codeforces_client.Init(codeforcesClnPath, config.Instance.CodeforcesHost, config.Instance.Proxy)
 	szkopul_client.Init(szkopulClnPath, config.Instance.SzkopulHost, config.Instance.Proxy)
-	sio_client.Init(sioClnPath, config.Instance.SioHost, config.Instance.Proxy)
+	sio_client.Init(sioStaszicClnPath, config.Instance.SioStaszicHost, config.Instance.Proxy, sio_client.Staszic)
+	sio_client.Init(sioMimuwClnPath, config.Instance.SioMimuwHost, config.Instance.Proxy, sio_client.Mimuw)
 
 	err := cmd.Eval(opts)
 	if err != nil {

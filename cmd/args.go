@@ -54,7 +54,8 @@ type ParsedArgs struct {
 	Goto           bool     `docopt:"goto"`
 	Codeforces     bool
 	Szkopul        bool
-	Sio            bool
+	SioStaszic     bool
+	SioMimuw       bool
 }
 
 var Args *ParsedArgs
@@ -74,9 +75,14 @@ func determineClient() error {
 		Args.Codeforces = true
 		return nil
 	}
-	sioDir := SubPath(path, cfg.FolderName["sio-root"])
-	if sioDir {
-		Args.Sio = true
+	sioStaszicDir := SubPath(path, cfg.FolderName["sio-staszic-root"])
+	if sioStaszicDir {
+		Args.SioStaszic = true
+		return nil
+	}
+	sioMimuwDir := SubPath(path, cfg.FolderName["sio-mimuw-root"])
+	if sioMimuwDir {
+		Args.SioMimuw = true
 		return nil
 	}
 	szkopulDir := SubPath(path, cfg.FolderName["szkopul-root"])
@@ -97,11 +103,21 @@ func parseArgs(opts docopt.Opts) error {
 	if err != nil {
 		return err
 	}
+	cfg := config.Instance
 	if Args.Codeforces {
 		return parseArgsCodeforces()
 	}
-	if Args.Sio {
-		return parseArgsSio()
+	if Args.SioStaszic {
+		if Args.Handle == "" {
+			Args.Handle = sio_client.StaszicInstance.Username
+		}
+		return parseArgsSio(cfg.FolderName["sio-staszic-root"])
+	}
+	if Args.SioMimuw {
+		if Args.Handle == "" {
+			Args.Handle = sio_client.MimuwInstance.Username
+		}
+		return parseArgsSio(cfg.FolderName["sio-mimuw-root"])
 	}
 	if Args.Szkopul {
 		return parseArgsSzkopul()

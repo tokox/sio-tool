@@ -31,7 +31,8 @@ type Config struct {
 	GenAfterParse  bool              `json:"gen_after_parse"`
 	CodeforcesHost string            `json:"codeforces_host"`
 	SzkopulHost    string            `json:"szkopul_host"`
-	SioHost        string            `json:"sio_host"`
+	SioStaszicHost string            `json:"sio_staszic_host"`
+	SioMimuwHost   string            `json:"sio_mimuw_host"`
 	Proxy          string            `json:"proxy"`
 	FolderName     map[string]string `json:"folder_name"`
 	DefaultNaming  map[string]string `json:"default_naming"`
@@ -42,7 +43,7 @@ type Config struct {
 var Instance *Config
 
 func Init(path string) {
-	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioHost: "https://sio2.staszic.waw.pl", DbPath: "~/.st/tasks.db", Proxy: ""}
+	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioStaszicHost: "https://sio2.staszic.waw.pl", SioMimuwHost: "https://sio2.mimuw.edu.pl", DbPath: "~/.st/tasks.db", Proxy: ""}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new configuration in %v", path)
@@ -53,8 +54,11 @@ func Init(path string) {
 	if c.FolderName == nil {
 		c.FolderName = map[string]string{}
 	}
-	if _, ok := c.FolderName["sio-root"]; !ok {
-		c.FolderName["sio-root"] = "~/st/sio"
+	if _, ok := c.FolderName["sio-staszic-root"]; !ok {
+		c.FolderName["sio-staszic-root"] = "~/st/sio-staszic"
+	}
+	if _, ok := c.FolderName["sio-mimuw-root"]; !ok {
+		c.FolderName["sio-mimuw-root"] = "~/st/sio-mimuw"
 	}
 	if _, ok := c.FolderName["codeforces-root"]; !ok {
 		c.FolderName["codeforces-root"] = "~/st/codeforces"
@@ -93,7 +97,11 @@ func Init(path string) {
 		color.Red(err.Error())
 		return
 	}
-	c.FolderName["sio-root"], err = homedir.Expand(c.FolderName["sio-root"])
+	c.FolderName["sio-staszic-root"], err = homedir.Expand(c.FolderName["sio-staszic-root"])
+	if err != nil {
+		color.Red(err.Error())
+	}
+	c.FolderName["sio-mimuw-root"], err = homedir.Expand(c.FolderName["sio-mimuw-root"])
 	if err != nil {
 		color.Red(err.Error())
 	}
