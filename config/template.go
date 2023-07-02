@@ -70,6 +70,10 @@ func (c *Config) AddTemplate() (err error) {
 	if err = survey.AskOne(&survey.Input{Message: `Template absolute path(e.g. "~/template/io.cpp"):`}, &path, survey.WithValidator(validateTemplatePath)); err != nil {
 		return
 	}
+	path, err = homedir.Expand(path)
+	if err != nil {
+		return
+	}
 
 	color.Cyan(`The suffix of template above will be added by default.`)
 	suffixes := ""
