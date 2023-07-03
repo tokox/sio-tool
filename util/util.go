@@ -128,7 +128,8 @@ func LimitNumOfChars(s string, n int) string {
 }
 
 func PdfToText(body []byte) ([]byte, error) {
-	cmd := exec.Command("pdftotext", "-", "-")
+	cmd := exec.Command("pdftotext", "-raw", "-", "-")
+
 	cmd.Stdin = bytes.NewReader(body)
 	var out bytes.Buffer
 	cmd.Stdout = &out
