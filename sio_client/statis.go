@@ -104,7 +104,7 @@ func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performa
 		if len(problemsOnPage) == 0 {
 			break
 		}
-		for i, _ := range problemsOnPage {
+		for i := range problemsOnPage {
 			if problemsOnPage[i].Round == "" {
 				problemsOnPage[i].Round = activeRoundName
 			}

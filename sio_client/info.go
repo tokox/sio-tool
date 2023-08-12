@@ -25,6 +25,8 @@ const ErrorNeedContest = "you have to specify the contest"
 
 const ErrorNeedSubmissionID = "you have to specify the Submission ID"
 
+const ErrorUnknownInstance = "unknown sio instance"
+
 func (info *Info) Hint() string {
 	text := ""
 	if info.Contest != "" {
@@ -60,7 +62,7 @@ var polishCharMap = map[rune]rune{
 func replacePolishChars(str string) string {
 	runes := []rune(str)
 	for i := range runes {
-		if val, ok := polishCharMap[runes[i]]; ok == true {
+		if val, ok := polishCharMap[runes[i]]; ok {
 			runes[i] = val
 		}
 	}
@@ -140,11 +142,17 @@ func (info *Info) SubmitURL(host string) (string, error) {
 	return fmt.Sprintf(host+"/c/%v/submit/", info.Contest), nil
 }
 
-func (info *Info) StandingsURL(host string) (string, error) {
+func (info *Info) StandingsURL(cln *SioClient, host string) (string, error) {
 	if info.Contest == "" {
 		return "", errors.New(ErrorNeedContest)
 	}
-	return fmt.Sprintf(host+"/c/%v/r/", info.Contest), nil
+	if cln.instanceClient == Staszic {
+		return fmt.Sprintf(host+"/c/%v/r/", info.Contest), nil
+	} else if cln.instanceClient == Mimuw {
+		return fmt.Sprintf(host+"/c/%v/ranking/", info.Contest), nil
+	} else {
+		return "", errors.New(ErrorUnknownInstance)
+	}
 }
 
 func (info *Info) StatusURL(host string) (string, error) {

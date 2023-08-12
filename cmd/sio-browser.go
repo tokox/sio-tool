@@ -30,7 +30,7 @@ func SioSid() (err error) {
 }
 
 func SioStand() (err error) {
-	URL, err := Args.SioInfo.StandingsURL(getSioHost())
+	URL, err := Args.SioInfo.StandingsURL(getSioClient(), getSioHost())
 	if err != nil {
 		return
 	}

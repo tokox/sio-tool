@@ -2,15 +2,19 @@ package sio_client
 
 import (
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/k0kubun/go-ansi"
 	"math"
 	"time"
+
+	"github.com/fatih/color"
+	"github.com/k0kubun/go-ansi"
 )
 
 func (c *SioClient) RaceContest(info Info) (round string, err error) {
 	color.Cyan("Race " + info.Hint())
 	roundInfo, err := c.status(info)
+	if err != nil {
+		return "", err
+	}
 	color.Cyan("Round %v", roundInfo.RoundName)
 	timeLeft := int64(math.Round(roundInfo.RoundStartDate - roundInfo.Time))
 	if timeLeft <= 0 {

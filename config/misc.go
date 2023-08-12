@@ -3,9 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
 	"path/filepath"
 	"regexp"
+
+	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/szkopul_client"
@@ -127,7 +128,9 @@ func (c *Config) SetFolderName() (err error) {
 		return
 	}
 	for _, problemType := range codeforces_client.ProblemTypes {
-		c.FolderName[fmt.Sprintf("codeforces-%v", problemType)], err = inputDontOverwriteEmpty(fmt.Sprintf(`Codeforces %v path`, problemType), c.FolderName[fmt.Sprintf("codeforces-%v", problemType)], nil)
+		if c.FolderName[fmt.Sprintf("codeforces-%v", problemType)], err = inputDontOverwriteEmpty(fmt.Sprintf(`Codeforces %v path`, problemType), c.FolderName[fmt.Sprintf("codeforces-%v", problemType)], nil); err != nil {
+			return
+		}
 	}
 	if c.FolderName["szkopul-root"], err = inputDontOverwriteEmpty(`Szkopul root path (absolute)`, c.FolderName["szkopul-root"], validateAbsolutePath); err != nil {
 		return
