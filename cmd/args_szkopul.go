@@ -85,15 +85,17 @@ func parseArgsSzkopul() error {
 	return nil
 }
 
-const SzkopulProblemSecretKeyRegStr = `[A-Za-z0-9]{24}`
+const SzkopulProblemSecretKeyRegStr = `[A-Za-z0-9-]{24}`
 
 const StrictSzkopulProblemRegStr = `[a-z]{3}\d*`
 const OIContestRegStr = `[MCLXVI]+`
 const OIStageRegStr = `[1-3]`
 
+var SzkopulLinkRegStr = fmt.Sprintf(`/problemset/problem/(?P<problemSecretKey>%v)(/site(/\?key=\w+)?)?`, SzkopulProblemSecretKeyRegStr)
+
 var SzkopulArgRegStr = [...]string{
 	`^[oO][iI]?$`,
-	fmt.Sprintf(`/problemset/problem/(?P<problemSecretKey>%v)(/site(/\?key=\w+)?)?`, SzkopulProblemSecretKeyRegStr),
+	SzkopulLinkRegStr,
 	fmt.Sprintf(`^(?P<problemSecretKey>%v)$`, SzkopulProblemSecretKeyRegStr),
 	fmt.Sprintf(`^(?P<problemAlias>%v)$`, StrictSzkopulProblemRegStr),
 	fmt.Sprintf(`^(?P<contestID>%v)$`, OIContestRegStr),

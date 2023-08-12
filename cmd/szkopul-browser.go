@@ -60,6 +60,19 @@ func getLinkToProblemFromStatis() (link string, err error) {
 	return
 }
 
+func searchForLinkSzkopul() (link string, err error) {
+	color.Green("Searching in database...")
+	link, err = getLinkToProblemFromDatabase(Args.SzkopulInfo.ToTask())
+	if err == nil {
+		return
+	}
+	if err.Error() == ErrorNoProblemFound || err.Error() == ErrorMultipleProblemsFound {
+		color.Red(err.Error())
+		link, err = getLinkToProblemFromStatis()
+	}
+	return
+}
+
 func SzkopulOpen() (err error) {
 	var URL string
 	if Args.SzkopulInfo.ProblemID == "" && Args.SzkopulInfo.ProblemAlias != "" {
@@ -69,19 +82,11 @@ func SzkopulOpen() (err error) {
 			return
 		}
 		if search {
-			color.Green("Searching in database...")
-			URL, err = getLinkToProblemFromDatabase(Args.SzkopulInfo.ToTask())
-			if err == nil {
-				return openURL(URL)
+			URL, err = searchForLinkSzkopul()
+			if err != nil {
+				return
 			}
-			if err.Error() == ErrorNoProblemFound || err.Error() == ErrorMultipleProblemsFound {
-				color.Red(err.Error())
-				URL, err = getLinkToProblemFromStatis()
-				if err == nil {
-					return openURL(URL)
-				}
-			}
-			return
+			return openURL(URL)
 		}
 	}
 	URL, err = Args.SzkopulInfo.OpenURL(config.Instance.SzkopulHost)
