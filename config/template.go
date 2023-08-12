@@ -3,13 +3,14 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/Arapak/sio-tool/util"
-	"github.com/mitchellh/go-homedir"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/Arapak/sio-tool/util"
+	"github.com/mitchellh/go-homedir"
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/fatih/color"
@@ -97,16 +98,16 @@ func (c *Config) AddTemplate() (err error) {
     - before_script   (execute once)
     - script          (execute the number of samples times)
     - after_script    (execute once)
-  You could set "before_script" or "after_script" to empty string, meaning not executing.
+  You could set "before_script" or "after_script" to an empty string, meaning not executing.
   You have to run your program in "script" with standard input/output (no need to redirect).
 
-  You can insert some placeholders in your scripts. When execute a script,
-  st will replace all placeholders by following rules:
+  You can insert some placeholders in your scripts. When executing a script,
+  st will replace all placeholders by the following rules:
 
   $%path%$   Path to source file (Excluding $%full%$, e.g. "/home/arapak/")
   $%full%$   Full name of source file (e.g. "a.cpp")
   $%file%$   Name of source file (Excluding suffix, e.g. "a")
-  $%rand%$   Random string with 8 character (including "a-z" "0-9")`
+  $%rand%$   Random string with 8 characters (including "a-z" "0-9")`
 	_, _ = ansi.Println(note)
 
 	beforeScript := ""
