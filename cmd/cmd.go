@@ -3,10 +3,11 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/docopt/docopt-go"
 
@@ -155,11 +156,14 @@ type CodeList struct {
 	Index []int
 }
 
-func getCode(filename string, templates []config.CodeTemplate) (codes []CodeList, err error) {
+func getCode(filename string, templates []config.CodeTemplate, fileExtensions map[string]struct{}) (codes []CodeList, err error) {
 	mp := make(map[string][]int)
 	for i, temp := range templates {
 		suffixMap := map[string]bool{}
 		for _, suffix := range temp.Suffix {
+			if _, ok := fileExtensions[suffix]; len(fileExtensions) != 0 && !ok {
+				continue
+			}
 			if _, ok := suffixMap[suffix]; !ok {
 				suffixMap[suffix] = true
 				sf := "." + suffix
@@ -196,8 +200,8 @@ func getCode(filename string, templates []config.CodeTemplate) (codes []CodeList
 	return codes, nil
 }
 
-func getOneCode(filename string, templates []config.CodeTemplate) (name string, index int, err error) {
-	codes, err := getCode(filename, templates)
+func getOneCode(filename string, templates []config.CodeTemplate, fileExtensions map[string]struct{}) (name string, index int, err error) {
+	codes, err := getCode(filename, templates, fileExtensions)
 	if err != nil {
 		return
 	}

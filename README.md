@@ -105,12 +105,12 @@ Then change the directory to the `met` folder.
 
 In this folder, there will be 2 files, `in1.txt` and `out1.txt`. These are the samples for the "Meteory" problem.
 
-Now you can generate a file for your solution using the default template (or your C++ template if it isn't the default one) (which you have to configure first, refer to the configuration section).
+Now you can generate a file for your solution using the default template (which you have to configure first, refer to the configuration section).
 
 `st gen`
 
-For Szkopul, you have to use C++, so only this template will be allowed.
-This will create a `met.cpp` file containing your template.
+For Szkopul, your file extension has to be one of: `cpp`, `cc`, `c`, `py` or `pas` (some problems may even accept only `cpp` or `cc`), so only files with those extensions will be allowed.
+If you use C++, this will create a `met.cpp` file containing your template.
 
 You now proceed to solve the problem, and when you are ready, you want to test it on the samples.
 
@@ -152,12 +152,12 @@ Then change the directory to the `per` folder.
 
 In this folder will be 2 files, `in1.txt` and `out1.txt`. These are the samples for the "Permutacje" problem.
 
-Now you can generate a file for your solution using the default template (or your C++ template if it isn't the default one) (which you have to configure first; refer to the configuration section).
+Now you can generate a file for your solution using the default template (which you have to configure first; refer to the configuration section).
 
 `st gen`
 
-For Sio, you have to use C++, so only this template will be allowed.
-This will create a `per.cpp` file containing your template.
+For Sio, your file extension has to be one of: `cpp`, `cc`, `c`, `py` or `pas` (some contests may even accept only `cpp` or `cc`), so only files with those extensions will be allowed.
+If you use C++, this will create a `per.cpp` file containing your template.
 
 You now proceed to solve the problem, and when you are ready, you want to test it on the samples.
 

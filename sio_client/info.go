@@ -10,6 +10,14 @@ import (
 	"github.com/Arapak/sio-tool/database_client"
 )
 
+var AcceptedExtensions = map[string]struct{}{
+	"cpp": {},
+	"cc":  {},
+	"c":   {},
+	"pas": {},
+	"py":  {},
+}
+
 type Info struct {
 	Contest      string `json:"contest_id"`
 	ProblemID    string `json:"problem_id"`

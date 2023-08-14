@@ -13,6 +13,14 @@ var Archives = [...]string{
 	"OI",
 }
 
+var AcceptedExtensions = map[string]struct{}{
+	"cpp": {},
+	"cc":  {},
+	"c":   {},
+	"pas": {},
+	"py":  {},
+}
+
 type Info struct {
 	Archive      string `json:"archive"`
 	ContestID    string `json:"contest_id"`

@@ -13,7 +13,7 @@ func CodeforcesSubmit() (err error) {
 	cln := codeforces_client.Instance
 	cfg := config.Instance
 	info := Args.CodeforcesInfo
-	filename, index, err := getOneCode(Args.File, cfg.Template)
+	filename, index, err := getOneCode(Args.File, cfg.Template, map[string]struct{}{})
 	if err != nil {
 		return
 	}

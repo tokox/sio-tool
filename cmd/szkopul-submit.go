@@ -26,7 +26,7 @@ func getProblemIDFromLink(link string) (problemID string, err error) {
 func SzkopulSubmit() (err error) {
 	cln := szkopul_client.Instance
 	cfg := config.Instance
-	filename, _, err := getOneCode(Args.File, cfg.Template)
+	filename, _, err := getOneCode(Args.File, cfg.Template, szkopul_client.AcceptedExtensions)
 	if err != nil {
 		return
 	}

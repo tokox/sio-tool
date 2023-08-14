@@ -172,7 +172,7 @@ func Test() (err error) {
 		return errors.New("you have to add at least one code template by `st config`")
 	}
 
-	filename, index, err := getOneCode(Args.File, cfg.Template)
+	filename, index, err := getOneCode(Args.File, cfg.Template, map[string]struct{}{})
 	if err != nil {
 		return
 	}

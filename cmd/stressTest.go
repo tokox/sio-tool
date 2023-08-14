@@ -34,7 +34,7 @@ func StressTest() (err error) {
 	} else {
 		solveFilePattern = strings.ReplaceAll(solveFilePattern, "$%task%$", task)
 	}
-	solveFilename, index, err := getOneCode(solveFilePattern, cfg.Template)
+	solveFilename, index, err := getOneCode(solveFilePattern, cfg.Template, map[string]struct{}{})
 	if err != nil {
 		return
 	}
@@ -48,7 +48,7 @@ func StressTest() (err error) {
 	} else {
 		bruteFilePattern = strings.ReplaceAll(bruteFilePattern, "$%task%$", task)
 	}
-	bruteFilename, _, err := getOneCode(bruteFilePattern, cfg.Template)
+	bruteFilename, _, err := getOneCode(bruteFilePattern, cfg.Template, map[string]struct{}{})
 	if err != nil {
 		return
 	}
@@ -62,7 +62,7 @@ func StressTest() (err error) {
 	} else {
 		testsGenFilePattern = strings.ReplaceAll(testsGenFilePattern, "$%task%$", task)
 	}
-	testsGenFilename, _, err := getOneCode(testsGenFilePattern, cfg.Template)
+	testsGenFilename, _, err := getOneCode(testsGenFilePattern, cfg.Template, map[string]struct{}{})
 	if err != nil {
 		return
 	}
