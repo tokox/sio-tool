@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/Arapak/sio-tool/util"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -12,6 +11,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
@@ -28,6 +29,12 @@ func getErrorsFromBody(body []byte) (err error) {
 	if err != nil {
 		return
 	}
+	wholeError := doc.Find(".alert").First().Contents().Text()
+	prefix := doc.Find(".alert").First().Find("span").Text()
+	if wholeError != "" {
+		return errors.New(strings.TrimSpace(strings.Replace(wholeError, prefix, "", 1)))
+	}
+
 	s := doc.Find(".help-block").First().Text()
 	if s != "" {
 		return errors.New(s)
