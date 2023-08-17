@@ -224,7 +224,10 @@ func (c *SioClient) Parse(info Info, db *sql.DB) (problems []StatisInfo, paths [
 		return
 	}
 
-	if len(problems) >= 10 {
+	if len(problems) == 1 {
+		info.Round = problems[0].Round
+		info.ProblemAlias = problems[0].Alias
+	} else if len(problems) >= 10 {
 		parseAll := true
 		prompt := &survey.Confirm{Message: fmt.Sprintf("Are you sure you want to parse %v problems?", len(problems)), Default: true}
 		if err = survey.AskOne(prompt, &parseAll); err != nil {
