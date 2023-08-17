@@ -4,7 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 	"unicode"
+
+	"github.com/Arapak/sio-tool/util"
 )
 
 const ErrorParsingSamples = `parsing samples failed`
@@ -36,41 +39,105 @@ func containsWhitespaceOnly(input [][]byte) bool {
 	return false
 }
 
-func FindSamples(body []byte) (input, output [][]byte, err error) {
-	sectionStart1Reg := regexp.MustCompile(`Przykład(y)?\s+`)
-	sectionEnd1Reg := regexp.MustCompile(`Wyjaśnienie przykładu|Wyjaśnienie do przykładu|Komentarz do przykładu|Ocenianie|Autor(zy)? zadania:|Testy „ocen”`)
+func findSamplesSection(body []byte) []byte {
+	sectionStartReg := regexp.MustCompile(`Przykład(y)?\s+`)
+	sectionEndReg := regexp.MustCompile(`Wyjaśnienie przykładu|Wyjaśnienie do przykładu|Komentarz do przykładu|Ocenianie|Autor(zy)? zadania:|Testy „ocen”`)
 
-	startIndex := sectionStart1Reg.FindIndex(body)
+	startIndex := sectionStartReg.FindIndex(body)
 	if startIndex != nil {
 		body = body[startIndex[1]:]
 	}
-	endIndex := sectionEnd1Reg.FindIndex(body)
+	endIndex := sectionEndReg.FindIndex(body)
 	if endIndex != nil {
 		body = body[:endIndex[0]]
 	}
+	return body
+}
 
-	var oiSampleInputStarts = []string{
-		`[Dd]la danych wejściowych:\s*`,
-		`[AIai] dla danych wejściowych:\s*`,
-		`[Aa] dla danych:\s*`,
-		`[Nn]atomiast dla danych wejściowych:\s*`,
-		`[Nn]atomiast dla danych:\s*`,
-		`[Zz] kolei dla danych wejściowych:\s*`,
-		`[Pp]rzykładowe wejście\s*`,
+func maxSpace(s string) int {
+	maxSpc := 0
+	index := len(s)
+	currentSpace := 0
+	for i := range s {
+		if s[i] == ' ' {
+			currentSpace++
+			if currentSpace > maxSpc {
+				maxSpc = currentSpace
+				index = i
+			}
+		} else {
+			currentSpace = 0
+		}
 	}
-	var oiSampleOutputStarts = []string{
-		`[Pp]oprawnym wynikiem jest:\s*`,
-		`[Jj]ednym z poprawnych wyników jest:\s*`,
-		`[Mm]ożliwym poprawnym wynikiem jest:\s*`,
-		`[Mm]ożliwym wynikiem jest:\s*`,
-		`[Mm]ożliwą odpowiedzią jest:\s*`,
-		`[Pp]oprawną odpowiedzią jest:\s*`,
-		`[Pp]rzykładowe wyjście\s*`,
-	}
-	const sioSampleInputStart = `Wejście\s*`
-	const sioSampleOutputStart = `Wyjście\s*`
+	return index
+}
 
-	const sampleEnd = `\n\n|\z`
+func trimSpace(s string) string {
+	s = strings.TrimSpace(s)
+	whitespaces := regexp.MustCompile(`\s+`)
+	return whitespaces.ReplaceAllString(s, " ")
+}
+
+func parseSinolSample(sample []byte) (input string, output string, err error) {
+	lines := strings.Split(string(sample), "\n")
+	index := maxSpace(lines[0])
+	for i := range lines {
+		if len(lines[i]) >= index {
+			input += trimSpace(lines[i][:index]) + "\n"
+			output += trimSpace(lines[i][index:]) + "\n"
+		} else {
+			input += trimSpace(lines[i]) + "\n"
+		}
+	}
+	input = strings.TrimSpace(input)
+	output = strings.TrimSpace(output)
+	return
+}
+
+const sioSampleInputStart = `Wejście\s*`
+const sioSampleOutputStart = `Wyjście\s*`
+
+const sampleEnd = `\n\n|\z`
+
+func parseSinolStatement(pdf []byte) (input, output [][]byte, err error) {
+	body, err := util.PdfToTextLayout(pdf)
+	if err != nil {
+		return
+	}
+	body = findSamplesSection(body)
+	merged := findSubstring(body, sioSampleInputStart+sioSampleOutputStart, "("+sampleEnd+")", 1)
+	for _, sample := range merged {
+		inputString, outputString, err := parseSinolSample(sample)
+		if err != nil {
+			return input, output, err
+		}
+		input = append(input, []byte(inputString))
+		output = append(output, []byte(outputString))
+	}
+	return
+}
+
+var oiSampleInputStarts = []string{
+	`[Dd]la danych wejściowych:\s*`,
+	`[AIai] dla danych wejściowych:\s*`,
+	`[Aa] dla danych:\s*`,
+	`[Nn]atomiast dla danych wejściowych:\s*`,
+	`[Nn]atomiast dla danych:\s*`,
+	`[Zz] kolei dla danych wejściowych:\s*`,
+	`[Pp]rzykładowe wejście\s*`,
+}
+
+var oiSampleOutputStarts = []string{
+	`[Pp]oprawnym wynikiem jest:\s*`,
+	`[Jj]ednym z poprawnych wyników jest:\s*`,
+	`[Mm]ożliwym poprawnym wynikiem jest:\s*`,
+	`[Mm]ożliwym wynikiem jest:\s*`,
+	`[Mm]ożliwą odpowiedzią jest:\s*`,
+	`[Pp]oprawną odpowiedzią jest:\s*`,
+	`[Pp]rzykładowe wyjście\s*`,
+}
+
+func FindSamples(body []byte, pdf []byte) (input, output [][]byte, err error) {
 
 	inputEnd := createRegGroupFromArray(append(oiSampleInputStarts, append(oiSampleOutputStarts, sampleEnd)...))
 	oiSampleInputStartReg := createRegGroupFromArray(oiSampleInputStarts)
@@ -89,8 +156,8 @@ func FindSamples(body []byte) (input, output [][]byte, err error) {
 	}
 
 	if len(input) == 0 && len(output) == 0 {
-		input = findSubstring(body, sioSampleInputStart, "("+sampleEnd+")", 1)
-		output = findSubstring(body, sioSampleOutputStart, "("+sampleEnd+")", 1)
+		return parseSinolStatement(pdf)
+
 	}
 	if len(input) != len(output) {
 		return nil, nil, errors.New(ErrorParsingSamples)

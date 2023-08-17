@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/fatih/color"
 	"io"
 	"log"
 	"math/rand"
@@ -14,6 +12,9 @@ import (
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/fatih/color"
 )
 
 const CHA = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -127,8 +128,21 @@ func LimitNumOfChars(s string, n int) string {
 	return string(unicodeSafeString)
 }
 
-func PdfToText(body []byte) ([]byte, error) {
+func PdfToTextRaw(body []byte) ([]byte, error) {
 	cmd := exec.Command("pdftotext", "-raw", "-", "-")
+
+	cmd.Stdin = bytes.NewReader(body)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	return out.Bytes(), nil
+}
+
+func PdfToTextLayout(body []byte) ([]byte, error) {
+	cmd := exec.Command("pdftotext", "-layout", "-", "-")
 
 	cmd.Stdin = bytes.NewReader(body)
 	var out bytes.Buffer

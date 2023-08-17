@@ -4,13 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/Arapak/sio-tool/database_client"
-	"github.com/Arapak/sio-tool/sio_samples"
-	"github.com/Arapak/sio-tool/util"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/fatih/color"
-	"github.com/k0kubun/go-ansi"
 	"io"
 	"os"
 	"path/filepath"
@@ -18,6 +11,14 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/Arapak/sio-tool/database_client"
+	"github.com/Arapak/sio-tool/sio_samples"
+	"github.com/Arapak/sio-tool/util"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/fatih/color"
+	"github.com/k0kubun/go-ansi"
 )
 
 const ErrorFetchingProblemSiteFailed = `fetching problem site failed`
@@ -36,7 +37,7 @@ func parseSiteStatement(body []byte) (name string, standardIO bool, input [][]by
 	standardIO = !reg.Match(body)
 	statement := doc.Find("section.main-content").First().Text()
 	if standardIO {
-		input, output, err = sio_samples.FindSamples([]byte(statement))
+		input, output, err = sio_samples.FindSamples([]byte(statement), body)
 	}
 	return
 }
@@ -72,7 +73,7 @@ func getNameFromPdf(statement []byte) (problemName string) {
 }
 
 func parsePdf(body []byte) (name string, standardIO bool, input [][]byte, output [][]byte, err error) {
-	statement, err := util.PdfToText(body)
+	statement, err := util.PdfToTextRaw(body)
 	if err != nil {
 		return
 	}
@@ -84,7 +85,7 @@ func parsePdf(body []byte) (name string, standardIO bool, input [][]byte, output
 		return
 	}
 	if standardIO {
-		input, output, err = sio_samples.FindSamples(statement)
+		input, output, err = sio_samples.FindSamples(statement, body)
 	}
 	return
 }
