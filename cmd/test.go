@@ -225,8 +225,12 @@ func Test() (err error) {
 				verdict = judge(i, "in%v.txt", "out%v.txt", s)
 			}
 
-			if verdict.err != nil && err != nil {
-				color.Red(err.Error())
+			if verdict.err != nil {
+				if err != nil {
+					color.Red(err.Error())
+				} else{
+					fmt.Print("Error is NULL\n")
+				}
 			} else {
 				fmt.Print(verdict.message)
 			}
