@@ -226,11 +226,7 @@ func Test() (err error) {
 			}
 
 			if verdict.err != nil {
-				if err != nil {
-					color.Red(err.Error())
-				} else{
-					fmt.Print("Error is NULL\n")
-				}
+				color.Red(verdict.err.Error())
 			} else {
 				fmt.Print(verdict.message)
 			}
