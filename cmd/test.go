@@ -226,7 +226,7 @@ func Test() (err error) {
 			}
 
 			if verdict.err != nil {
-				color.Red(err.Error())
+				color.Red(verdict.err.Error())
 			} else {
 				fmt.Print(verdict.message)
 			}
