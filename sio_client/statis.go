@@ -1,6 +1,8 @@
 package sio_client
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -18,6 +20,8 @@ type StatisInfo struct {
 	Round  string
 	Points string
 }
+
+const ErrorContestNotFound = "contest not found"
 
 func (prob *StatisInfo) ParsePoint() string {
 	if prob.Points == "" {
@@ -83,6 +87,10 @@ func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performa
 		perf.StartFetching()
 		body, err = util.GetBody(c.client, fmt.Sprintf("%v/?page=%v", URL, pageNum))
 		if err != nil {
+			return
+		}
+		if bytes.Contains(body, []byte("<p>404 &mdash; Page not found</p>")) {
+			err = errors.New(ErrorContestNotFound)
 			return
 		}
 		perf.StopFetching()
