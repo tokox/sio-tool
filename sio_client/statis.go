@@ -103,8 +103,6 @@ func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performa
 			return
 		}
 
-		perf.StopParsing()
-
 		problemsOnPage, err = findProblems(body)
 		if err != nil {
 			return
@@ -118,6 +116,8 @@ func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performa
 			}
 		}
 		problems = append(problems, problemsOnPage...)
+
+		perf.StopParsing()
 	}
 	var filteredProblems []StatisInfo
 	for _, problem := range problems {
