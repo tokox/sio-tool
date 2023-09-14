@@ -22,7 +22,7 @@ func SioSid() (err error) {
 	if info.SubmissionID == "" && cln.LastSubmission != nil {
 		info = *cln.LastSubmission
 	}
-	URL, err := info.SubmissionURL(getSioHost())
+	URL, err := info.SubmissionURL(getSioHost(), false)
 	if err != nil {
 		return
 	}

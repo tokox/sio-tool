@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -45,6 +47,16 @@ func (s *Submission) ParseID() string {
 }
 
 const inf = 1000000009
+
+var intReg = regexp.MustCompile(`\d+`)
+
+func toInt(sel string) uint64 {
+	if tmp := intReg.FindString(sel); tmp != "" {
+		t, _ := strconv.Atoi(tmp)
+		return uint64(t)
+	}
+	return inf
+}
 
 func (s *Submission) ParsePoints() string {
 	if s.points == inf {
@@ -152,14 +164,6 @@ func getProblemNames(name string) (string, string) {
 }
 
 func parseSubmission(s *goquery.Selection) (ret Submission, err error) {
-	reg := regexp.MustCompile(`\d+`)
-	toInt := func(sel string) uint64 {
-		if tmp := reg.FindString(sel); tmp != "" {
-			t, _ := strconv.Atoi(tmp)
-			return uint64(t)
-		}
-		return inf
-	}
 	body, err := s.Html()
 	if err != nil {
 		return
@@ -238,6 +242,50 @@ func (c *SioClient) getSubmissions(URL string, n int) (submissions []Submission,
 	return
 }
 
+func (c *SioClient) RevealSubmission(info Info) (err error) {
+	submissionURL, err := info.SubmissionURL(c.host, false)
+	if err != nil {
+		return
+	}
+	body, err := util.GetBody(c.client, submissionURL)
+	if err != nil {
+		return
+	}
+	if !bytes.Contains(body, []byte("<h4>Score revealing</h4>")) && !bytes.Contains(body, []byte("<h4>Ujawnianie wyniku</h4>")) {
+		return
+	}
+	if bytes.Contains(body, []byte("<p>Unfortunately, this submission has not been scored yet, so you can&#39;t see your score. Please come back later.</p>")) || bytes.Contains(body, []byte("<p>Niestety to zgłoszenie nie zostało jeszcze ocenione, więc nie możesz zobaczyć swojego wyniku. Spróbuj później.</p>")) {
+		return
+	}
+	csrf, err := findCsrf(body)
+	if err != nil {
+		return
+	}
+	revealURL, err := info.SubmissionURL(c.host, true)
+	if err != nil {
+		return
+	}
+	postBody := &bytes.Buffer{}
+	writer := multipart.NewWriter(postBody)
+	part, err := writer.CreateFormField("csrfmiddlewaretoken")
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(part, strings.NewReader(csrf))
+	if err != nil {
+		return
+	}
+	writer.Close()
+	req, err := http.NewRequest("POST", revealURL, postBody)
+	if err != nil {
+		return
+	}
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+	req.Header.Add("Referer", submissionURL)
+	_, err = c.client.Do(req)
+	return
+}
+
 func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []Submission, err error) {
 	URL, err := info.MySubmissionURL(c.host)
 	if err != nil {
@@ -248,6 +296,12 @@ func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []
 	first := true
 	for {
 		st := time.Now()
+		if info.SubmissionID != "" {
+			err = c.RevealSubmission(info)
+			if err != nil {
+				return
+			}
+		}
 		submissions, err = c.getSubmissions(URL, n)
 		if err != nil {
 			return
@@ -263,6 +317,11 @@ func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []
 		if endCount == len(submissions) {
 			return
 		}
+
+		if n == 1 && len(submissions) == 1 {
+			info.SubmissionID = submissions[0].ParseID()
+		}
+
 		sub := time.Since(st)
 		if sub < time.Second {
 			time.Sleep(time.Second - sub)

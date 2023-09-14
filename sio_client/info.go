@@ -133,14 +133,18 @@ func (info *Info) MySubmissionURL(host string) (string, error) {
 	return fmt.Sprintf(host+"/c/%v/submissions/", info.Contest), nil
 }
 
-func (info *Info) SubmissionURL(host string) (string, error) {
+func (info *Info) SubmissionURL(host string, reveal bool) (string, error) {
 	if info.SubmissionID == "" {
 		return "", errors.New(ErrorNeedSubmissionID)
 	}
 	if info.Contest == "" {
 		return "", errors.New(ErrorNeedContest)
 	}
-	return fmt.Sprintf(host+"/c/%v/s/%v", info.Contest, info.SubmissionID), nil
+	if reveal {
+		return fmt.Sprintf(host+"/c/%v/s/%v/reveal/", info.Contest, info.SubmissionID), nil
+	} else {
+		return fmt.Sprintf(host+"/c/%v/s/%v", info.Contest, info.SubmissionID), nil
+	}
 }
 
 func (info *Info) SubmitURL(host string) (string, error) {
