@@ -8,6 +8,10 @@ import (
 
 func CodeforcesPull() (err error) {
 	cln := codeforces_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.CodeforcesInfo
 	ac := Args.Accepted
 	rootPath, err := os.Getwd()

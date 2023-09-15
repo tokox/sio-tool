@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
 	"path/filepath"
+
+	"github.com/fatih/color"
 
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/szkopul_client"
@@ -14,6 +15,10 @@ import (
 func SzkopulParse() (err error) {
 	cfg := config.Instance
 	cln := szkopul_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.SzkopulInfo
 	source := ""
 	ext := ""

@@ -13,6 +13,10 @@ import (
 
 func SzkopulList() (err error) {
 	cln := szkopul_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.SzkopulInfo
 	problems, perf, err := cln.Statis(info)
 	if err != nil {

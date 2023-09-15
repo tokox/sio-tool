@@ -6,6 +6,10 @@ import (
 
 func CodeforcesWatch() (err error) {
 	cln := codeforces_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.CodeforcesInfo
 	n := 10
 	if Args.All {

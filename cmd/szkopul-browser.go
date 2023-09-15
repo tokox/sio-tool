@@ -42,6 +42,10 @@ func getLinkToProblemFromDatabase(task database_client.Task) (link string, err e
 
 func getLinkToProblemFromStatis() (link string, err error) {
 	cln := szkopul_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	var problems []szkopul_client.StatisInfo
 	var perf util.Performance
 	color.Green("Fetching...")

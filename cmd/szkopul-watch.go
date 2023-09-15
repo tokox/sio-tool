@@ -6,6 +6,10 @@ import (
 
 func SzkopulWatch() (err error) {
 	cln := szkopul_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.SzkopulInfo
 	n := 10
 	if Args.All {

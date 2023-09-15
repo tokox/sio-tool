@@ -16,6 +16,10 @@ import (
 
 func CodeforcesList() (err error) {
 	cln := codeforces_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.CodeforcesInfo
 	problems, perf, err := cln.Statis(info)
 	if err != nil {

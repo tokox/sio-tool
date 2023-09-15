@@ -17,6 +17,10 @@ func SioList() (err error) {
 		return SioListContests()
 	}
 	cln := getSioClient()
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	problems, perf, err := cln.Statis(info)
 	if err != nil {
 		if err = loginAgainSio(cln, err); err == nil {
@@ -55,6 +59,10 @@ func SioList() (err error) {
 
 func SioListContests() (err error) {
 	cln := getSioClient()
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	contests, perf, err := cln.ListContests()
 	if err != nil {
 		if err = loginAgainSio(cln, err); err == nil {

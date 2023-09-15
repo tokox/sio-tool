@@ -8,6 +8,10 @@ import (
 func CodeforcesRace() (err error) {
 	cfg := config.Instance
 	cln := codeforces_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.CodeforcesInfo
 	if err = cln.RaceContest(info); err != nil {
 		if err = loginAgainCodeforces(cln, err); err == nil {

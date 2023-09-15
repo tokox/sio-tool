@@ -2,6 +2,10 @@ package cmd
 
 func SioRace() (err error) {
 	cln := getSioClient()
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.SioInfo
 	if Args.SioInfo.Round, err = cln.RaceContest(info); err != nil {
 		if err = loginAgainSio(cln, err); err == nil {

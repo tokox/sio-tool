@@ -109,6 +109,10 @@ func (info *Info) APISubmitURL(host string) (string, error) {
 	return fmt.Sprintf(host+"/api/problemset/submit/%v", info.ProblemID), nil
 }
 
+func APIPingURL(host string) string {
+	return host + "/api/ping"
+}
+
 func (info *Info) SubmitURL(host string) (string, error) {
 	if info.ProblemID == "" {
 		return "", errors.New(ErrorNeedProblemID)

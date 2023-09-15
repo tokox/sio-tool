@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
 	"path/filepath"
+
+	"github.com/fatih/color"
 
 	"github.com/Arapak/sio-tool/codeforces_client"
 	"github.com/Arapak/sio-tool/config"
@@ -14,6 +15,10 @@ import (
 func CodeforcesParse() (err error) {
 	cfg := config.Instance
 	cln := codeforces_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.CodeforcesInfo
 	source := ""
 	ext := ""

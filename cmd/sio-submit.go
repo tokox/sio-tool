@@ -9,6 +9,10 @@ import (
 
 func SioSubmit() (err error) {
 	cln := getSioClient()
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	cfg := config.Instance
 	info := Args.SioInfo
 	filename, _, err := getOneCode(Args.File, cfg.Template, sio_client.AcceptedExtensions)

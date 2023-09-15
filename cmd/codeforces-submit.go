@@ -11,6 +11,10 @@ import (
 
 func CodeforcesSubmit() (err error) {
 	cln := codeforces_client.Instance
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	cfg := config.Instance
 	info := Args.CodeforcesInfo
 	filename, index, err := getOneCode(Args.File, cfg.Template, map[string]struct{}{})

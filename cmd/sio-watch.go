@@ -2,6 +2,10 @@ package cmd
 
 func SioWatch() (err error) {
 	cln := getSioClient()
+	err = cln.Ping()
+	if err != nil {
+		return
+	}
 	info := Args.SioInfo
 	n := 10
 	if Args.All {
