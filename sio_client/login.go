@@ -7,14 +7,15 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/Arapak/sio-tool/cookiejar"
-	"github.com/Arapak/sio-tool/util"
 	"io"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/Arapak/sio-tool/cookiejar"
+	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
 )
@@ -31,12 +32,14 @@ func findUsername(body []byte) (username string, err error) {
 }
 
 func findCsrf(body []byte) (string, error) {
-	reg := regexp.MustCompile(`<input type='hidden' name='csrfmiddlewaretoken' value='(.+?)' />`)
-	tmp := reg.FindSubmatch(body)
-	if len(tmp) < 2 {
-		return "", errors.New("cannot find csrf")
+	reg := regexp.MustCompile(`<input type=('|")hidden('|") name=('|")csrfmiddlewaretoken('|") value=('|")(?P<csrf>.+?)('|")( /)?>`)
+	names := reg.SubexpNames()
+	for i, val := range reg.FindSubmatch(body) {
+		if names[i] == "csrf" {
+			return string(val), nil
+		}
 	}
-	return string(tmp[1]), nil
+	return "", errors.New("cannot find csrf")
 }
 
 func (c *SioClient) getCsrf(URL string) (csrf string, err error) {
@@ -73,7 +76,7 @@ func (c *SioClient) Login() (err error) {
 		form.Add("auth-username", c.Username)
 		form.Add("auth-password", password)
 		form.Add("login_view-current_step", "auth")
-		URL = c.host + "/c/oi30-3/login/"
+		URL = c.host + "/c/oi30-1/login/"
 	}
 
 	req, err := http.NewRequest("POST", URL, strings.NewReader(form.Encode()))
