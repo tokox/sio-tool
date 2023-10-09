@@ -1,6 +1,7 @@
 package sio_client
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Arapak/sio-tool/util"
@@ -13,7 +14,7 @@ type ContestInfo struct {
 	Subheader bool
 }
 
-func findContests(body []byte) (ret []ContestInfo, err error) {
+func (c *SioClient) findContests(body []byte) (ret []ContestInfo, err error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
 	if err != nil {
 		return
@@ -21,7 +22,7 @@ func findContests(body []byte) (ret []ContestInfo, err error) {
 	doc.Find("table tbody").First().Find("tr").Each(func(_ int, s *goquery.Selection) {
 		_, ok := s.Attr("class")
 		info := ContestInfo{}
-		if !ok {
+		if !ok && c.instanceClient == Staszic {
 			info.Subheader = true
 			info.Name = strings.TrimSpace(s.Find("a").First().Text())
 		} else {
@@ -36,7 +37,11 @@ func findContests(body []byte) (ret []ContestInfo, err error) {
 
 func (c *SioClient) ListContests() (problems []ContestInfo, perf util.Performance, err error) {
 	perf.StartFetching()
-	body, err := util.GetBody(c.client, c.host)
+	URL := c.host
+	if c.instanceClient == Mimuw {
+		URL = fmt.Sprintf("%v/c/oi30-1/contest", c.host)
+	}
+	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
 	}
@@ -48,7 +53,7 @@ func (c *SioClient) ListContests() (problems []ContestInfo, perf util.Performanc
 		return
 	}
 
-	contests, err := findContests(body)
+	contests, err := c.findContests(body)
 	if err != nil {
 		return
 	}
