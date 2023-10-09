@@ -87,7 +87,7 @@ func SioListContests() (err error) {
 		if prob.Subheader {
 			table.Append([]string{util.GreenString(prob.Name)})
 		} else {
-			table.Append([]string{fmt.Sprintf("%v (%v)", util.LimitNumOfChars(prob.Name, 20), prob.Alias)})
+			table.Append([]string{fmt.Sprintf("%v (%v)", util.LimitNumOfChars(prob.Name, 25), prob.Alias)})
 		}
 	}
 	table.Render()

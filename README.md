@@ -173,6 +173,18 @@ You get 100 points, are happy, and now want to check if your position in the sta
 
 `st stand`
 
+### Packages
+
+You want to test your solution on a set of tests for example downloaded from the user forum on sio2-mimuw.
+
+First download and unpack the package, then go to your solutions directory in st, and write 
+
+`st add_package ~/path/to/your/package`
+
+And after that, test your code using
+
+`st package_test`
+
 ### Database
 
 You vaguely remember a problem but don't know from where; you just remember it was something about chess. Now you can search all the problems you solved using the sio-tool's db command.
@@ -209,6 +221,8 @@ Usage:
   st parse [<specifier>...]
   st gen [<alias>]
   st test [<file>]
+  st package_test [<file>]
+  st add_package <file>
   st watch [all] [<specifier>...]
   st open [<specifier>...]
   st stand [<specifier>...]
@@ -284,6 +298,9 @@ Examples:
                        test all samples. If you want to add a new test case,
                        Create two files, "inK.txt" and "outK.txt" where K is
                        a string with 0~9.
+  st add_package ~/tests
+                       Add package (set of tests) for a task you are currently in 
+  st test_package      Test your solution on a package added before
   st watch             Watch the first 10 submissions for the current contest.
   st watch all         Watch all submissions for the current contest.
   st open 1136a        Use your default web browser to open the page for the contest.

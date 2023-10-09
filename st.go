@@ -41,6 +41,8 @@ Usage:
   st parse [<specifier>...]
   st gen [<alias>]
   st test [<file>]
+  st package_test [<file>]
+  st add_package <file>
   st watch [all] [<specifier>...]
   st open [<specifier>...]
   st stand [<specifier>...]
@@ -116,6 +118,9 @@ Examples:
                        test all samples. If you want to add a new test case,
                        Create two files, "inK.txt" and "outK.txt" where K is
                        a string with 0~9.
+  st add_package ~/tests
+                       Add package (set of tests) for a task you are currently in 
+  st test_package      Test your solution on a package added before
   st watch             Watch the first 10 submissions for the current contest.
   st watch all         Watch all submissions for the current contest.
   st open 1136a        Use your default web browser to open the page for the contest.

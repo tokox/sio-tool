@@ -35,6 +35,10 @@ func Eval(opts docopt.Opts) error {
 		return StressTest()
 	} else if Args.Upgrade {
 		return Upgrade()
+	} else if Args.PackageTest {
+		return PackageTest()
+	} else if Args.AddPackage {
+		return AddPackage()
 	} else if Args.Database {
 		if Args.Add {
 			return DatabaseAdd()

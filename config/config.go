@@ -37,13 +37,14 @@ type Config struct {
 	FolderName     map[string]string `json:"folder_name"`
 	DefaultNaming  map[string]string `json:"default_naming"`
 	DbPath         string            `json:"db_path"`
+	PackagesPath   string            `json:"packages_path"`
 	path           string
 }
 
 var Instance *Config
 
 func Init(path string) {
-	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioStaszicHost: "https://sio2.staszic.waw.pl", SioMimuwHost: "https://sio2.mimuw.edu.pl", DbPath: "~/.st/tasks.db", Proxy: ""}
+	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioStaszicHost: "https://sio2.staszic.waw.pl", SioMimuwHost: "https://sio2.mimuw.edu.pl", DbPath: "~/.st/tasks.db", Proxy: "", PackagesPath: "~/.st/packages"}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new configuration in %v", path)
@@ -114,6 +115,10 @@ func Init(path string) {
 		color.Red(err.Error())
 	}
 	c.DbPath, err = homedir.Expand(c.DbPath)
+	if err != nil {
+		color.Red(err.Error())
+	}
+	c.PackagesPath, err = homedir.Expand(c.PackagesPath)
 	if err != nil {
 		color.Red(err.Error())
 	}

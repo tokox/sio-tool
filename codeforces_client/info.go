@@ -73,6 +73,23 @@ func (info *Info) Path() string {
 	return path
 }
 
+func (info *Info) PackagePath() (string, error) {
+	if info.GroupID == "" {
+		return "", errors.New(ErrorNeedGroupID)
+	}
+	if info.ProblemType == "acmsguru" || info.ContestID == "" {
+		return "", errors.New(ErrorNeedContestID)
+	}
+	if info.ProblemID == "" {
+		return "", errors.New(ErrorNeedProblemID)
+	}
+	path := info.RootPath
+	path = filepath.Join(path, info.GroupID)
+	path = filepath.Join(path, info.ContestID)
+	path = filepath.Join(path, strings.ToLower(info.ProblemID))
+	return path, nil
+}
+
 func (info *Info) ProblemSetURL(host string) (string, error) {
 	if info.ContestID == "" {
 		return info.errorContest()

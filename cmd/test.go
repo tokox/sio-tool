@@ -140,9 +140,7 @@ func generateVerdict(testID, answer string, processInfo ProcessInfo) Verdict {
 	return Verdict{correct, fmt.Sprintf("%v ... %.3fs %v\n%v", state, processInfo.time, processInfo.memory, diff), nil}
 }
 
-func judge(sampleID, inPathFormat, ansPathFormat, command string) Verdict {
-	inPath := fmt.Sprintf(inPathFormat, sampleID)
-	ansPath := fmt.Sprintf(ansPathFormat, sampleID)
+func judge(inPath, ansPath, sampleID, command string) Verdict {
 	input, err := os.Open(inPath)
 	if err != nil {
 		return Verdict{false, "", err}
@@ -220,9 +218,9 @@ func Test() (err error) {
 		for _, i := range samples {
 			var verdict Verdict
 			if samplesWithName {
-				verdict = judge(i, fmt.Sprintf("%s%%v.in", file), fmt.Sprintf("%s%%v.out", file), s)
+				verdict = judge(fmt.Sprintf("%s%v.in", file, i), fmt.Sprintf("%s%v.out", file, i), i, s)
 			} else {
-				verdict = judge(i, "in%v.txt", "out%v.txt", s)
+				verdict = judge(fmt.Sprintf("in%v.txt", i), fmt.Sprintf("out%v.txt", i), i, s)
 			}
 
 			if verdict.err != nil {

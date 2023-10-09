@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"errors"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/Arapak/sio-tool/codeforces_client"
@@ -39,6 +41,8 @@ type ParsedArgs struct {
 	Parse          bool     `docopt:"parse"`
 	Gen            bool     `docopt:"gen"`
 	Test           bool     `docopt:"test"`
+	PackageTest    bool     `docopt:"package_test"`
+	AddPackage     bool     `docopt:"add_package"`
 	Watch          bool     `docopt:"watch"`
 	Open           bool     `docopt:"open"`
 	Stand          bool     `docopt:"stand"`
@@ -123,4 +127,24 @@ func parseArgs(opts docopt.Opts) error {
 		return parseArgsSzkopul()
 	}
 	return nil
+}
+
+const ErrorPackageCouldntBeDetermined = "package path couldn't be determined"
+
+func ArgsPackagePath() (path string, err error) {
+	cfg := config.Instance
+	if Args.Codeforces {
+		Args.CodeforcesInfo.RootPath = filepath.Join(cfg.PackagesPath, "codeforces")
+		return Args.CodeforcesInfo.PackagePath()
+	} else if Args.Szkopul {
+		Args.SzkopulInfo.RootPath = filepath.Join(cfg.PackagesPath, "szkopul")
+		return Args.SzkopulInfo.PackagePath()
+	} else if Args.SioStaszic {
+		Args.SioInfo.RootPath = filepath.Join(cfg.PackagesPath, "sio-staszic")
+		return Args.SioInfo.PackagePath()
+	} else if Args.SioMimuw {
+		Args.SioInfo.RootPath = filepath.Join(cfg.PackagesPath, "sio-mimuw")
+		return Args.SioInfo.PackagePath()
+	}
+	return "", errors.New(ErrorPackageCouldntBeDetermined)
 }

@@ -31,6 +31,9 @@ type Info struct {
 	RootPath     string
 }
 
+const ErrorNeedContestID = "you have to specify the Contest ID"
+const ErrorNeedStageID = "you have to specify the Stage ID"
+const ErrorNeedProblemAlias = "you have to specify the problem alias"
 const ErrorNeedProblemID = "you have to specify the Problem ID"
 const ErrorNeedSubmissionID = "you have to specify the Submission ID"
 const ErrorNeedArchive = "you have to specify the archive"
@@ -67,6 +70,23 @@ func (info *Info) Path() string {
 		}
 	}
 	return path
+}
+
+func (info *Info) PackagePath() (string, error) {
+	if info.ContestID == "" {
+		return "", errors.New(ErrorNeedContestID)
+	}
+	if info.StageID == "" {
+		return "", errors.New(ErrorNeedStageID)
+	}
+	if info.ProblemAlias == "" {
+		return "", errors.New(ErrorNeedProblemAlias)
+	}
+	path := info.RootPath
+	path = filepath.Join(path, info.ContestID)
+	path = filepath.Join(path, info.StageID)
+	path = filepath.Join(path, strings.ToLower(info.ProblemAlias))
+	return path, nil
 }
 
 func ProblemURL(host, problemID string) string {

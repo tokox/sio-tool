@@ -30,6 +30,7 @@ type Info struct {
 const ErrorNeedProblemAlias = "you have to specify the Problem alias"
 
 const ErrorNeedContest = "you have to specify the contest"
+const ErrorNeedRound = "you have to specify the round"
 
 const ErrorNeedSubmissionID = "you have to specify the Submission ID"
 
@@ -103,6 +104,23 @@ func (info *Info) Path() string {
 		}
 	}
 	return path
+}
+
+func (info *Info) PackagePath() (string, error) {
+	if info.Contest == "" {
+		return "", errors.New(ErrorNeedContest)
+	}
+	if info.Round == "" {
+		return "", errors.New(ErrorNeedRound)
+	}
+	if info.ProblemAlias == "" {
+		return "", errors.New(ErrorNeedProblemAlias)
+	}
+	path := info.RootPath
+	path = filepath.Join(path, info.Contest)
+	path = filepath.Join(path, clearString(info.Round))
+	path = filepath.Join(path, strings.ToLower(info.ProblemAlias))
+	return path, nil
 }
 
 func ProblemURL(host, contest, problemAlias string) string {
