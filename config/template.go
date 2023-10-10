@@ -37,6 +37,15 @@ func validateTemplatePath(path interface{}) (err error) {
 
 func (c *Config) AddTemplate() (err error) {
 	color.Cyan("Add a template")
+
+	addOiTemplate := false
+	if err = survey.AskOne(&survey.Confirm{Message: `Do you want to add the default template for OI (linux)`}, &addOiTemplate); err != nil {
+		return
+	}
+	if addOiTemplate {
+		return c.AddOiTemplate()
+	}
+
 	type kv struct {
 		K, V string
 	}

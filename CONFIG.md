@@ -17,9 +17,12 @@ After a successful login, your username and password will be saved to a correspo
 ## Add a template
 You will have a step-by-step guide to creating a template (for the tool to know what language you are using, what commands are used to compile and run your program, and what is your default template to copy whenever you want to solve a new problem).
 
-
 You can have multiple templates, sio-tool will automatically choose the one for your program based on the file extension.
 
+
+### Add defult OI template
+If you don't want to customize your template, you can just add the default OI template. It complies your code using the command:
+`g++ -std=c++17 -Wpedantic -O3 -static`
 
 ### Select a language
 Choose what programming language this template is supposed to use.
