@@ -60,6 +60,7 @@ type ParsedArgs struct {
 	Szkopul        bool
 	SioStaszic     bool
 	SioMimuw       bool
+	Oiejq          bool
 }
 
 var Args *ParsedArgs

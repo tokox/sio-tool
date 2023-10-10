@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -12,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/judge"
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
@@ -85,7 +85,7 @@ func StressTest() (err error) {
 	run := func(script, path, full, file string) error {
 		if s := filter(script, path, full, file); len(s) > 0 {
 			fmt.Println(s)
-			cmds := splitCmd(s)
+			cmds := util.SplitCmd(s)
 			cmd := exec.Command(cmds[0], cmds[1:]...)
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
@@ -141,43 +141,58 @@ func StressTest() (err error) {
 				currentTestNumber++
 				mu.Unlock()
 				testID := strconv.Itoa(testNumber)
-				genProcessInfo, err := runProcess(testID, testsGenScript, strings.NewReader(testID))
+				var genProcessInfo *judge.ProcessInfo
+				if Args.Oiejq {
+					genProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID))
+				} else {
+					genProcessInfo, err = judge.RunProcess(testID, testsGenScript, strings.NewReader(testID), nil)
+				}
 				if err != nil {
 					mu.Lock()
 					color.Red(err.Error())
 					mu.Unlock()
 					return
 				}
-				bruteProcessInfo, err := runProcess(testID, bruteScript, bytes.NewReader(genProcessInfo.output))
+				var bruteProcessInfo *judge.ProcessInfo
+				if Args.Oiejq {
+					bruteProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID))
+				} else {
+					bruteProcessInfo, err = judge.RunProcess(testID, testsGenScript, strings.NewReader(testID), nil)
+				}
 				if err != nil {
 					mu.Lock()
 					color.Red(err.Error())
 					mu.Unlock()
 					return
 				}
-				solveProcessInfo, err := runProcess(testID, solveScript, bytes.NewReader(genProcessInfo.output))
+				var solveProcessInfo *judge.ProcessInfo
+				if Args.Oiejq {
+					solveProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID))
+				} else {
+					solveProcessInfo, err = judge.RunProcess(testID, testsGenScript, strings.NewReader(testID), nil)
+				}
 				if err != nil {
 					mu.Lock()
 					color.Red(err.Error())
 					mu.Unlock()
 					return
 				}
-				verdict := generateVerdict(testID, plain(bruteProcessInfo.output), *solveProcessInfo)
-				if !verdict.correct {
+				verdict := judge.GenerateVerdict(testID, judge.Plain(bruteProcessInfo.Output), *solveProcessInfo)
+				if !verdict.Correct {
 					mu.Lock()
 					if workerError {
 						mu.Unlock()
 						return
 					}
 					workerError = true
-					fmt.Print(verdict.message)
-					err = os.WriteFile(strings.ReplaceAll(testInFormat, "$%test%$", testID), genProcessInfo.output, 0644)
+					fmt.Print(verdict.Message)
+					err = os.WriteFile(strings.ReplaceAll(testInFormat, "$%test%$", testID), genProcessInfo.Output, 0644)
 					color.Red(err.Error())
 					mu.Unlock()
 					return
 				}
 				mu.Lock()
-				fmt.Print(verdict.message)
+				fmt.Print(verdict.Message)
 				mu.Unlock()
 			}
 		}(i)

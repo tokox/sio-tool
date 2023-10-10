@@ -3,6 +3,7 @@ package util
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"time"
+	"unicode"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
@@ -173,4 +175,41 @@ func GetValue(message string, val *string, required bool) {
 			os.Exit(1)
 		}
 	}
+}
+
+func SplitCmd(s string) (res []string) {
+	// https://github.com/vrischmann/shlex/blob/master/shlex.go
+	var buf bytes.Buffer
+	insideQuotes := false
+	for _, r := range s {
+		switch {
+		case unicode.IsSpace(r) && !insideQuotes:
+			if buf.Len() > 0 {
+				res = append(res, buf.String())
+				buf.Reset()
+			}
+		case r == '"' || r == '\'':
+			if insideQuotes {
+				res = append(res, buf.String())
+				buf.Reset()
+				insideQuotes = false
+				continue
+			}
+			insideQuotes = true
+		default:
+			buf.WriteRune(r)
+		}
+	}
+	if buf.Len() > 0 {
+		res = append(res, buf.String())
+	}
+	return
+}
+
+func FileExists(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+		return false
+	}
+	return true
 }

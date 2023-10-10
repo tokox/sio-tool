@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/Arapak/sio-tool/util"
 	"github.com/fatih/color"
 	"github.com/otiai10/copy"
 )
@@ -43,20 +44,11 @@ func AddPackage() (err error) {
 	return
 }
 
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-
-	if err != nil && errors.Is(err, os.ErrNotExist) {
-		return false
-	}
-	return true
-}
-
 func getPackageNumber(path string) (packagePath string) {
 	i := 0
 	for {
 		packagePath = filepath.Join(path, strconv.Itoa(i))
-		if !fileExists(packagePath) {
+		if !util.FileExists(packagePath) {
 			return
 		}
 		i++

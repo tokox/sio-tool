@@ -12,6 +12,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/Arapak/sio-tool/config"
+	"github.com/Arapak/sio-tool/judge"
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/fatih/color"
@@ -161,7 +162,7 @@ func PackageTest() (err error) {
 	run := func(script string) error {
 		if s := filter(script); len(s) > 0 {
 			fmt.Println(s)
-			cmds := splitCmd(s)
+			cmds := util.SplitCmd(s)
 			cmd := exec.Command(cmds[0], cmds[1:]...)
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
@@ -201,22 +202,22 @@ func PackageTest() (err error) {
 					return
 				}
 				mu.Unlock()
-				verdict := judge(filepath.Join(packagePath, in[testNumber]), filepath.Join(packagePath, out[testNumber]), in[testNumber], runScript)
-				if !verdict.correct {
+				verdict := judge.Judge(filepath.Join(packagePath, in[testNumber]), filepath.Join(packagePath, out[testNumber]), in[testNumber], runScript, Args.Oiejq)
+				if !verdict.Correct {
 					mu.Lock()
 					if workerError {
 						mu.Unlock()
 						return
 					}
 					workerError = true
-					fmt.Print(verdict.message)
+					fmt.Print(verdict.Message)
 					color.Blue(in[testNumber])
 					color.Blue(out[testNumber])
 					mu.Unlock()
 					return
 				}
 				mu.Lock()
-				fmt.Print(verdict.message)
+				fmt.Print(verdict.Message)
 				mu.Unlock()
 			}
 		}(i)
