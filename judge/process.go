@@ -3,6 +3,7 @@ package judge
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -41,13 +42,15 @@ type ProcessInfo struct {
 func RunProcess(processID, command string, input io.Reader, extrafile *os.File) (*ProcessInfo, error) {
 	var o bytes.Buffer
 	output := io.Writer(&o)
+	var e bytes.Buffer
+	stderr := io.Writer(&e)
 
 	cmds := util.SplitCmd(command)
 
 	cmd := exec.Command(cmds[0], cmds[1:]...)
 	cmd.Stdin = input
 	cmd.Stdout = output
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = stderr
 	if extrafile != nil {
 		cmd.ExtraFiles = append(cmd.ExtraFiles, extrafile)
 	}
@@ -76,6 +79,10 @@ func RunProcess(processID, command string, input io.Reader, extrafile *os.File) 
 				if err == nil && m.RSS > maxMemory {
 					maxMemory = m.RSS
 				}
+			}
+			if extrafile != nil && bytes.Contains(e.Bytes(), []byte("Exception occurred: System error occured: perf event open failed: Permission denied: error 13: Permission denied")) {
+				cmd.Process.Kill()
+				return nil, errors.New("to use oiejq you have to run `sudo sysctl kernel.perf_event_paranoid=-1`")
 			}
 		}
 	}

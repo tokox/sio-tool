@@ -162,6 +162,12 @@ If you use C++, this will create a `per.cpp` file containing your template.
 You now proceed to solve the problem, and when you are ready, you want to test it on the samples.
 
 `st test`
+ 
+you can also use
+
+`st test --oiejq`
+
+to use oiejq to time the execution of your program (you can expect an increase in memory usage, oiejq uses some memory of it's own)
 
 This compiles and runs your program using the scripts you specified in the template.
 
@@ -175,15 +181,21 @@ You get 100 points, are happy, and now want to check if your position in the sta
 
 ### Packages
 
-You want to test your solution on a set of tests for example downloaded from the user forum on sio2-mimuw.
+You want to test your solution on a set of tests, for example downloaded from the user forum on sio2-mimuw.
 
-First download and unpack the package, then go to your solutions directory in st, and write 
+First download and unpack the package, then go to your solution's directory in st, and write 
 
 `st add_package ~/path/to/your/package`
 
 And after that, test your code using
 
 `st package_test`
+
+You can even use
+
+`st package_test --oiejq`
+
+to use oiejq to time the execution of your program (you can expect an increase in memory usage, oiejq uses some memory of it's own)
 
 ### Database
 
