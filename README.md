@@ -167,7 +167,7 @@ you can also use
 
 `st test --oiejq`
 
-to use oiejq to time the execution of your program (you can expect an increase in memory usage, oiejq uses some memory of it's own)
+to use oiejq to time the execution and measure memory usage of your program
 
 This compiles and runs your program using the scripts you specified in the template.
 
@@ -195,8 +195,7 @@ You can even use
 
 `st package_test --oiejq`
 
-to use oiejq to time the execution of your program (you can expect an increase in memory usage, oiejq uses some memory of it's own)
-
+to use oiejq to time the execution and measure memory usage of your program
 ### Database
 
 You vaguely remember a problem but don't know from where; you just remember it was something about chess. Now you can search all the problems you solved using the sio-tool's db command.
