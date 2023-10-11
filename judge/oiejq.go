@@ -19,7 +19,8 @@ var options = " --mount-namespace off" +
 	" --ipc-namespace off" +
 	" --net-namespace off" +
 	" --capability-drop off --user-namespace off" +
-	" -s"
+	" -s" +
+	" -m 1000000"
 
 const timelimit = time.Second * 10
 
@@ -28,7 +29,7 @@ var sio2jail []byte
 
 var sio2jailPath = "~/.st/sio2jail"
 
-const sio2jailCommand = "%v -f 3 -rtimelimit %vms -o oiaug %v -- %v 3> %v"
+const sio2jailCommand = "%v -f 3 --rtimelimit %vms -o oiaug %v -- %v 3> %v"
 
 func InstallSio2Jail() (err error) {
 	sio2jailPath, err = homedir.Expand(sio2jailPath)
