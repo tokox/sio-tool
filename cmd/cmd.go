@@ -115,7 +115,7 @@ func getSampleID() (samples []string) {
 	if err != nil {
 		return
 	}
-	reg := regexp.MustCompile(`in(\d+).txt`)
+	reg := regexp.MustCompile(`in(\w+).txt`)
 	for _, path := range paths {
 		name := path.Name()
 		tmp := reg.FindSubmatch([]byte(name))
@@ -139,7 +139,7 @@ func getSampleByName(filename string) (samples []string) {
 	if err != nil {
 		return
 	}
-	reg := regexp.MustCompile(fmt.Sprintf("%s(\\d+).in", regexp.QuoteMeta(filename)))
+	reg := regexp.MustCompile(fmt.Sprintf("%s(\\w+).in", regexp.QuoteMeta(filename)))
 	for _, path := range paths {
 		name := path.Name()
 		tmp := reg.FindSubmatch([]byte(name))
