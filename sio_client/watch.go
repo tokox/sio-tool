@@ -1,7 +1,6 @@
 package sio_client
 
 import (
-	"bufio"
 	"bytes"
 	"errors"
 	"fmt"
@@ -9,130 +8,15 @@ import (
 	"mime/multipart"
 	"net/http"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/Arapak/sio-tool/sio_submissions"
+	"github.com/Arapak/sio-tool/szkopul_client"
 	"github.com/Arapak/sio-tool/util"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/fatih/color"
-	"github.com/k0kubun/go-ansi"
-	"github.com/olekukonko/tablewriter"
 )
-
-type Submission struct {
-	name      string
-	shortName string
-	id        uint64
-	status    string
-	points    uint64
-	when      string
-	end       bool
-}
-
-func (s *Submission) ParseStatus() string {
-	status := s.status
-	for k, v := range colorMap {
-		tmp := strings.ReplaceAll(status, k, "")
-		if tmp != status {
-			status = color.New(v).Sprint(tmp)
-		}
-	}
-	return status
-}
-
-func (s *Submission) ParseID() string {
-	return fmt.Sprintf("%v", s.id)
-}
-
-const inf = 1000000009
-
-var intReg = regexp.MustCompile(`\d+`)
-
-func toInt(sel string) uint64 {
-	if tmp := intReg.FindString(sel); tmp != "" {
-		t, _ := strconv.Atoi(tmp)
-		return uint64(t)
-	}
-	return inf
-}
-
-func (s *Submission) ParsePoints() string {
-	if s.points == inf {
-		return ""
-	} else if s.points == 0 {
-		return color.New(colorMap["${c-failed}"]).Sprint(s.points)
-	} else if s.points < 100 {
-		return color.New(colorMap["${c-partial}"]).Sprint(s.points)
-	} else if s.points == 100 {
-		return color.New(colorMap["${c-accepted}"]).Sprint(s.points)
-	}
-	return fmt.Sprintf("%v", s.points)
-}
-
-func refreshLine(n int, maxWidth int) {
-	for i := 0; i < n; i++ {
-		_, _ = ansi.Printf("%v\n", strings.Repeat(" ", maxWidth))
-	}
-	ansi.CursorUp(n)
-}
-
-func updateLine(line string, maxWidth *int) string {
-	*maxWidth = len(line)
-	return line
-}
-
-func (s *Submission) display(first bool, maxWidth *int) {
-	if !first {
-		ansi.CursorUp(6)
-	}
-	_, _ = ansi.Printf("      #: %v\n", s.ParseID())
-	_, _ = ansi.Printf("   when: %v\n", s.when)
-	_, _ = ansi.Printf("   prob: %v\n", s.name)
-	_, _ = ansi.Printf("  alias: %v\n", s.shortName)
-	refreshLine(1, *maxWidth)
-	_, _ = ansi.Printf(updateLine(fmt.Sprintf(" status: %v\n", s.ParseStatus()), maxWidth))
-	_, _ = ansi.Printf(" points: %v\n", s.ParsePoints())
-}
-
-func display(submissions []Submission, first bool, maxWidth *int, line bool) {
-	if line {
-		submissions[0].display(first, maxWidth)
-		return
-	}
-	var buf bytes.Buffer
-	output := io.Writer(&buf)
-	table := tablewriter.NewWriter(output)
-	table.SetHeader([]string{"#", "when", "problem", "alias", "status", "points"})
-	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-	table.SetAlignment(tablewriter.ALIGN_CENTER)
-	table.SetCenterSeparator("|")
-	table.SetAutoWrapText(false)
-	for _, sub := range submissions {
-		table.Append([]string{
-			sub.ParseID(),
-			sub.when,
-			sub.name,
-			sub.shortName,
-			sub.ParseStatus(),
-			sub.ParsePoints(),
-		})
-	}
-	table.Render()
-
-	if !first {
-		ansi.CursorUp(len(submissions) + 2)
-	}
-	refreshLine(len(submissions)+2, *maxWidth)
-
-	scanner := bufio.NewScanner(io.Reader(&buf))
-	for scanner.Scan() {
-		line := scanner.Text()
-		*maxWidth = len(line)
-		_, _ = ansi.Println(line)
-	}
-}
 
 func getSubmissionID(body string) (string, error) {
 	reg := regexp.MustCompile(`<td id="submission(\d+?)-score">`)
@@ -163,7 +47,7 @@ func getProblemNames(name string) (string, string) {
 	return string(tmp[1]), string(tmp[2])
 }
 
-func parseSubmission(s *goquery.Selection) (ret Submission, err error) {
+func parseSubmission(s *goquery.Selection) (ret sio_submissions.Submission, err error) {
 	body, err := s.Html()
 	if err != nil {
 		return
@@ -179,7 +63,7 @@ func parseSubmission(s *goquery.Selection) (ret Submission, err error) {
 	when := strings.TrimSpace(s.Find("a").First().Text())
 	combinedName := get(fmt.Sprintf("td#submission%v-problem-instance", id))
 	name, shortName := getProblemNames(combinedName)
-	points := toInt(get(fmt.Sprintf("td#submission%v-score", id)))
+	points := sio_submissions.ToInt(get(fmt.Sprintf("td#submission%v-score", id)))
 	kind := get(fmt.Sprintf("td#submission%v-kind", id))
 	status := get(fmt.Sprintf("td#submission%v-status", id))
 	statusLowercase := strings.ToLower(status)
@@ -189,29 +73,29 @@ func parseSubmission(s *goquery.Selection) (ret Submission, err error) {
 		end = false
 	} else if strings.Contains(statusLowercase, "ok") {
 		status = fmt.Sprintf("${c-accepted}%v", status)
-		if points == inf && (kind == "" || kind == "Normalne" || kind == "Normal" || kind == "Zignorowane" || kind == "Ignored") {
+		if points == sio_submissions.Inf && (kind == "" || kind == "Normalne" || kind == "Normal" || kind == "Zignorowane" || kind == "Ignored") {
 			end = false
 		}
 	} else if strings.Contains(statusLowercase, "błąd") || strings.Contains(statusLowercase, "failed") {
 		status = fmt.Sprintf("${c-failed}%v", status)
-		if points == inf && !strings.Contains(statusLowercase, "kompilacji") && !strings.Contains(statusLowercase, "compilation") {
+		if points == sio_submissions.Inf && !strings.Contains(statusLowercase, "kompilacji") && !strings.Contains(statusLowercase, "compilation") {
 			end = false
 		}
 	} else {
 		status = fmt.Sprintf("${c-rejected}%v", status)
 	}
-	return Submission{
-		id:        toInt(id),
-		name:      name,
-		shortName: shortName,
-		status:    status,
-		points:    points,
-		when:      when,
-		end:       end,
+	return sio_submissions.Submission{
+		Id:        sio_submissions.ToInt(id),
+		Name:      name,
+		ShortName: shortName,
+		Status:    status,
+		Points:    points,
+		When:      when,
+		End:       end,
 	}, nil
 }
 
-func (c *SioClient) getSubmissions(URL string, n int) (submissions []Submission, err error) {
+func (c *SioClient) getSubmissions(URL string, n int) (submissions []sio_submissions.Submission, err error) {
 	body, err := util.GetBody(c.client, URL)
 	if err != nil {
 		return
@@ -286,7 +170,7 @@ func (c *SioClient) RevealSubmission(info Info) (err error) {
 	return
 }
 
-func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []Submission, err error) {
+func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []sio_submissions.Submission, err error) {
 	URL, err := info.MySubmissionURL(c.host)
 	if err != nil {
 		return
@@ -302,15 +186,19 @@ func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []
 				return
 			}
 		}
-		submissions, err = c.getSubmissions(URL, n)
+		if c.instanceClient == Staszic {
+			submissions, err = c.getSubmissions(URL, n)
+		} else {
+			submissions, err = szkopul_client.GetSubmissions(c.client, URL, n)
+		}
 		if err != nil {
 			return
 		}
-		display(submissions, first, &maxWidth, line)
+		sio_submissions.Display(submissions, first, &maxWidth, line)
 		first = false
 		endCount := 0
 		for _, submission := range submissions {
-			if submission.end {
+			if submission.End {
 				endCount++
 			}
 		}
@@ -327,12 +215,4 @@ func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []
 			time.Sleep(time.Second - sub)
 		}
 	}
-}
-
-var colorMap = map[string]color.Attribute{
-	"${c-waiting}":  color.FgBlue,
-	"${c-failed}":   color.FgRed,
-	"${c-accepted}": color.FgGreen,
-	"${c-partial}":  color.FgCyan,
-	"${c-rejected}": color.FgBlue,
 }
