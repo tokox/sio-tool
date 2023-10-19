@@ -29,6 +29,8 @@ type ParsedArgs struct {
 	Shortname      string
 	Contest        string
 	Stage          string
+	TimeLimit      string   `docopt:"--time_limit"`
+	MemoryLimit    string   `docopt:"--memory_limit"`
 	Specifier      []string `docopt:"<specifier>"`
 	Alias          string   `docopt:"<alias>"`
 	Accepted       bool     `docopt:"ac"`

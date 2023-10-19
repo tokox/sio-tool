@@ -40,8 +40,8 @@ Usage:
   st list [<specifier>...]
   st parse [<specifier>...]
   st gen [<alias>]
-  st test [--oiejq] [<file>]
-  st package_test [--oiejq] [<file>]
+  st test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
+  st package_test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
   st add_package <file>
   st watch [all] [<specifier>...]
   st open [<specifier>...]
@@ -49,7 +49,7 @@ Usage:
   st sid [<specifier>...]
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
-  st stress-test [--oiejq] <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
+  st stress-test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
   st db add [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
   st db find [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
   st db goto [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
@@ -90,7 +90,11 @@ Options:
                        want.
   <alias>              Template's alias, e.g., "cpp"
   ac                   The status of the submission is Accepted.
-  -o, --oiejq              Use oiejq for running tests
+  -o, --oiejq          Use oiejq for running tests
+  -m <memory_limit>, --memory_limit <memory_limit>, <memory_limit>
+             Set oiejq's memory limit in MiB (default is 1024 (1 GiB))
+  -t <time_limit>, --time_limit <time_limit>, <time_limit>  
+             Set oiejq's time limit in seconds (default is 10s)
 
 Examples:
   st config            Configure the sio-tool.

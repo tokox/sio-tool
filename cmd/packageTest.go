@@ -181,20 +181,23 @@ func PackageTest() (err error) {
 	wg.Add(numberOfWorkers)
 	mu := sync.Mutex{}
 
-	workerError := false
 	currentTestNumber := 0
 
 	runScript := filter(template.Script)
 
+	var oiejqOptions *judge.OiejqOptions
+	if Args.Oiejq {
+		oiejqOptions = &judge.OiejqOptions{MemorylimitInMegaBytes: Args.MemoryLimit, TimeLimitInSeconds: Args.TimeLimit}
+	}
+
 	for i := 1; i <= numberOfWorkers; i++ {
 		go func(workerID int) {
-			defer wg.Done()
+			defer func() {
+				wg.Done()
+			}()
+
 			for {
 				mu.Lock()
-				if workerError {
-					mu.Unlock()
-					return
-				}
 				testNumber := currentTestNumber
 				currentTestNumber++
 				if testNumber >= len(in) {
@@ -202,20 +205,20 @@ func PackageTest() (err error) {
 					return
 				}
 				mu.Unlock()
-				verdict := judge.Judge(filepath.Join(packagePath, in[testNumber]), filepath.Join(packagePath, out[testNumber]), in[testNumber], runScript, Args.Oiejq)
+
+				verdict := judge.Judge(filepath.Join(packagePath, in[testNumber]), filepath.Join(packagePath, out[testNumber]), in[testNumber], runScript, oiejqOptions)
+
 				if !verdict.Correct {
 					mu.Lock()
-					if workerError {
-						mu.Unlock()
-						return
+					if verdict.Err != nil {
+						color.Red(verdict.Err.Error())
+					} else {
+						color.Red(verdict.Message)
 					}
-					workerError = true
-					fmt.Print(verdict.Message)
-					color.Blue(in[testNumber])
-					color.Blue(out[testNumber])
 					mu.Unlock()
-					return
+					continue
 				}
+
 				mu.Lock()
 				fmt.Print(verdict.Message)
 				mu.Unlock()

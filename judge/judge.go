@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func Judge(inPath, ansPath, sampleID, command string, oiejq bool) Verdict {
+func Judge(inPath, ansPath, sampleID, command string, oiejqOptions *OiejqOptions) Verdict {
 	input, err := os.Open(inPath)
 	if err != nil {
 		return Verdict{false, "", err}
@@ -13,8 +13,8 @@ func Judge(inPath, ansPath, sampleID, command string, oiejq bool) Verdict {
 	defer input.Close()
 
 	var processInfo *ProcessInfo
-	if oiejq {
-		processInfo, err = RunProcessWithOiejq(sampleID, command, input)
+	if oiejqOptions != nil {
+		processInfo, err = RunProcessWithOiejq(sampleID, command, input, oiejqOptions)
 	} else {
 		processInfo, err = RunProcess(sampleID, command, input, nil)
 	}

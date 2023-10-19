@@ -123,6 +123,8 @@ func StressTest() (err error) {
 	workerError := false
 	currentTestNumber := 1
 
+	oiejqOptions := &judge.OiejqOptions{MemorylimitInMegaBytes: Args.MemoryLimit, TimeLimitInSeconds: Args.TimeLimit}
+
 	for i := 1; i <= numberOfWorkers; i++ {
 		go func(workerID int) {
 			defer func() {
@@ -143,7 +145,7 @@ func StressTest() (err error) {
 				testID := strconv.Itoa(testNumber)
 				var genProcessInfo *judge.ProcessInfo
 				if Args.Oiejq {
-					genProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID))
+					genProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID), oiejqOptions)
 				} else {
 					genProcessInfo, err = judge.RunProcess(testID, testsGenScript, strings.NewReader(testID), nil)
 				}
@@ -155,7 +157,7 @@ func StressTest() (err error) {
 				}
 				var bruteProcessInfo *judge.ProcessInfo
 				if Args.Oiejq {
-					bruteProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID))
+					bruteProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID), oiejqOptions)
 				} else {
 					bruteProcessInfo, err = judge.RunProcess(testID, testsGenScript, strings.NewReader(testID), nil)
 				}
@@ -167,7 +169,7 @@ func StressTest() (err error) {
 				}
 				var solveProcessInfo *judge.ProcessInfo
 				if Args.Oiejq {
-					solveProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID))
+					solveProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID), oiejqOptions)
 				} else {
 					solveProcessInfo, err = judge.RunProcess(testID, testsGenScript, strings.NewReader(testID), nil)
 				}

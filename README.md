@@ -169,6 +169,8 @@ you can also use
 
 to use oiejq to time the execution and measure memory usage of your program
 
+(you can also specify the time limit and memory limit, like this: `st test --oiejq --memory_limit 10 --time_limit 1` (10Mib and 1s))
+
 This compiles and runs your program using the scripts you specified in the template.
 
 Your solution passes the samples, and you want to submit it.
@@ -178,6 +180,23 @@ Your solution passes the samples, and you want to submit it.
 You get 100 points, are happy, and now want to check if your position in the standings changed.
 
 `st stand`
+
+### Stress testing
+
+Everywhere below `abc` means the alias of the problem you are solving
+
+To stress test your program you have to create a brute force solution named by default `abc-brute` and a generator taking in a seed and outputing a test case (by default `abc-gen`)
+
+Then write: 
+
+`st stress-test abc`
+
+And if you want to use oiejq, use the command:
+
+`st stress-test abc --oiejq`
+
+(you can also specify the time limit and memory limit, like this: `st stress-test --oiejq --memory_limit 10 --time_limit 1` (10Mib and 1s))
+
 
 ### Packages
 
@@ -194,6 +213,8 @@ And after that, test your code using
 You can even use
 
 `st package_test --oiejq`
+
+(you can also specify the time limit and memory limit, like this: `st package_test --oiejq --memory_limit 10 --time_limit 1` (10Mib and 1s))
 
 to use oiejq to time the execution and measure memory usage of your program
 ### Database
@@ -231,8 +252,8 @@ Usage:
   st list [<specifier>...]
   st parse [<specifier>...]
   st gen [<alias>]
-  st test [--oiejq] [<file>]
-  st package_test [--oiejq] [<file>]
+  st test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
+  st package_test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
   st add_package <file>
   st watch [all] [<specifier>...]
   st open [<specifier>...]
@@ -240,7 +261,7 @@ Usage:
   st sid [<specifier>...]
   st race [<specifier>...]
   st pull [ac] [<specifier>...]
-  st stress-test [--oiejq] <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
+  st stress-test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] <specifier> [-s <solve>] [-b <brute>] [-g <generator>]
   st db add [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
   st db find [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
   st db goto [--source <source>] [-n <name>] [-p <path>] [-l <link>] [-c <contest>] [--shortname <shortname>] [--stage <stage>]
@@ -281,7 +302,11 @@ Options:
                        want.
   <alias>              Template's alias, e.g., "cpp"
   ac                   The status of the submission is Accepted.
-  -o, --oiejq              Use oiejq for running tests
+  -o, --oiejq          Use oiejq for running tests
+  -m <memory_limit>, --memory_limit <memory_limit>, <memory_limit>
+             Set oiejq's memory limit in MiB (default is 1024 (1 GiB))
+  -t <time_limit>, --time_limit <time_limit>, <time_limit>  
+             Set oiejq's time limit in seconds (default is 10s)
 
 Examples:
   st config            Configure the sio-tool.

@@ -65,13 +65,20 @@ func Test() (err error) {
 	if err = run(template.BeforeScript); err != nil {
 		return
 	}
+
+	var oiejqOptions *judge.OiejqOptions
+	if Args.Oiejq {
+		oiejqOptions = &judge.OiejqOptions{MemorylimitInMegaBytes: Args.MemoryLimit, TimeLimitInSeconds: Args.TimeLimit}
+	}
+
 	if s := filter(template.Script); len(s) > 0 {
 		for _, i := range samples {
 			var verdict judge.Verdict
+
 			if samplesWithName {
-				verdict = judge.Judge(fmt.Sprintf("%s%v.in", file, i), fmt.Sprintf("%s%v.out", file, i), i, s, Args.Oiejq)
+				verdict = judge.Judge(fmt.Sprintf("%s%v.in", file, i), fmt.Sprintf("%s%v.out", file, i), i, s, oiejqOptions)
 			} else {
-				verdict = judge.Judge(fmt.Sprintf("in%v.txt", i), fmt.Sprintf("out%v.txt", i), i, s, Args.Oiejq)
+				verdict = judge.Judge(fmt.Sprintf("in%v.txt", i), fmt.Sprintf("out%v.txt", i), i, s, oiejqOptions)
 			}
 
 			if verdict.Err != nil {
