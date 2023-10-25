@@ -253,7 +253,9 @@ func PackageTest() (err error) {
 				mu.Lock()
 				ansi.EraseInLine(2)
 				ansi.CursorHorizontalAbsolute(0)
-				printVerdict(verdict, in[testNumber])
+				if Args.Verbose {
+					printVerdict(verdict, in[testNumber])
+				}
 				m[verdict.Status]++
 				testsRan++
 				maxTime = math.Max(maxTime, verdict.TimeInSeconds)

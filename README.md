@@ -212,11 +212,14 @@ And after that, test your code using
 
 You can even use
 
-`st package_test --oiejq`
-
-(you can also specify the time limit and memory limit, like this: `st package_test --oiejq --memory_limit 10 --time_limit 1` (10Mib and 1s))
+`st package_test --oiejq --verbose`
 
 to use oiejq to time the execution and measure memory usage of your program
+
+(you can also specify the time limit and memory limit, like this: `st package_test --oiejq --verbose --memory_limit 10 --time_limit 1` (10Mib and 1s))
+
+(you can also discard the `verbose` statement, if you don't want to print the result of every test case, just the summarizer)
+
 ### Database
 
 You vaguely remember a problem but don't know from where; you just remember it was something about chess. Now you can search all the problems you solved using the sio-tool's db command.
@@ -303,6 +306,7 @@ Options:
   <alias>              Template's alias, e.g., "cpp"
   ac                   The status of the submission is Accepted.
   -o, --oiejq          Use oiejq for running tests
+  -v, --verbose        Print verdict of every test
   -m <memory_limit>, --memory_limit <memory_limit>, <memory_limit>
              Set oiejq's memory limit in MiB (default is 1024 (1 GiB))
   -t <time_limit>, --time_limit <time_limit>, <time_limit>  

@@ -41,7 +41,7 @@ Usage:
   st parse [<specifier>...]
   st gen [<alias>]
   st test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
-  st package_test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
+  st package_test [--oiejq] [--verbose] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
   st add_package <file>
   st watch [all] [<specifier>...]
   st open [<specifier>...]
@@ -91,6 +91,7 @@ Options:
   <alias>              Template's alias, e.g., "cpp"
   ac                   The status of the submission is Accepted.
   -o, --oiejq          Use oiejq for running tests
+  -v, --verbose        Print verdict of every test
   -m <memory_limit>, --memory_limit <memory_limit>, <memory_limit>
              Set oiejq's memory limit in MiB (default is 1024 (1 GiB))
   -t <time_limit>, --time_limit <time_limit>, <time_limit>  
