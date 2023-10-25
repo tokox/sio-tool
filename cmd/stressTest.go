@@ -160,11 +160,11 @@ func StressTest() (err error) {
 
 				if genProcessInfo.Status != judge.OK {
 					mu.Lock()
-					color.Red("#%v GEN - %v", testID, string(genProcessInfo.Status))
-					if err != nil {
-						color.Red(": %v", err.Error())
+					if err == nil {
+						color.Red("#%v GEN - %v", testID, string(genProcessInfo.Status))
+					} else {
+						color.Red("#%v GEN - %v: %v", testID, string(genProcessInfo.Status), err.Error())
 					}
-					color.Red("\n")
 					mu.Lock()
 					return
 				}
@@ -178,11 +178,11 @@ func StressTest() (err error) {
 
 				if bruteProcessInfo.Status != judge.OK {
 					mu.Lock()
-					color.Red("#%v BRUTE - %v", testID, string(bruteProcessInfo.Status))
-					if err != nil {
-						color.Red(": %v", err.Error())
+					if err == nil {
+						color.Red("#%v BRUTE - %v", testID, string(bruteProcessInfo.Status))
+					} else {
+						color.Red("#%v BRUTE - %v: %v", testID, string(bruteProcessInfo.Status), err.Error())
 					}
-					color.Red("\n")
 					mu.Lock()
 					return
 				}
@@ -194,13 +194,13 @@ func StressTest() (err error) {
 					solveProcessInfo, err = judge.RunProcessWithOiejq(solveScript, bytes.NewReader(genProcessInfo.Output), oiejqOptions)
 				}
 
-				if bruteProcessInfo.Status != judge.OK {
+				if solveProcessInfo.Status != judge.OK {
 					mu.Lock()
-					color.Red("#%v SOLVE - %v", testID, string(bruteProcessInfo.Status))
-					if err != nil {
-						color.Red(": %v", err.Error())
+					if err == nil {
+						color.Red("#%v SOLVE - %v", testID, string(solveProcessInfo.Status))
+					} else {
+						color.Red("#%v SOLVE - %v: %v", testID, string(solveProcessInfo.Status), err.Error())
 					}
-					color.Red("\n")
 					mu.Lock()
 					return
 				}
