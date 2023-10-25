@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -150,35 +151,62 @@ func StressTest() (err error) {
 				currentTestNumber++
 				mu.Unlock()
 				testID := strconv.Itoa(testNumber)
-				var genProcessInfo *judge.ProcessInfo
-				genProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID), oiejqOptions)
+				var genProcessInfo judge.ProcessInfo
+				if oiejqOptions == nil {
+					genProcessInfo, err = judge.RunProcess(testsGenScript, strings.NewReader(testID), nil)
+				} else {
+					genProcessInfo, err = judge.RunProcessWithOiejq(testsGenScript, strings.NewReader(testID), oiejqOptions)
+				}
 
-				if err != nil {
+				if genProcessInfo.Status != judge.OK {
 					mu.Lock()
-					color.Red(err.Error())
-					mu.Unlock()
+					color.Red("#%v GEN - %v", testID, string(genProcessInfo.Status))
+					if err != nil {
+						color.Red(": %v", err.Error())
+					}
+					color.Red("\n")
+					mu.Lock()
 					return
 				}
-				var bruteProcessInfo *judge.ProcessInfo
-				bruteProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID), oiejqOptions)
 
-				if err != nil {
+				var bruteProcessInfo judge.ProcessInfo
+				if oiejqOptions == nil {
+					bruteProcessInfo, err = judge.RunProcess(bruteScript, bytes.NewReader(genProcessInfo.Output), nil)
+				} else {
+					bruteProcessInfo, err = judge.RunProcessWithOiejq(bruteScript, bytes.NewReader(genProcessInfo.Output), oiejqOptions)
+				}
+
+				if bruteProcessInfo.Status != judge.OK {
 					mu.Lock()
-					color.Red(err.Error())
-					mu.Unlock()
+					color.Red("#%v BRUTE - %v", testID, string(bruteProcessInfo.Status))
+					if err != nil {
+						color.Red(": %v", err.Error())
+					}
+					color.Red("\n")
+					mu.Lock()
 					return
 				}
-				var solveProcessInfo *judge.ProcessInfo
-				solveProcessInfo, err = judge.RunProcessWithOiejq(testID, testsGenScript, strings.NewReader(testID), oiejqOptions)
 
-				if err != nil {
+				var solveProcessInfo judge.ProcessInfo
+				if oiejqOptions == nil {
+					solveProcessInfo, err = judge.RunProcess(solveScript, bytes.NewReader(genProcessInfo.Output), nil)
+				} else {
+					solveProcessInfo, err = judge.RunProcessWithOiejq(solveScript, bytes.NewReader(genProcessInfo.Output), oiejqOptions)
+				}
+
+				if bruteProcessInfo.Status != judge.OK {
 					mu.Lock()
-					color.Red(err.Error())
-					mu.Unlock()
+					color.Red("#%v SOLVE - %v", testID, string(bruteProcessInfo.Status))
+					if err != nil {
+						color.Red(": %v", err.Error())
+					}
+					color.Red("\n")
+					mu.Lock()
 					return
 				}
-				verdict := judge.GenerateVerdict(testID, judge.Plain(bruteProcessInfo.Output), *solveProcessInfo)
-				if !verdict.Correct {
+
+				verdict := judge.GenerateVerdict(testID, judge.Plain(bruteProcessInfo.Output), solveProcessInfo)
+				if verdict.Status != judge.OK {
 					mu.Lock()
 					if workerError {
 						mu.Unlock()

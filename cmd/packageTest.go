@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -14,6 +15,7 @@ import (
 	"github.com/Arapak/sio-tool/config"
 	"github.com/Arapak/sio-tool/judge"
 	"github.com/Arapak/sio-tool/util"
+	"github.com/k0kubun/go-ansi"
 
 	"github.com/fatih/color"
 )
@@ -121,6 +123,37 @@ func getAllTests(path string) (in []string, out []string, err error) {
 	return nil, nil, errors.New(ErrorTestsNotFound)
 }
 
+func printVerdict(verdict judge.Verdict, testID string) {
+	if verdict.Status == judge.OK || verdict.Status == judge.WA {
+		fmt.Print(verdict.Message)
+	} else if verdict.Status == judge.RE {
+		color.Red("runtime error #%v: %v", testID, verdict.Err.Error())
+	} else if verdict.Status == judge.TLE {
+		color.Red("time limit exceeded #%v", testID)
+	} else if verdict.Status == judge.MLE {
+		color.Red("memory limit exceeded #%v", testID)
+	} else if verdict.Status == judge.OLE {
+		color.Red("output limit exceeded #%v", testID)
+	} else if verdict.Status == judge.INT {
+		color.Red("internal error #%v: %v", testID, verdict.Err.Error())
+	} else if verdict.Status == judge.PERF {
+		color.Red("#%v: to use oiejq you have to run `sudo sysctl kernel.perf_event_paranoid=-1`", testID)
+	}
+}
+
+func printReport(m map[judge.VerdictStatus]int, testsRan int, maxTime, maxMemory float64) {
+	_, _ = ansi.Printf("TESTS RAN: %v", util.BlueString(fmt.Sprint(testsRan)))
+	_, _ = ansi.Printf(" MAX TIME: %0.3fs", maxTime)
+	_, _ = ansi.Printf(" MAX MEMORY: %v", judge.ParseMemory(maxMemory))
+	for status, num := range m {
+		if status == judge.OK {
+			_, _ = ansi.Printf(" OK: %v", util.GreenString(fmt.Sprint(num)))
+		} else {
+			_, _ = ansi.Printf(" %v: %v", status, util.RedString(fmt.Sprint(num)))
+		}
+	}
+}
+
 func PackageTest() (err error) {
 	cfg := config.Instance
 	if len(cfg.Template) == 0 {
@@ -194,6 +227,11 @@ func PackageTest() (err error) {
 		oiejqOptions = &judge.OiejqOptions{MemorylimitInMegaBytes: Args.MemoryLimit, TimeLimitInSeconds: Args.TimeLimit}
 	}
 
+	m := make(map[judge.VerdictStatus]int)
+	testsRan := 0
+	maxTime := 0.0
+	maxMemory := 0.0
+
 	for i := 1; i <= numberOfWorkers; i++ {
 		go func(workerID int) {
 			defer func() {
@@ -212,24 +250,20 @@ func PackageTest() (err error) {
 
 				verdict := judge.Judge(filepath.Join(packagePath, in[testNumber]), filepath.Join(packagePath, out[testNumber]), in[testNumber], runScript, oiejqOptions)
 
-				if !verdict.Correct {
-					mu.Lock()
-					if verdict.Err != nil {
-						color.Red(verdict.Err.Error())
-					} else {
-						color.Red(verdict.Message)
-					}
-					mu.Unlock()
-					continue
-				}
-
 				mu.Lock()
-				fmt.Print(verdict.Message)
+				ansi.EraseInLine(2)
+				ansi.CursorHorizontalAbsolute(0)
+				printVerdict(verdict, in[testNumber])
+				m[verdict.Status]++
+				testsRan++
+				maxTime = math.Max(maxTime, verdict.TimeInSeconds)
+				maxMemory = math.Max(maxMemory, verdict.MemoryInMegabytes)
+				printReport(m, testsRan, maxTime, maxMemory)
 				mu.Unlock()
 			}
 		}(i)
 	}
 	wg.Wait()
-	color.Blue("----FINISHED----")
+	color.Blue("\n----FINISHED----")
 	return
 }
