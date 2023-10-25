@@ -187,6 +187,10 @@ func PackageTest() (err error) {
 
 	var oiejqOptions *judge.OiejqOptions
 	if Args.Oiejq {
+		err = judge.InstallSio2Jail()
+		if err != nil {
+			return
+		}
 		oiejqOptions = &judge.OiejqOptions{MemorylimitInMegaBytes: Args.MemoryLimit, TimeLimitInSeconds: Args.TimeLimit}
 	}
 

@@ -41,6 +41,9 @@ func InstallSio2Jail() (err error) {
 	if err != nil {
 		return
 	}
+	if util.FileExists(sio2jailPath) {
+		return
+	}
 	return os.WriteFile(sio2jailPath, sio2jail, 0755)
 }
 
@@ -82,17 +85,6 @@ func readOiejqOutput(processID, path string) (*ProcessInfo, error) {
 }
 
 func RunProcessWithOiejq(processID, command string, input io.Reader, oiejqOptions *OiejqOptions) (oiejqProcessInfo *ProcessInfo, err error) {
-	sio2jailPath, err = homedir.Expand(sio2jailPath)
-	if err != nil {
-		return
-	}
-	if !util.FileExists(sio2jailPath) {
-		err = InstallSio2Jail()
-		if err != nil {
-			return
-		}
-	}
-
 	oiejqResults, err := os.CreateTemp(os.TempDir(), "sio2jail-")
 	if err != nil {
 		return
