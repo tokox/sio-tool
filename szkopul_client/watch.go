@@ -59,18 +59,18 @@ func parseSubmission(body []byte) (ret sio_submissions.Submission, err error) {
 	points := sio_submissions.ToInt(get(fmt.Sprintf("td#submission%v-score", id)))
 	status := strings.ToLower(get(fmt.Sprintf("td#submission%v-status", id)))
 	end := true
-	if strings.Contains(strings.ToLower(status), "oczekuje") || strings.Contains(strings.ToLower(status), "pending") {
+	if status == "oczekuje" || status == "pending" {
+		status = fmt.Sprintf("${c-waiting}%v", status)
 		end = false
-	}
-	if strings.Contains(strings.ToLower(status), "ok") {
-		status = fmt.Sprintf("${c-accepted}%v", status)
-		if points == sio_submissions.Inf {
-			end = false
-		}
-	} else if strings.Contains(strings.ToLower(status), "błąd") || strings.Contains(strings.ToLower(status), "failed") {
+	} else if status == "błąd kompilacji" || status == "compilation failed" {
 		status = fmt.Sprintf("${c-failed}%v", status)
+	} else if strings.Contains(status, "ok") || strings.Contains(status, "failed") || strings.Contains(status, "błąd") {
 		if points == sio_submissions.Inf {
-			end = false
+			status = fmt.Sprintf("${c-partial}%v", status)
+		} else if points == 0 {
+			status = fmt.Sprintf("${c-failed}%v", status)
+		} else {
+			status = fmt.Sprintf("${c-accepted}%v", status)
 		}
 	} else {
 		status = fmt.Sprintf("${c-rejected}%v", status)
