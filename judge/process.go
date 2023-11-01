@@ -16,8 +16,11 @@ func Plain(raw []byte) string {
 	var b bytes.Buffer
 	newline := []byte{'\n'}
 	for buf.Scan() {
-		b.Write(bytes.TrimSpace(buf.Bytes()))
-		b.Write(newline)
+		line := bytes.TrimSpace(buf.Bytes())
+		if len(line) != 0 {
+			b.Write(line)
+			b.Write(newline)
+		}
 	}
 	return b.String()
 }
