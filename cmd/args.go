@@ -63,6 +63,7 @@ type ParsedArgs struct {
 	SioStaszic     bool
 	SioMimuw       bool
 	Oiejq          bool
+	Verbose        bool
 }
 
 var Args *ParsedArgs

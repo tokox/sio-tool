@@ -80,6 +80,7 @@ const colorReset = "\033[0m"
 
 const colorRed = "\033[31m"
 const colorGreen = "\033[32m"
+const colorBlue = "\033[34m"
 
 func RedString(str string) string {
 	return fmt.Sprintf("%v%v%v", colorRed, str, colorReset)
@@ -87,6 +88,9 @@ func RedString(str string) string {
 
 func GreenString(str string) string {
 	return fmt.Sprintf("%v%v%v", colorGreen, str, colorReset)
+}
+func BlueString(str string) string {
+	return fmt.Sprintf("%v%v%v", colorBlue, str, colorReset)
 }
 
 type Performance struct {

@@ -41,60 +41,68 @@ func InstallSio2Jail() (err error) {
 	if err != nil {
 		return
 	}
+	if util.FileExists(sio2jailPath) {
+		return
+	}
 	return os.WriteFile(sio2jailPath, sio2jail, 0755)
 }
 
 const ErrorInvalidOiejqResults = "invalid oiejq results returned"
 
-func readOiejqOutput(processID, path string) (*ProcessInfo, error) {
+func readOiejqOutput(path string) (processInfo ProcessInfo, err error) {
 	result, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		processInfo.Status = INT
+		return
 	}
 	lines := strings.Split(string(result), "\n")
 	if len(lines) != 3 {
-		return nil, fmt.Errorf(ErrorInvalidOiejqResults)
+		processInfo.Status = INT
+		err = errors.New(ErrorInvalidOiejqResults)
+		return
 	}
 	results := strings.Split(lines[0], " ")
 	message := lines[1]
-	if results[0] == "RE" || results[0] == "RV" {
-		return nil, fmt.Errorf("runtime error #%v ... %v", processID, message)
-	} else if results[0] == "TLE" {
-		return nil, fmt.Errorf("time limit exceeded #%v", processID)
-	} else if results[0] == "MLE" {
-		return nil, fmt.Errorf("memory limit exceeded #%v", processID)
-	} else if results[0] == "OLE" {
-		return nil, fmt.Errorf("output limit exceeded #%v", processID)
-	} else if results[0] != "OK" {
-		return nil, fmt.Errorf("invalid oiejq status returned")
+	if results[0] == string(RE) || results[0] == "RV" {
+		processInfo.Status = RE
+		err = errors.New(message)
+		return
+	} else if results[0] == string(TLE) {
+		processInfo.Status = TLE
+		return
+	} else if results[0] == string(MLE) {
+		processInfo.Status = MLE
+		return
+	} else if results[0] == string(OLE) {
+		processInfo.Status = OLE
+		return
+	} else if results[0] != string(OK) {
+		processInfo.Status = INT
+		err = errors.New("invalid oiejq status returned")
+		return
 	}
 
 	timeMiliseconds, err := strconv.ParseFloat(results[2], 64)
 	if err != nil {
-		return nil, err
-	}
-	memory, err := strconv.Atoi(results[4])
-	if err != nil {
-		return nil, err
-	}
-
-	return &ProcessInfo{timeMiliseconds / 1000, parseMemory(uint64(memory) * 1024), []byte{}}, nil
-}
-
-func RunProcessWithOiejq(processID, command string, input io.Reader, oiejqOptions *OiejqOptions) (oiejqProcessInfo *ProcessInfo, err error) {
-	sio2jailPath, err = homedir.Expand(sio2jailPath)
-	if err != nil {
+		processInfo.Status = INT
 		return
 	}
-	if !util.FileExists(sio2jailPath) {
-		err = InstallSio2Jail()
-		if err != nil {
-			return
-		}
+	processInfo.TimeInSeconds = timeMiliseconds / 1000
+	memory, err := strconv.Atoi(results[4])
+	if err != nil {
+		processInfo.Status = INT
+		return
 	}
+	processInfo.MemoryInMegabytes = float64(memory) / 1024.0
 
+	processInfo.Status = OK
+	return
+}
+
+func RunProcessWithOiejq(command string, input io.Reader, oiejqOptions *OiejqOptions) (oiejqProcessInfo ProcessInfo, err error) {
 	oiejqResults, err := os.CreateTemp(os.TempDir(), "sio2jail-")
 	if err != nil {
+		oiejqProcessInfo.Status = INT
 		return
 	}
 	defer os.Remove(oiejqResults.Name())
@@ -107,22 +115,19 @@ func RunProcessWithOiejq(processID, command string, input io.Reader, oiejqOption
 	}
 
 	oiejqCommand := fmt.Sprintf(sio2jailCommand, sio2jailPath, oiejqOptions.TimeLimitInSeconds, options, oiejqOptions.MemorylimitInMegaBytes, command, oiejqResults.Name())
-	processInfo, processErr := RunProcess(processID, oiejqCommand, input, oiejqResults)
-	oiejqProcessInfo, err = readOiejqOutput(processID, oiejqResults.Name())
-	if err != nil {
-		if err.Error() == ErrorInvalidOiejqResults {
-			if processErr != nil {
-				return nil, processErr
-			} else if processInfo == nil {
-				return nil, fmt.Errorf("runtime error #%v", processID)
-			} else {
-				return nil, errors.New(string(processInfo.Output))
-			}
+	processInfo, processErr := RunProcess(oiejqCommand, input, oiejqResults)
+	oiejqProcessInfo, err = readOiejqOutput(oiejqResults.Name())
+	if oiejqProcessInfo.Status != OK {
+		if err != nil && err.Error() == ErrorInvalidOiejqResults {
+			oiejqProcessInfo.Status = processInfo.Status
+			err = processErr
+			return
 		}
 		return
 	}
 	if processErr != nil {
-		return nil, processErr
+		err = processErr
+		return
 	}
 	oiejqProcessInfo.Output = processInfo.Output
 	return

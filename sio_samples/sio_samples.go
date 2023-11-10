@@ -41,7 +41,7 @@ func containsWhitespaceOnly(input [][]byte) bool {
 
 func findSamplesSection(body []byte) []byte {
 	sectionStartReg := regexp.MustCompile(`Przykład(y)?\s+`)
-	sectionEndReg := regexp.MustCompile(`Wyjaśnienie przykładu|Wyjaśnienie do przykładu|Komentarz do przykładu|Ocenianie|Autor(zy)? zadania:|Testy „ocen”`)
+	sectionEndReg := regexp.MustCompile(`Wyjaśnienie przykładu|Wyjaśnienie do przykładu|Komentarz do przykładu|Ocenianie|Autor(zy)? zadania:|Testy „ocen”|Testy przykładowe`)
 
 	startIndex := sectionStartReg.FindIndex(body)
 	if startIndex != nil {
@@ -138,6 +138,7 @@ var oiSampleOutputStarts = []string{
 }
 
 func FindSamples(body []byte, pdf []byte) (input, output [][]byte, err error) {
+	body = findSamplesSection(body)
 
 	inputEnd := createRegGroupFromArray(append(oiSampleInputStarts, append(oiSampleOutputStarts, sampleEnd)...))
 	oiSampleInputStartReg := createRegGroupFromArray(oiSampleInputStarts)

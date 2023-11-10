@@ -26,7 +26,7 @@ int main() {
 `
 
 var oiTemplatePath = "~/.st/template.cpp"
-var oiTemplateCompilation = "g++ -std=c++17 -Wpedantic -O3 -static -o $%path%$$%file%$.e $%path%$$%full%$"
+var oiTemplateCompilation = "g++ -std=c++20 -Wpedantic -O3 -static -o $%path%$$%file%$.e $%path%$$%full%$"
 var oiTemplateRun = "./$%path%$$%file%$.e"
 
 func (c *Config) AddOiTemplate() (err error) {

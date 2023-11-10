@@ -3,8 +3,6 @@ package judge
 import (
 	"bufio"
 	"bytes"
-	"errors"
-	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -18,28 +16,23 @@ func Plain(raw []byte) string {
 	var b bytes.Buffer
 	newline := []byte{'\n'}
 	for buf.Scan() {
-		b.Write(bytes.TrimSpace(buf.Bytes()))
-		b.Write(newline)
+		line := bytes.TrimSpace(buf.Bytes())
+		if len(line) != 0 {
+			b.Write(line)
+			b.Write(newline)
+		}
 	}
 	return b.String()
 }
 
-func parseMemory(memory uint64) string {
-	if memory > 1024*1024 {
-		return fmt.Sprintf("%.3fMB", float64(memory)/1024.0/1024.0)
-	} else if memory > 1024 {
-		return fmt.Sprintf("%.3fKB", float64(memory)/1024.0)
-	}
-	return fmt.Sprintf("%vB", memory)
-}
-
 type ProcessInfo struct {
-	Time   float64
-	Memory string
-	Output []byte
+	Status            VerdictStatus
+	TimeInSeconds     float64
+	MemoryInMegabytes float64
+	Output            []byte
 }
 
-func RunProcess(processID, command string, input io.Reader, extrafile *os.File) (*ProcessInfo, error) {
+func RunProcess(command string, input io.Reader, extrafile *os.File) (ProcessInfo, error) {
 	var o bytes.Buffer
 	output := io.Writer(&o)
 	var e bytes.Buffer
@@ -55,7 +48,7 @@ func RunProcess(processID, command string, input io.Reader, extrafile *os.File) 
 		cmd.ExtraFiles = append(cmd.ExtraFiles, extrafile)
 	}
 	if err := cmd.Start(); err != nil {
-		return nil, fmt.Errorf("runtime error #%v ... %v", processID, err.Error())
+		return ProcessInfo{RE, 0, 0, []byte{}}, err
 	}
 
 	pid := int32(cmd.Process.Pid)
@@ -69,7 +62,7 @@ func RunProcess(processID, command string, input io.Reader, extrafile *os.File) 
 		select {
 		case err := <-ch:
 			if err != nil {
-				return nil, fmt.Errorf("runtime error #%v ... %v", processID, err.Error())
+				return ProcessInfo{RE, 0, float64(maxMemory) / (1024.0 * 1024.0), []byte{}}, err
 			}
 			running = false
 		default:
@@ -82,9 +75,9 @@ func RunProcess(processID, command string, input io.Reader, extrafile *os.File) 
 			}
 			if extrafile != nil && bytes.Contains(e.Bytes(), []byte("Exception occurred: System error occured: perf event open failed: Permission denied: error 13: Permission denied")) {
 				cmd.Process.Kill()
-				return nil, errors.New("to use oiejq you have to run `sudo sysctl kernel.perf_event_paranoid=-1`")
+				return ProcessInfo{PERF, 0, float64(maxMemory) / (1024.0 * 1024.0), []byte{}}, nil
 			}
 		}
 	}
-	return &ProcessInfo{cmd.ProcessState.UserTime().Seconds(), parseMemory(maxMemory), o.Bytes()}, nil
+	return ProcessInfo{OK, cmd.ProcessState.UserTime().Seconds(), float64(maxMemory) / (1024.0 * 1024.0), o.Bytes()}, nil
 }
