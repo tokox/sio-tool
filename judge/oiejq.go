@@ -1,6 +1,7 @@
 package judge
 
 import (
+	"bytes"
 	_ "embed"
 	"errors"
 	"fmt"
@@ -41,10 +42,13 @@ func InstallSio2Jail() (err error) {
 	if err != nil {
 		return
 	}
-	if util.FileExists(sio2jailPath) {
-		return
+	if !util.FileExists(sio2jailPath) {
+		err = os.WriteFile(sio2jailPath, sio2jail, 0755)
+		if err != nil {
+			return
+		}
 	}
-	return os.WriteFile(sio2jailPath, sio2jail, 0755)
+	return testOiejq()
 }
 
 const ErrorInvalidOiejqResults = "invalid oiejq results returned"
@@ -107,6 +111,9 @@ func RunProcessWithOiejq(command string, input io.Reader, oiejqOptions *OiejqOpt
 	}
 	defer os.Remove(oiejqResults.Name())
 
+	if oiejqOptions == nil {
+		oiejqOptions = &OiejqOptions{}
+	}
 	if oiejqOptions.MemorylimitInMegaBytes == "" {
 		oiejqOptions.MemorylimitInMegaBytes = defaultMemoryLimitInMegaBytes
 	}
@@ -117,6 +124,8 @@ func RunProcessWithOiejq(command string, input io.Reader, oiejqOptions *OiejqOpt
 	oiejqCommand := fmt.Sprintf(sio2jailCommand, sio2jailPath, oiejqOptions.TimeLimitInSeconds, options, oiejqOptions.MemorylimitInMegaBytes, command, oiejqResults.Name())
 	processInfo, processErr := RunProcess(oiejqCommand, input, oiejqResults)
 	oiejqProcessInfo, err = readOiejqOutput(oiejqResults.Name())
+	oiejqProcessInfo.Output = processInfo.Output
+	oiejqProcessInfo.Stderr = processInfo.Stderr
 	if oiejqProcessInfo.Status != OK {
 		if err != nil && err.Error() == ErrorInvalidOiejqResults {
 			oiejqProcessInfo.Status = processInfo.Status
@@ -129,6 +138,16 @@ func RunProcessWithOiejq(command string, input io.Reader, oiejqOptions *OiejqOpt
 		err = processErr
 		return
 	}
-	oiejqProcessInfo.Output = processInfo.Output
 	return
+}
+
+const perfEventParanoid = "Exception occurred: System error occured: perf event open failed: Permission denied: error"
+const ErrorPerfEventParanoid = "to use oiejq you have to run `sudo sysctl kernel.perf_event_paranoid=-1`"
+
+func testOiejq() error {
+	processInfo, err := RunProcessWithOiejq("/bin/true", bytes.NewReader([]byte{}), nil)
+	if bytes.Contains(processInfo.Stderr, []byte(perfEventParanoid)) {
+		return errors.New(ErrorPerfEventParanoid)
+	}
+	return err
 }

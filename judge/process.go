@@ -30,6 +30,7 @@ type ProcessInfo struct {
 	TimeInSeconds     float64
 	MemoryInMegabytes float64
 	Output            []byte
+	Stderr            []byte
 }
 
 func RunProcess(command string, input io.Reader, extrafile *os.File) (ProcessInfo, error) {
@@ -48,7 +49,7 @@ func RunProcess(command string, input io.Reader, extrafile *os.File) (ProcessInf
 		cmd.ExtraFiles = append(cmd.ExtraFiles, extrafile)
 	}
 	if err := cmd.Start(); err != nil {
-		return ProcessInfo{RE, 0, 0, []byte{}}, err
+		return ProcessInfo{RE, 0, 0, []byte{}, []byte{}}, err
 	}
 
 	pid := int32(cmd.Process.Pid)
@@ -62,7 +63,7 @@ func RunProcess(command string, input io.Reader, extrafile *os.File) (ProcessInf
 		select {
 		case err := <-ch:
 			if err != nil {
-				return ProcessInfo{RE, 0, float64(maxMemory) / (1024.0 * 1024.0), []byte{}}, err
+				return ProcessInfo{RE, 0, float64(maxMemory) / (1024.0 * 1024.0), []byte{}, e.Bytes()}, err
 			}
 			running = false
 		default:
@@ -73,11 +74,7 @@ func RunProcess(command string, input io.Reader, extrafile *os.File) (ProcessInf
 					maxMemory = m.RSS
 				}
 			}
-			if extrafile != nil && bytes.Contains(e.Bytes(), []byte("Exception occurred: System error occured: perf event open failed: Permission denied: error 13: Permission denied")) {
-				cmd.Process.Kill()
-				return ProcessInfo{PERF, 0, float64(maxMemory) / (1024.0 * 1024.0), []byte{}}, nil
-			}
 		}
 	}
-	return ProcessInfo{OK, cmd.ProcessState.UserTime().Seconds(), float64(maxMemory) / (1024.0 * 1024.0), o.Bytes()}, nil
+	return ProcessInfo{OK, cmd.ProcessState.UserTime().Seconds(), float64(maxMemory) / (1024.0 * 1024.0), o.Bytes(), e.Bytes()}, nil
 }

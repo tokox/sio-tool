@@ -136,8 +136,6 @@ func printVerdict(verdict judge.Verdict, testID string) {
 		color.Red("output limit exceeded #%v", testID)
 	} else if verdict.Status == judge.INT {
 		color.Red("internal error #%v: %v", testID, verdict.Err.Error())
-	} else if verdict.Status == judge.PERF {
-		color.Red("#%v: to use oiejq you have to run `sudo sysctl kernel.perf_event_paranoid=-1`", testID)
 	}
 }
 
