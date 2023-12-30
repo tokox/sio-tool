@@ -62,10 +62,30 @@ func (c *SzkopulClient) load() (err error) {
 	bytes, err := io.ReadAll(file)
 
 	if err != nil {
-		return err
+		return
 	}
 
-	return json.Unmarshal(bytes, c)
+	err = json.Unmarshal(bytes, c)
+	if err != nil {
+		return
+	}
+
+	parsed_url, err := url.Parse(c.host)
+	if err != nil {
+		return
+	}
+
+	cookies := c.Jar.Cookies(parsed_url)
+
+	for _, cookie := range cookies {
+		if cookie.Name == "lang" {
+			cookie.Value = "pl"
+		}
+	}
+
+	c.Jar.SetCookies(parsed_url, cookies)
+
+	return nil
 }
 
 func (c *SzkopulClient) save() (err error) {
