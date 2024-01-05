@@ -85,7 +85,7 @@ func parseArgsSzkopul() error {
 	return nil
 }
 
-const SzkopulProblemSecretKeyRegStr = `[A-Za-z0-9-]{24}`
+const SzkopulProblemSecretKeyRegStr = `[A-Za-z0-9-_]{24}`
 
 const StrictSzkopulProblemRegStr = `[a-z]{3}\d*`
 const OIContestRegStr = `[MCLXVI]+`
