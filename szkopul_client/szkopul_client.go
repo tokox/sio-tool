@@ -65,7 +65,18 @@ func (c *SzkopulClient) load() (err error) {
 		return err
 	}
 
-	return json.Unmarshal(bytes, c)
+	parsed_url, err := url.Parse(c.host)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(bytes, c)
+	if err != nil {
+		return
+	}
+
+	c.Jar.SetCookies(parsed_url, []*http.Cookie{{Name: "lang", Value: "pl"}})
+	return
 }
 
 func (c *SzkopulClient) save() (err error) {

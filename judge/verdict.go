@@ -9,14 +9,13 @@ import (
 type VerdictStatus string
 
 const (
-	OK   VerdictStatus = "OK"
-	WA   VerdictStatus = "WA"
-	TLE  VerdictStatus = "TLE"
-	MLE  VerdictStatus = "MLE"
-	OLE  VerdictStatus = "OLE"
-	RE   VerdictStatus = "RE"
-	PERF VerdictStatus = "perf_event_paranoid"
-	INT  VerdictStatus = "INT"
+	OK  VerdictStatus = "OK"
+	WA  VerdictStatus = "WA"
+	TLE VerdictStatus = "TLE"
+	MLE VerdictStatus = "MLE"
+	OLE VerdictStatus = "OLE"
+	RE  VerdictStatus = "RE"
+	INT VerdictStatus = "INT"
 )
 
 type Verdict struct {
