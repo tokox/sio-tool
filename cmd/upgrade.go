@@ -67,7 +67,7 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 		return
 	}
 
-	resp, err := http.Get("https://api.github.com/repos/Arapak/sio-tool/releases/latest")
+	resp, err := http.Get("https://api.github.com/repos/kartof0nix/sio-tool/releases/latest")
 	if err != nil {
 		return
 	}
@@ -85,7 +85,7 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 	note = result["body"].(string)
 	tm, _ := time.Parse("2006-01-02T15:04:05Z", result["published_at"].(string))
 	ptime = tm.In(time.Local).Format("2006-01-02 15:04")
-	url = fmt.Sprintf("https://github.com/Arapak/sio-tool/releases/download/%v/st_%v_%v.zip", version, goos, arch)
+	url = fmt.Sprintf("https://github.com/kartof0nix/sio-tool/releases/download/%v/st_%v_%v.zip", version, goos, arch)
 	assets, _ := result["assets"].([]interface{})
 	for _, tmp := range assets {
 		asset, _ := tmp.(map[string]interface{})
