@@ -42,6 +42,8 @@ func getSioClient() *sio_client.SioClient {
 		return sio_client.StaszicInstance
 	} else if Args.SioMimuw {
 		return sio_client.MimuwInstance
+	} else if Args.SioTalent {
+		return sio_client.TalentInstance
 	}
 	return nil
 }
@@ -51,6 +53,8 @@ func getSioHost() string {
 		return config.Instance.SioStaszicHost
 	} else if Args.SioMimuw {
 		return config.Instance.SioMimuwHost
+	} else if Args.SioTalent {
+		return config.Instance.SioTalentHost
 	}
 	return ""
 }

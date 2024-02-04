@@ -62,6 +62,8 @@ func Init(path, host, proxy string, instanceClient SioInstanceClient) {
 		StaszicInstance = c
 	} else if instanceClient == Mimuw {
 		MimuwInstance = c
+	} else if instanceClient == Talent {
+		TalentInstance = c
 	}
 }
 

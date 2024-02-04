@@ -133,6 +133,12 @@ func parseArgs(opts docopt.Opts) error {
 		}
 		return parseArgsSio(cfg.FolderName["sio-mimuw-root"])
 	}
+	if Args.SioTalent {
+		if Args.Handle == "" {
+			Args.Handle = sio_client.TalentInstance.Username
+		}
+		return parseArgsSio(cfg.FolderName["sio-talent-root"])
+	}
 	if Args.Szkopul {
 		return parseArgsSzkopul()
 	}
