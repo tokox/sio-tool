@@ -33,6 +33,7 @@ type Config struct {
 	SzkopulHost    string            `json:"szkopul_host"`
 	SioStaszicHost string            `json:"sio_staszic_host"`
 	SioMimuwHost   string            `json:"sio_mimuw_host"`
+	SioTalentHost  string            `json:"sio_talent_host"`
 	Proxy          string            `json:"proxy"`
 	FolderName     map[string]string `json:"folder_name"`
 	DefaultNaming  map[string]string `json:"default_naming"`
@@ -44,7 +45,7 @@ type Config struct {
 var Instance *Config
 
 func Init(path string) {
-	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioStaszicHost: "https://sio2.staszic.waw.pl", SioMimuwHost: "https://sio2.mimuw.edu.pl", DbPath: "~/.st/tasks.db", Proxy: "", PackagesPath: "~/.st/packages"}
+	c := &Config{ path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioStaszicHost: "https://sio2.staszic.waw.pl",	SioMimuwHost: "https://sio2.mimuw.edu.pl", SioTalentHost: "https://sio.talent.edu.pl", DbPath: "~/.st/tasks.db", Proxy: "", PackagesPath: "~/.st/packages"	}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new configuration in %v", path)
@@ -60,6 +61,9 @@ func Init(path string) {
 	}
 	if _, ok := c.FolderName["sio-mimuw-root"]; !ok {
 		c.FolderName["sio-mimuw-root"] = "~/st/sio-mimuw"
+	}
+	if _, ok := c.FolderName["sio-talent-root"]; !ok {
+		c.FolderName["sio-talent-root"] = "~/st/sio-talent"
 	}
 	if _, ok := c.FolderName["codeforces-root"]; !ok {
 		c.FolderName["codeforces-root"] = "~/st/codeforces"

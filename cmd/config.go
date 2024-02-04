@@ -24,7 +24,7 @@ func Config() (err error) {
 			`delete a template`,
 			`set default template`,
 			`run "st gen" after "st parse"`,
-			`set codeforces host domain`,
+			`set host domains`,
 			`set proxy`,
 			`set folders' name`,
 			`set default naming`,
@@ -43,6 +43,7 @@ func Config() (err error) {
 				`Szkopul`,
 				`Sio2 (staszic.waw.pl)`,
 				`Sio2 (mimuw.edu.pl)`,
+				`Sio2 (talent.edu.pl)`,
 			},
 		}
 		if err = survey.AskOne(prompt, &index); err != nil {
@@ -56,6 +57,8 @@ func Config() (err error) {
 			return sioStaszicCln.ConfigLogin()
 		} else if index == 3 {
 			return sioMimuwCln.ConfigLogin()
+		} else if index == 4 {
+			// return sioTalentCln.ConfigLogin()
 		}
 	} else if index == 1 {
 		return cfg.AddTemplate()
@@ -66,7 +69,7 @@ func Config() (err error) {
 	} else if index == 4 {
 		return cfg.SetGenAfterParse()
 	} else if index == 5 {
-		return cfg.SetCodeforcesHost()
+		return cfg.SetHost()
 	} else if index == 6 {
 		return cfg.SetProxy()
 	} else if index == 7 {
