@@ -41,9 +41,6 @@ func SioParse() (err error) {
 
 	work := func() error {
 		_, paths, err := cln.Parse(info, db)
-		if err != nil {
-			return err
-		}
 		if cfg.GenAfterParse {
 			for _, path := range paths {
 				err = GenFiles(source, path, ext)
@@ -51,6 +48,9 @@ func SioParse() (err error) {
 					color.Red(err.Error())
 				}
 			}
+		}
+		if err != nil {
+			return err
 		}
 		return nil
 	}
