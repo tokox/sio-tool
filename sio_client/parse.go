@@ -54,7 +54,7 @@ func getNameFromOiPdf(statement []byte) (problemName string) {
 }
 
 func getNameFromSinolPdf(statement []byte) (problemName string) {
-	reg := regexp.MustCompile(`\A([\S ]*?\n+)?([\S ]*?\n+)?Dostępna pamięć: \d+MB\n+(?P<problemName>[\S ]+?)\n`)
+	reg := regexp.MustCompile(`\A([\S ]*?\n+){0,2}Dostępna pamięć: \d+( )?MB\n+(?P<problemName>[\S ]+?)\n`)
 	names := reg.SubexpNames()
 	for i, val := range reg.FindSubmatch(statement) {
 		if names[i] == "problemName" {

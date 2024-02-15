@@ -18,7 +18,7 @@ type SioInstanceClient int
 const (
 	Staszic SioInstanceClient = 0
 	Mimuw   SioInstanceClient = 1
-	Talent   SioInstanceClient = 2
+	Talent  SioInstanceClient = 2
 )
 
 type SioClient struct {

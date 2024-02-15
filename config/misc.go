@@ -23,7 +23,7 @@ func (c *Config) SetGenAfterParse() (err error) {
 }
 
 func validateHost(host interface{}) error {
-	if(host == ""){
+	if host == "" {
 		return nil
 	}
 	reg := regexp.MustCompile(`https?://[\w\-]+(\.[\w\-]+)+/?`)
@@ -48,13 +48,10 @@ func validateProxy(proxy interface{}) error {
 	return nil
 }
 
-
 func (c *Config) SetHost() (err error) {
-	// color.Green("Current host domain is %v", host)
 	color.Cyan(`Server's host names`)
 	color.Cyan(`Enter empty line if you don't want to change the value`)
 	color.Cyan(`Note: Don't forget the "http://" or "https://"`)
-	// color.Cyan(`Set a new host domain (e.g. "https://codeforces.com")`)
 	if c.CodeforcesHost, err = inputDontOverwriteEmpty(`Codeforces host`, c.CodeforcesHost, validateHost); err != nil {
 		return
 	}
