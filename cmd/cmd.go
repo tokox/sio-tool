@@ -82,7 +82,7 @@ func Eval(opts docopt.Opts) error {
 			} else if Args.List {
 				return SzkopulList()
 			}
-		} else if Args.SioStaszic || Args.SioMimuw {
+		} else if Args.SioStaszic || Args.SioMimuw || Args.SioTalent {
 			if Args.Submit {
 				return SioSubmit()
 			} else if Args.Watch {
@@ -230,7 +230,7 @@ func getOneCode(filename string, templates []config.CodeTemplate, fileExtensions
 	if len(codes[0].Index) > 1 {
 		langs := make([]string, len(codes[0].Index))
 		for i, idx := range codes[0].Index {
-			langs[i] = codeforces_client.Langs[templates[idx].Lang]
+			langs[i] = codeforces_client.Langs[templates[idx].Lang] + " from " + templates[idx].Alias
 		}
 		prompt := &survey.Select{
 			Message: "Multiple languages match the file.",

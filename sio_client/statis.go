@@ -40,7 +40,7 @@ func (prob *StatisInfo) ParsePoint() string {
 	}
 }
 
-func findProblems(body []byte) (ret []StatisInfo, err error) {
+func findProblems(body []byte, curIns SioInstanceClient) (ret []StatisInfo, err error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
 	if err != nil {
 		return
@@ -57,7 +57,13 @@ func findProblems(body []byte) (ret []StatisInfo, err error) {
 		info.Name = strings.TrimPrefix(strings.TrimSpace(s.Find("a").First().Text()), "Zadanie ")
 		info.Alias = strings.TrimSpace(s.Find("td").First().Text())
 		info.ID = strings.TrimPrefix(s.Find("div").First().AttrOr("id", ""), "limits_")
-		info.Points = strings.TrimSpace(s.Find(".label").First().Text())
+		if curIns == Mimuw || curIns == Staszic {
+			info.Points = strings.TrimSpace(s.Find(".label").First().Text())
+		}
+		if curIns == Talent {
+			info.Points = strings.TrimSpace(s.Find(".badge").First().Text())
+		}
+
 		ret = append(ret, info)
 	})
 	return
@@ -103,7 +109,7 @@ func (c *SioClient) Statis(info Info) (problems []StatisInfo, perf util.Performa
 			return
 		}
 
-		problemsOnPage, err = findProblems(body)
+		problemsOnPage, err = findProblems(body, c.instanceClient)
 		if err != nil {
 			return
 		}

@@ -77,6 +77,11 @@ func (c *SioClient) Login() (err error) {
 		form.Add("auth-password", password)
 		form.Add("login_view-current_step", "auth")
 		URL = c.host + "/c/oi30-1/login/"
+	} else if c.instanceClient == Talent {
+		form.Add("auth-username", c.Username)
+		form.Add("auth-password", password)
+		form.Add("login_view-current_step", "auth")
+		URL = c.host + "/login/"
 	}
 
 	req, err := http.NewRequest("POST", URL, strings.NewReader(form.Encode()))
