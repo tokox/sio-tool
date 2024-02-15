@@ -7,7 +7,7 @@
 ### The script
 If you don't feel the need to understand what's going on, you can just use this script:
 ```bash
-wget -q https://github.com/kartof0nix/sio-tool/releases/latest/download/st_linux_x64.zip && \
+wget -q https://github.com/Arapak/sio-tool/releases/latest/download/st_linux_x64.zip && \
 unzip st_linux_x64.zip && \
 sudo mv st /usr/bin && \
 rm st_linux_x64.zip
@@ -15,9 +15,9 @@ rm st_linux_x64.zip
 
 
 ### 1. Download the binary
-Download the latest binary for linux [here](https://github.com/kartof0nix/sio-tool/releases/latest/download/st_linux_x64.zip) or just run the command:
+Download the latest binary for linux [here](https://github.com/Arapak/sio-tool/releases/latest/download/st_linux_x64.zip) or just run the command:
 ```bash
-wget https://github.com/kartof0nix/sio-tool/releases/latest/download/st_linux_x64.zip
+wget https://github.com/Arapak/sio-tool/releases/latest/download/st_linux_x64.zip
 ```
 
 
@@ -54,7 +54,7 @@ Prerequisite **(go >= 1.18)**:
 
 
 ```bash
-git clone https://github.com/kartof0nix/sio-tool.git
+git clone https://github.com/Arapak/sio-tool.git
 cd sio-tool
 go build -ldflags "-s -w" st.go
 ```
