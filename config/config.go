@@ -45,7 +45,7 @@ type Config struct {
 var Instance *Config
 
 func Init(path string) {
-	c := &Config{ path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioStaszicHost: "https://sio2.staszic.waw.pl",	SioMimuwHost: "https://sio2.mimuw.edu.pl", SioTalentHost: "https://sio.talent.edu.pl", DbPath: "~/.st/tasks.db", Proxy: "", PackagesPath: "~/.st/packages"	}
+	c := &Config{path: path, CodeforcesHost: "https://codeforces.com", SzkopulHost: "https://szkopul.edu.pl", SioStaszicHost: "https://sio2.staszic.waw.pl", SioMimuwHost: "https://sio2.mimuw.edu.pl", SioTalentHost: "https://wyzwania.programuj.edu.pl", DbPath: "~/.st/tasks.db", Proxy: "", PackagesPath: "~/.st/packages"}
 	if err := c.load(); err != nil {
 		color.Red(err.Error())
 		color.Green("Create a new configuration in %v", path)
