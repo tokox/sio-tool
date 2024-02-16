@@ -80,7 +80,7 @@ func Test() (err error) {
 			var verdict judge.Verdict
 
 			if samplesWithName {
-				verdict = judge.Judge(fmt.Sprintf("%s%v.in", file, i), fmt.Sprintf("%s%v.out", file, i), i, s, oiejqOptions)
+				verdict = judge.Judge(fmt.Sprintf("%s%v.in", task, i), fmt.Sprintf("%s%v.out", task, i), i, s, oiejqOptions)
 			} else {
 				verdict = judge.Judge(fmt.Sprintf("in%v.txt", i), fmt.Sprintf("out%v.txt", i), i, s, oiejqOptions)
 			}
