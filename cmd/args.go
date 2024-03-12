@@ -62,6 +62,7 @@ type ParsedArgs struct {
 	Szkopul        bool
 	SioStaszic     bool
 	SioMimuw       bool
+	SioTalent      bool
 	Oiejq          bool
 	Verbose        bool
 }
@@ -91,6 +92,11 @@ func determineClient() error {
 	sioMimuwDir := SubPath(path, cfg.FolderName["sio-mimuw-root"])
 	if sioMimuwDir {
 		Args.SioMimuw = true
+		return nil
+	}
+	sioTalentDir := SubPath(path, cfg.FolderName["sio-talent-root"])
+	if sioTalentDir {
+		Args.SioTalent = true
 		return nil
 	}
 	szkopulDir := SubPath(path, cfg.FolderName["szkopul-root"])
@@ -126,6 +132,12 @@ func parseArgs(opts docopt.Opts) error {
 			Args.Handle = sio_client.MimuwInstance.Username
 		}
 		return parseArgsSio(cfg.FolderName["sio-mimuw-root"])
+	}
+	if Args.SioTalent {
+		if Args.Handle == "" {
+			Args.Handle = sio_client.TalentInstance.Username
+		}
+		return parseArgsSio(cfg.FolderName["sio-talent-root"])
 	}
 	if Args.Szkopul {
 		return parseArgsSzkopul()

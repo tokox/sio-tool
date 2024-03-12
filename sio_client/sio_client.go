@@ -18,6 +18,7 @@ type SioInstanceClient int
 const (
 	Staszic SioInstanceClient = 0
 	Mimuw   SioInstanceClient = 1
+	Talent  SioInstanceClient = 2
 )
 
 type SioClient struct {
@@ -33,6 +34,7 @@ type SioClient struct {
 
 var StaszicInstance *SioClient
 var MimuwInstance *SioClient
+var TalentInstance *SioClient
 
 func Init(path, host, proxy string, instanceClient SioInstanceClient) {
 	jar, _ := cookiejar.New(nil)
@@ -60,6 +62,8 @@ func Init(path, host, proxy string, instanceClient SioInstanceClient) {
 		StaszicInstance = c
 	} else if instanceClient == Mimuw {
 		MimuwInstance = c
+	} else if instanceClient == Talent {
+		TalentInstance = c
 	}
 }
 

@@ -62,6 +62,11 @@ func (c *SzkopulClient) load() (err error) {
 	bytes, err := io.ReadAll(file)
 
 	if err != nil {
+		return err
+	}
+
+	parsed_url, err := url.Parse(c.host)
+	if err != nil {
 		return
 	}
 
@@ -70,22 +75,8 @@ func (c *SzkopulClient) load() (err error) {
 		return
 	}
 
-	parsed_url, err := url.Parse(c.host)
-	if err != nil {
-		return
-	}
-
-	cookies := c.Jar.Cookies(parsed_url)
-
-	for _, cookie := range cookies {
-		if cookie.Name == "lang" {
-			cookie.Value = "pl"
-		}
-	}
-
-	c.Jar.SetCookies(parsed_url, cookies)
-
-	return nil
+	c.Jar.SetCookies(parsed_url, []*http.Cookie{{Name: "lang", Value: "pl"}})
+	return
 }
 
 func (c *SzkopulClient) save() (err error) {

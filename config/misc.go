@@ -23,6 +23,9 @@ func (c *Config) SetGenAfterParse() (err error) {
 }
 
 func validateHost(host interface{}) error {
+	if host == "" {
+		return nil
+	}
 	reg := regexp.MustCompile(`https?://[\w\-]+(\.[\w\-]+)+/?`)
 	if !reg.MatchString(host.(string)) {
 		return fmt.Errorf(`invalid host "%v"`, host)
@@ -45,21 +48,30 @@ func validateProxy(proxy interface{}) error {
 	return nil
 }
 
-func (c *Config) SetCodeforcesHost() (err error) {
-	var host string
-	if validateHost(c.CodeforcesHost) == nil {
-		host = formatHost(c.CodeforcesHost)
-	} else {
-		host = "https://codeforces.com"
-	}
-	color.Green("Current host domain is %v", host)
-	color.Cyan(`Set a new host domain (e.g. "https://codeforces.com")`)
+func (c *Config) SetHost() (err error) {
+	color.Cyan(`Server's host names`)
+	color.Cyan(`Enter empty line if you don't want to change the value`)
 	color.Cyan(`Note: Don't forget the "http://" or "https://"`)
-	if err = survey.AskOne(&survey.Input{Message: `host:`}, &host, survey.WithValidator(validateHost)); err != nil {
+	if c.CodeforcesHost, err = inputDontOverwriteEmpty(`Codeforces host`, c.CodeforcesHost, validateHost); err != nil {
 		return
 	}
-	c.CodeforcesHost = formatHost(host)
-	color.Green("New host domain is %v", host)
+	if c.SzkopulHost, err = inputDontOverwriteEmpty(`Szkopul host`, c.SzkopulHost, validateHost); err != nil {
+		return
+	}
+	if c.SioStaszicHost, err = inputDontOverwriteEmpty(`SioStaszic host`, c.SioStaszicHost, validateHost); err != nil {
+		return
+	}
+	if c.SioMimuwHost, err = inputDontOverwriteEmpty(`SioMimuw host`, c.SioMimuwHost, validateHost); err != nil {
+		return
+	}
+	if c.SioTalentHost, err = inputDontOverwriteEmpty(`SioTalent host`, c.SioTalentHost, validateHost); err != nil {
+		return
+	}
+	c.CodeforcesHost = formatHost(c.CodeforcesHost)
+	c.SzkopulHost = formatHost(c.SzkopulHost)
+	c.SioStaszicHost = formatHost(c.SioStaszicHost)
+	c.SioMimuwHost = formatHost(c.SioMimuwHost)
+	c.SioTalentHost = formatHost(c.SioTalentHost)
 	return c.save()
 }
 
@@ -154,6 +166,13 @@ func (c *Config) SetFolderName() (err error) {
 		return
 	}
 	if c.FolderName["sio-mimuw-root"], err = homedir.Expand(c.FolderName["sio-mimuw-root"]); err != nil {
+		return
+	}
+
+	if c.FolderName["sio-talent-root"], err = inputDontOverwriteEmpty(`Sio talent root path (absolute)`, c.FolderName["sio-talent-root"], validateAbsolutePath); err != nil {
+		return
+	}
+	if c.FolderName["sio-talent-root"], err = homedir.Expand(c.FolderName["sio-talent-root"]); err != nil {
 		return
 	}
 	return c.save()
