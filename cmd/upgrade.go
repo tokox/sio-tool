@@ -3,7 +3,6 @@ package cmd
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,11 +11,14 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/fatih/color"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func less(a, b string) bool {
@@ -43,7 +45,7 @@ func less(a, b string) bool {
 	return false
 }
 
-func getLatest() (version, note, ptime, url string, size uint, err error) {
+func getLatest() (version, ptime, url string, err error) {
 	goos := ""
 	switch runtime.GOOS {
 	case "darwin":
@@ -68,44 +70,37 @@ func getLatest() (version, note, ptime, url string, size uint, err error) {
 		return
 	}
 
-	resp, err := http.Get("https://api.github.com/repos/tokox/sio-tool/releases/latest")
+	resp, err := http.Get("https://github.com/tokox/sio-tool/releases/latest")
 	if err != nil {
 		return
 	}
 	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
+
+	location := resp.Request.URL
+
+	version = location.Path[strings.LastIndex(location.Path, "/")+1:]
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return
 	}
-	result := make(map[string]interface{})
-	err = json.Unmarshal(body, &result)
-	if err != nil {
-		return
-	}
-	version = result["tag_name"].(string)
-	note = result["body"].(string)
-	tm, _ := time.Parse("2006-01-02T15:04:05Z", result["published_at"].(string))
+
+
+	tm, _ := time.Parse("2006-01-02T15:04:05Z", doc.Find("relative-time").First().AttrOr("datetime", ""))
 	ptime = tm.In(time.Local).Format("2006-01-02 15:04")
 	url = fmt.Sprintf("https://github.com/tokox/sio-tool/releases/download/%v/st_%v_%v.zip", version, goos, arch)
-	assets, _ := result["assets"].([]interface{})
-	for _, tmp := range assets {
-		asset, _ := tmp.(map[string]interface{})
-		if url == asset["browser_download_url"] {
-			size = uint(asset["size"].(float64))
-			break
-		}
-	}
+
 	return
 }
 
 type WriteCounter struct {
-	Count, Total uint
-	last         uint
+	Count uint
+	last  uint
 }
 
 func (w *WriteCounter) Print() {
-	fmt.Printf("\rProgress: %v/%v KB  Speed: %v KB/s  Remain: %.0f s           ",
-		w.Count/1024, w.Total/1024, (w.Count-w.last)/1024, float64(w.Total-w.Count)/float64(w.Count-w.last))
+	fmt.Printf("\rProgress: %v KB  Speed: %v KB/s           ",
+		w.Count/1024, (w.Count-w.last)/1024)
 	w.last = w.Count
 }
 
@@ -115,7 +110,7 @@ func (w *WriteCounter) Write(p []byte) (int, error) {
 	return n, nil
 }
 
-func upgrade(url, exePath string, size uint) (err error) {
+func upgrade(url, exePath string) (err error) {
 	updateDir := filepath.Dir(exePath)
 
 	oldPath := filepath.Join(updateDir, fmt.Sprintf(".%s.old", filepath.Base(exePath)))
@@ -138,7 +133,7 @@ func upgrade(url, exePath string, size uint) (err error) {
 	}()
 
 	color.Cyan("Download %v", url)
-	counter := &WriteCounter{Count: 0, Total: size, last: 0}
+	counter := &WriteCounter{Count: 0, last: 0}
 	counter.Print()
 
 	ticker := time.NewTicker(time.Second)
@@ -194,7 +189,7 @@ func upgrade(url, exePath string, size uint) (err error) {
 
 func Upgrade() (err error) {
 	color.Cyan("Checking version")
-	latest, note, ptime, url, size, err := getLatest()
+	latest, ptime, url, err := getLatest()
 	if err != nil {
 		return
 	}
@@ -206,7 +201,6 @@ func Upgrade() (err error) {
 
 	color.Red("Current version is %v", version)
 	color.Green("The latest version is %v, published at %v", latest, ptime)
-	fmt.Println(note)
 
 	doUpgrade := true
 	prompt := &survey.Confirm{Message: "Do you want to upgrade?", Default: true}
@@ -226,7 +220,7 @@ func Upgrade() (err error) {
 		return
 	}
 
-	if err = upgrade(url, exePath, size); err != nil {
+	if err = upgrade(url, exePath); err != nil {
 		return
 	}
 
