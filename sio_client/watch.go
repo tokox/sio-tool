@@ -195,16 +195,16 @@ func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []
 			return
 		}
 		sio_submissions.Display(submissions, first, &maxWidth, line)
-		first = false
 		endCount := 0
 		for _, submission := range submissions {
 			if submission.End {
 				endCount++
 			}
 		}
-		if endCount == len(submissions) {
+		if !first && endCount == len(submissions) {
 			return
 		}
+		first = false
 
 		if n == 1 && len(submissions) == 1 {
 			info.SubmissionID = submissions[0].ParseID()
