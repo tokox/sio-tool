@@ -126,7 +126,17 @@ func (c *SioClient) getSubmissions(URL string, n int) (submissions []sio_submiss
 	return
 }
 
-func (c *SioClient) RevealSubmission(info Info) (err error) {
+type ScoreRevealState int
+
+const (
+	NoReveal ScoreRevealState = iota
+	NotScored
+	Error
+	Revealed
+)
+
+func (c *SioClient) RevealSubmission(info Info) (state ScoreRevealState, err error) {
+	state = Error
 	submissionURL, err := info.SubmissionURL(c.host, false)
 	if err != nil {
 		return
@@ -136,9 +146,11 @@ func (c *SioClient) RevealSubmission(info Info) (err error) {
 		return
 	}
 	if !bytes.Contains(body, []byte("<h4>Score revealing</h4>")) && !bytes.Contains(body, []byte("<h4>Ujawnianie wyniku</h4>")) {
+		state = NoReveal
 		return
 	}
 	if bytes.Contains(body, []byte("<p>Unfortunately, this submission has not been scored yet, so you can&#39;t see your score. Please come back later.</p>")) || bytes.Contains(body, []byte("<p>Niestety to zgłoszenie nie zostało jeszcze ocenione, więc nie możesz zobaczyć swojego wyniku. Spróbuj później.</p>")) {
+		state = NotScored
 		return
 	}
 	csrf, err := findCsrf(body)
@@ -167,6 +179,10 @@ func (c *SioClient) RevealSubmission(info Info) (err error) {
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	req.Header.Add("Referer", submissionURL)
 	_, err = c.client.Do(req)
+	if err != nil {
+		return
+	}
+	state = Revealed
 	return
 }
 
@@ -178,14 +194,9 @@ func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []
 
 	maxWidth := 0
 	first := true
+	revealstate := NotScored
 	for {
 		st := time.Now()
-		if info.SubmissionID != "" {
-			err = c.RevealSubmission(info)
-			if err != nil {
-				return
-			}
-		}
 		if c.instanceClient == Staszic {
 			submissions, err = c.getSubmissions(URL, n)
 		} else {
@@ -194,20 +205,28 @@ func (c *SioClient) WatchSubmission(info Info, n int, line bool) (submissions []
 		if err != nil {
 			return
 		}
+
 		sio_submissions.Display(submissions, first, &maxWidth, line)
+		first = false
+
 		endCount := 0
 		for _, submission := range submissions {
 			if submission.End {
 				endCount++
 			}
 		}
-		if !first && endCount == len(submissions) {
+		if endCount == len(submissions) && (revealstate != NotScored || n != 1) {
 			return
 		}
-		first = false
-
 		if n == 1 && len(submissions) == 1 {
 			info.SubmissionID = submissions[0].ParseID()
+		}
+
+		if info.SubmissionID != "" {
+			revealstate, err = c.RevealSubmission(info)
+			if err != nil {
+				return
+			}
 		}
 
 		sub := time.Since(st)
