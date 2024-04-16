@@ -143,11 +143,13 @@ func printReport(m map[judge.VerdictStatus]int, testsRan int, maxTime, maxMemory
 	_, _ = ansi.Printf("TESTS RAN: %v", util.BlueString(fmt.Sprint(testsRan)))
 	_, _ = ansi.Printf(" MAX TIME: %0.3fs", maxTime)
 	_, _ = ansi.Printf(" MAX MEMORY: %v", judge.ParseMemory(maxMemory))
-	for status, num := range m {
-		if status == judge.OK {
-			_, _ = ansi.Printf(" OK: %v", util.GreenString(fmt.Sprint(num)))
-		} else {
-			_, _ = ansi.Printf(" %v: %v", status, util.RedString(fmt.Sprint(num)))
+	for _, status := range judge.Verdicts {
+		if num, ok := m[status]; ok {
+			if status == judge.OK {
+				_, _ = ansi.Printf(" OK: %v", util.GreenString(fmt.Sprint(num)))
+			} else {
+				_, _ = ansi.Printf(" %v: %v", status, util.RedString(fmt.Sprint(num)))
+			}
 		}
 	}
 }
