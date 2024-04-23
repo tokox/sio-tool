@@ -99,6 +99,8 @@ func Eval(opts docopt.Opts) error {
 				return SioRace()
 			} else if Args.Stand {
 				return SioStand()
+			} else if Args.DownloadPackages {
+				return SioDownloadPackages()
 			}
 		}
 	}

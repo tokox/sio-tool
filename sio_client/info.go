@@ -144,6 +144,13 @@ func (info *Info) ContestURL(host string) (string, error) {
 	return fmt.Sprintf(host+"/c/%v/p", info.Contest), nil
 }
 
+func (info *Info) ProblemInstanceURL(host string) (string, error) {
+	if info.Contest == "" {
+		return "", errors.New(ErrorNeedContest)
+	}
+	return fmt.Sprintf(host+"/c/%v/admin/contests/probleminstance", info.Contest), nil
+}
+
 func (info *Info) MySubmissionURL(host string) (string, error) {
 	if info.Contest == "" {
 		return "", errors.New(ErrorNeedContest)

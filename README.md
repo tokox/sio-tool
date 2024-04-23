@@ -39,9 +39,11 @@ Please refer to the [CONFIG.md](/CONFIG.md) file
 ## Usage
 
 Let's explain the structure of the folders created by sio-tool: First, there are roots for every website (by default, they are in corresponding folders in `~/st`), then it differs based on the website (we will explain them below).
+
 ### Codeforces
 
 Folders structure:
+
 - First layer is the section in Codeforces (contests, gym, etc.).
 - Then there are the actual contests (the folder names are the contests' IDs).
 - Next there are problem aliases (for example: a, b, c, etc.).
@@ -88,14 +90,13 @@ Open the Standings page of the contest.
 ### Szkopul
 
 Folders structure:
+
 - Archives (currently only supporting OI)
 - Stage
 - Task
 - Your code and samples
 
-
 Let's say you want to solve the problem "Meteory" from XXIX OI. You should start in the szkopul's root folder (by default `~/st/szkopul`), then write
-
 
 `st parse XXIX met`
 
@@ -135,6 +136,7 @@ You see, you didn't solve the problem "Rzeki", so you want to open its statement
 ### Sio
 
 Folders structure:
+
 - Contest
 - Round
 - Task
@@ -162,7 +164,7 @@ If you use C++, this will create a `per.cpp` file containing your template.
 You now proceed to solve the problem, and when you are ready, you want to test it on the samples.
 
 `st test`
- 
+
 you can also use
 
 `st test --oiejq`
@@ -187,7 +189,7 @@ Everywhere below `abc` means the alias of the problem you are solving
 
 To stress test your program you have to create a brute force solution named by default `abc-brute` and a generator taking in a seed and outputing a test case (by default `abc-gen`)
 
-Then write: 
+Then write:
 
 `st stress-test abc`
 
@@ -197,12 +199,11 @@ And if you want to use oiejq, use the command:
 
 (you can also specify the time limit and memory limit, like this: `st stress-test --oiejq --memory_limit 10 --time_limit 1` (10Mib and 1s))
 
-
 ### Packages
 
 You want to test your solution on a set of tests, for example downloaded from the user forum on sio2-mimuw.
 
-First download and unpack the package, then go to your solution's directory in st, and write 
+First download and unpack the package, then go to your solution's directory in st, and write
 
 `st add_package ~/path/to/your/package`
 
@@ -258,6 +259,7 @@ Usage:
   st test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
   st package_test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
   st add_package <file>
+  st download_packages [<specifier>...]
   st watch [all] [<specifier>...]
   st open [<specifier>...]
   st stand [<specifier>...]
@@ -281,7 +283,7 @@ Options:
   					   Path to the test generator file
   -f <file>, --file <file>, <file>
                        Path to the file. E.g. "a.cpp", "./temp/a.cpp"
-  --source <source>, <source> 
+  --source <source>, <source>
 					   For example, the site from which the tasks originate (codeforces, szkopul)
   -n <name>, --name <name>, <name>
 					   Problem name
@@ -309,7 +311,7 @@ Options:
   -v, --verbose        Print verdict of every test
   -m <memory_limit>, --memory_limit <memory_limit>, <memory_limit>
              Set oiejq's memory limit in MiB (default is 1024 (1 GiB))
-  -t <time_limit>, --time_limit <time_limit>, <time_limit>  
+  -t <time_limit>, --time_limit <time_limit>, <time_limit>
              Set oiejq's time limit in seconds (default is 10s)
 
 Examples:
@@ -340,7 +342,7 @@ Examples:
                        Create two files, "inK.txt" and "outK.txt" where K is
                        a string with 0~9.
   st add_package ~/tests
-                       Add package (set of tests) for a task you are currently in 
+                       Add package (set of tests) for a task you are currently in
   st test_package      Test your solution on a package added before
   st watch             Watch the first 10 submissions for the current contest.
   st watch all         Watch all submissions for the current contest.
@@ -476,6 +478,7 @@ Note: If there is a new version released (especially a new command added), you s
 You get the error: `Error: exec: "pdftotext": executable file not found in $PATH`?
 
 This program depends on a package named (on most OSes) poppler-utils. Below is an example install on a Debian-based OS (ex. Ubuntu, Linux Mint):
+
 ```bash
 sudo apt install poppler-utils
 ```
