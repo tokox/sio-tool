@@ -104,6 +104,28 @@ func determineClient() error {
 		Args.Szkopul = true
 		return nil
 	}
+	for _, arg := range Args.Specifier {
+		if strings.Contains(arg, config.Instance.CodeforcesHost) {
+			Args.Codeforces = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SioStaszicHost) {
+			Args.SioStaszic = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SioMimuwHost) {
+			Args.SioMimuw = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SioTalentHost) {
+			Args.SioTalent = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SzkopulHost) {
+			Args.Szkopul = true
+			return nil
+		}
+	}
 	return nil
 }
 
