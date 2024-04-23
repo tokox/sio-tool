@@ -183,7 +183,7 @@ func StressTest() (err error) {
 					} else {
 						color.Red("#%v BRUTE - %v: %v", testID, string(bruteProcessInfo.Status), err.Error())
 					}
-					mu.Lock()
+					mu.Unlock()
 					return
 				}
 
@@ -201,7 +201,7 @@ func StressTest() (err error) {
 					} else {
 						color.Red("#%v SOLVE - %v: %v", testID, string(solveProcessInfo.Status), err.Error())
 					}
-					mu.Lock()
+					mu.Unlock()
 					return
 				}
 
@@ -215,7 +215,9 @@ func StressTest() (err error) {
 					workerError = true
 					fmt.Print(verdict.Message)
 					err = os.WriteFile(strings.ReplaceAll(testInFormat, "$%test%$", testID), genProcessInfo.Output, 0644)
-					color.Red(err.Error())
+					if err != nil {
+						color.Red(err.Error())
+					}
 					mu.Unlock()
 					return
 				}
