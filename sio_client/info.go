@@ -144,6 +144,13 @@ func (info *Info) ContestURL(host string) (string, error) {
 	return fmt.Sprintf(host+"/c/%v/p", info.Contest), nil
 }
 
+func (info *Info) ReuploadPackageURL(host string, reuploadId string) (string, error) {
+	if info.Contest == "" {
+		return "", errors.New(ErrorNeedContest)
+	}
+	return fmt.Sprintf(host+"/c/%v/problems/add?problem=%v&key=upload", info.Contest, reuploadId), nil
+}
+
 func (info *Info) ProblemInstanceURL(host string) (string, error) {
 	if info.Contest == "" {
 		return "", errors.New(ErrorNeedContest)

@@ -17,12 +17,20 @@ import (
 )
 
 const ErrorNoFileAttached = "no file attached"
+const ErrorProblemIdNotFound = "problem id not found"
+const ErrorReuploadIdNotFound = "reupload id not found"
 
 type PackageInfo struct {
-	Name    string
-	Alias   string
-	Package string
+	Name       string
+	Alias      string
+	Package    string
+	ReuploadId string
+	ProblemId  string
 }
+
+var ProblemIdRegStr = regexp.MustCompile(`/c/\S+/admin/contests/probleminstance/(\d+)/change/`)
+var ReuploadIdRegStr = regexp.MustCompile(`/c/\S+/problemset/add_or_update/\?problem=(\d+)&amp;key=upload`)
+var AttachmentRegStr = regexp.MustCompile(`attachment; filename="(\S+)"`)
 
 func findPackages(body []byte) (packages []PackageInfo, err error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
@@ -34,6 +42,20 @@ func findPackages(body []byte) (packages []PackageInfo, err error) {
 		info.Name = strings.TrimSpace(s.Find(".field-name_link a").Last().Text())
 		info.Alias = strings.TrimSpace(s.Find(".field-short_name_link a").First().Text())
 		info.Package, _ = s.Find(".field-package a").First().Attr("href")
+		var actions string
+		actions, err = goquery.OuterHtml(s.Find(".field-actions_field").First())
+		match := ProblemIdRegStr.FindStringSubmatch(actions)
+		if match == nil {
+			err = errors.New(ErrorProblemIdNotFound)
+			return
+		}
+		info.ProblemId = match[1]
+		match = ReuploadIdRegStr.FindStringSubmatch(actions)
+		if match == nil {
+			err = errors.New(ErrorReuploadIdNotFound)
+			return
+		}
+		info.ReuploadId = match[1]
 		packages = append(packages, info)
 	})
 	return
@@ -49,8 +71,7 @@ func (c *SioClient) DownloadPackage(p PackageInfo, rootPath string) (err error) 
 	if err != nil {
 		return
 	}
-	re := regexp.MustCompile(`attachment; filename="(\S+)"`)
-	match := re.FindStringSubmatch(resp.Header.Get("Content-Disposition"))
+	match := AttachmentRegStr.FindStringSubmatch(resp.Header.Get("Content-Disposition"))
 	if match == nil {
 		return errors.New(ErrorNoFileAttached)
 	}

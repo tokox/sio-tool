@@ -101,6 +101,8 @@ func Eval(opts docopt.Opts) error {
 				return SioStand()
 			} else if Args.DownloadPackages {
 				return SioDownloadPackages()
+			} else if Args.UploadPackage {
+				return SioUploadPackage()
 			}
 		}
 	}

@@ -46,6 +46,7 @@ type ParsedArgs struct {
 	PackageTest      bool     `docopt:"package_test"`
 	AddPackage       bool     `docopt:"add_package"`
 	DownloadPackages bool     `docopt:"download_packages"`
+	UploadPackage    bool     `docopt:"upload_package"`
 	Watch            bool     `docopt:"watch"`
 	Open             bool     `docopt:"open"`
 	Stand            bool     `docopt:"stand"`
