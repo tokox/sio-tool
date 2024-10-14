@@ -18,6 +18,16 @@ const (
 	INT VerdictStatus = "INT"
 )
 
+var Verdicts = []VerdictStatus{
+	OK,
+	WA,
+	TLE,
+	MLE,
+	OLE,
+	RE,
+	INT,
+}
+
 type Verdict struct {
 	Status            VerdictStatus
 	TimeInSeconds     float64

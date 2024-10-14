@@ -15,56 +15,58 @@ import (
 )
 
 type ParsedArgs struct {
-	CodeforcesInfo codeforces_client.Info
-	SzkopulInfo    szkopul_client.Info
-	SioInfo        sio_client.Info
-	File           string
-	Generator      string
-	Solve          string
-	Brute          string
-	Source         string
-	Name           string
-	Path           string
-	Link           string
-	Shortname      string
-	Contest        string
-	Stage          string
-	TimeLimit      string   `docopt:"--time_limit"`
-	MemoryLimit    string   `docopt:"--memory_limit"`
-	Specifier      []string `docopt:"<specifier>"`
-	Alias          string   `docopt:"<alias>"`
-	Accepted       bool     `docopt:"ac"`
-	All            bool     `docopt:"all"`
-	Handle         string   `docopt:"<handle>"`
-	Version        string   `docopt:"{version}"`
-	Config         bool     `docopt:"config"`
-	Submit         bool     `docopt:"submit"`
-	List           bool     `docopt:"list"`
-	Parse          bool     `docopt:"parse"`
-	Gen            bool     `docopt:"gen"`
-	Test           bool     `docopt:"test"`
-	PackageTest    bool     `docopt:"package_test"`
-	AddPackage     bool     `docopt:"add_package"`
-	Watch          bool     `docopt:"watch"`
-	Open           bool     `docopt:"open"`
-	Stand          bool     `docopt:"stand"`
-	Sid            bool     `docopt:"sid"`
-	Race           bool     `docopt:"race"`
-	Pull           bool     `docopt:"pull"`
-	Clone          bool     `docopt:"clone"`
-	Upgrade        bool     `docopt:"upgrade"`
-	StressTest     bool     `docopt:"stress-test"`
-	Database       bool     `docopt:"db"`
-	Add            bool     `docopt:"add"`
-	Find           bool     `docopt:"find"`
-	Goto           bool     `docopt:"goto"`
-	Codeforces     bool
-	Szkopul        bool
-	SioStaszic     bool
-	SioMimuw       bool
-	SioTalent      bool
-	Oiejq          bool
-	Verbose        bool
+	CodeforcesInfo   codeforces_client.Info
+	SzkopulInfo      szkopul_client.Info
+	SioInfo          sio_client.Info
+	File             string
+	Generator        string
+	Solve            string
+	Brute            string
+	Source           string
+	Name             string
+	Path             string
+	Link             string
+	Shortname        string
+	Contest          string
+	Stage            string
+	TimeLimit        string   `docopt:"--time_limit"`
+	MemoryLimit      string   `docopt:"--memory_limit"`
+	Specifier        []string `docopt:"<specifier>"`
+	Alias            string   `docopt:"<alias>"`
+	Accepted         bool     `docopt:"ac"`
+	All              bool     `docopt:"all"`
+	Handle           string   `docopt:"<handle>"`
+	Version          string   `docopt:"{version}"`
+	Config           bool     `docopt:"config"`
+	Submit           bool     `docopt:"submit"`
+	List             bool     `docopt:"list"`
+	Parse            bool     `docopt:"parse"`
+	Gen              bool     `docopt:"gen"`
+	Test             bool     `docopt:"test"`
+	PackageTest      bool     `docopt:"package_test"`
+	AddPackage       bool     `docopt:"add_package"`
+	DownloadPackages bool     `docopt:"download_packages"`
+	UploadPackage    bool     `docopt:"upload_package"`
+	Watch            bool     `docopt:"watch"`
+	Open             bool     `docopt:"open"`
+	Stand            bool     `docopt:"stand"`
+	Sid              bool     `docopt:"sid"`
+	Race             bool     `docopt:"race"`
+	Pull             bool     `docopt:"pull"`
+	Clone            bool     `docopt:"clone"`
+	Upgrade          bool     `docopt:"upgrade"`
+	StressTest       bool     `docopt:"stress-test"`
+	Database         bool     `docopt:"db"`
+	Add              bool     `docopt:"add"`
+	Find             bool     `docopt:"find"`
+	Goto             bool     `docopt:"goto"`
+	Codeforces       bool
+	Szkopul          bool
+	SioStaszic       bool
+	SioMimuw         bool
+	SioTalent        bool
+	Oiejq            bool
+	Verbose          bool
 }
 
 var Args *ParsedArgs
@@ -103,6 +105,28 @@ func determineClient() error {
 	if szkopulDir {
 		Args.Szkopul = true
 		return nil
+	}
+	for _, arg := range Args.Specifier {
+		if strings.Contains(arg, config.Instance.CodeforcesHost) {
+			Args.Codeforces = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SioStaszicHost) {
+			Args.SioStaszic = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SioMimuwHost) {
+			Args.SioMimuw = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SioTalentHost) {
+			Args.SioTalent = true
+			return nil
+		}
+		if strings.Contains(arg, config.Instance.SzkopulHost) {
+			Args.Szkopul = true
+			return nil
+		}
 	}
 	return nil
 }

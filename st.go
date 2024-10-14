@@ -44,6 +44,8 @@ Usage:
   st test [--oiejq] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
   st package_test [--oiejq] [--verbose] [--memory_limit <memory_limit>] [--time_limit <time_limit>] [<file>]
   st add_package <file>
+  st download_packages [<specifier>...]
+  st upload_package <file> [<specifier>...]
   st watch [all] [<specifier>...]
   st open [<specifier>...]
   st stand [<specifier>...]
